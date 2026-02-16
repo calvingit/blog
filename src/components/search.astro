@@ -33,7 +33,7 @@ if (trailingSlash === 'never') dataAttributes['data-strip-trailing-slash'] = ''
 	</button>
 
 	<dialog
-		class="p-0 m-0 w-full h-full max-w-full max-h-full shadow-xl open:flex flex-col backdrop:backdrop-blur-lg backdrop:bg-gray-900/20 border border-gray-300 dark:border-gray-600 sm:w-[90%] sm:max-w-3xl sm:h-max sm:min-h-64 sm:max-h-[calc(100%_-_8rem)] sm:rounded-lg sm:mt-12 sm:mx-auto bg-gray-100 dark:bg-gray-800"
+		class="p-0 m-0 w-full h-full max-w-full max-h-full shadow-xl open:flex flex-col backdrop:backdrop-blur-lg backdrop:bg-gray-900/20 border border-gray-300 dark:border-gray-600 sm:w-[90%] sm:max-w-3xl sm:h-max sm:min-h-64 sm:max-h-[calc(100%-8rem)] sm:rounded-lg sm:mt-12 sm:mx-auto bg-gray-100 dark:bg-gray-800"
 		aria-label="Search"
 	>
 		<div id="dialog-frame" class="relative overflow-auto flex flex-col gap-2 p-4 grow">
@@ -54,6 +54,7 @@ if (trailingSlash === 'never') dataAttributes['data-strip-trailing-slash'] = ''
 </site-search>
 
 <script is:inline>
+	/* eslint-disable antfu/if-newline */
 	;(() => {
 		const openBtn = document.querySelector('button[data-open-modal]')
 		const shortcut = openBtn?.querySelector('kbd')
@@ -128,6 +129,7 @@ if (trailingSlash === 'never') dataAttributes['data-strip-trailing-slash'] = ''
 						showImages: false,
 						showSubResults: true,
 						resetStyles: false,
+						// eslint-disable-next-line style/member-delimiter-style
 						processResult: (result: { url: string; sub_results: Array<{ url: string }> }) => {
 							result.url = formatURL(result.url)
 							result.sub_results = result.sub_results.map((sub_result) => {
