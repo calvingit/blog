@@ -36,7 +36,7 @@
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^7.4.3",
-		"@clack/prompts": "^0.11.0",
+		"@clack/prompts": "^1.0.1",
 		"@tailwindcss/typography": "^0.5.19",
 		"@types/mdast": "^4.0.4",
 		"@types/react": "^19.2.14",
