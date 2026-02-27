@@ -1,0 +1,315 @@
+---
+title: "C 语言的高阶函数"
+slug: "higher-order-functions-in-c"
+description: "C 语言进阶：利用函数指针实现高阶函数（Higher-order functions），模拟函数式编程特性。"
+date: 2022-09-16
+lastUpdated: 2022-09-16
+tags:
+  - Others
+---
+
+## 什么是高阶函数？
+
+这个概念来自于函数式编程，高阶函数是指至少支持以下特定之一的函数：
+
+- 将一个或多个函数作为参数
+- 返回函数作为其结果
+
+现代的高级语言几乎都支持这一特性，如 Go、JavaScript、Swift、Kotlin 等。
+
+C 语言本身不支持高阶函数，但是可以通过函数指针来达到这一效果。
+
+
+
+## 函数指针
+
+任何一个函数声明都长下面这个样子，包括三个部分：
+
+```c
+void fun_name(void);
+^    ^        ^
+|    |        `----- 参数类型
+|    `-------------- 函数名
+`------------------- 返回值类型
+```
+
+现在我们让一个指针指向这么一个函数，然后传递给其他函数，或在其他函数体返回高阶函数。
+
+函数指针声明例子：
+
+```c
+double (*fun_ptr)(int param);
+^       ^^        ^   ^
+|       ||        |   `------ 参数名
+|       ||        `---------- 参数类型
+|       |`------------------- 指针名称
+|       `-------------------- 指针标识符
+`---------------------------- 返回值类型
+```
+
+对比一下，可以看出函数声明和函数指针很像，差别主要在`(*fun_ptr)`上，函数指针多了一个指针标识符，小括号是为了区分返回值类型。
+
+## 函数指针深渊
+
+我们将函数和函数指针结合起来看，这是一个带函数指针参数的函数：
+
+```c
+void use_fptr(double (*fun_ptr)(int param));
+^    ^        ^        ^        ^   ^
+|    |        |        |        |   `------- 指针指向的函数参数
+|    |        |        |        `----------- 指针指向的函数参数类型
+|    |        |        `-------------------- 指针名称
+|    |        `----------------------------- 指针指向的函数返回值
+|    `-------------------------------------- 函数名称
+`------------------------------------------- 函数返回值类型
+```
+
+上面只是一个参数，如果有两个参数：
+
+```c
+void use_fptr(void (*fptr1)(void), void (*fptr2)(void));
+```
+
+再加上一个函数指针作为返回值如何？
+
+我们先来弄个简单的，假设函数不带任何参数，仅仅返回一个函数指针，这个函数指针指向的函数接收`int`类型，返回`double`类型，它的声明就像这样：
+
+```c
+double (* fn_returns_fptr(void))(int param);
+^       ^ ^               ^      ^   ^
+|       | |               |      |   `------ 返回的函数指针指向的函数的参数
+|       | |               |      `---------- 返回的函数指针指向的函数的参数类型
+|       | |               `----------------- 函数参数名称
+|       | `--------------------------------- 函数名称
+|       `----------------------------------- 返回的函数指针的指针标识符
+`------------------------------------------- 返回的函数指针指向的函数的返回类型
+```
+
+看到这个写法会不会有一阵头晕的感觉？如果再加上更多的函数指针作为参数，然后返回的函数指针指向的函数包含多个参数，这个函数再返回一个函数指针，无限嵌套.....
+
+幸好 C 提供了方法来简化这些声明，类型别名`typedef`可以给比较复杂的类型取个别名。
+
+## 简洁的函数传递
+
+`typedef`最简单的用法:
+
+```c
+typedef double (*int_to_double)(int);
+^       ^       ^^              ^
+|       |       ||              `---- 指向的函数参数类型
+|       |       |`------------------- 类型别名
+|       |       `-------------------- 指针标识符
+|       `---------------------------- 指向的函数返回值类型
+`------------------------------------ 关键字
+```
+
+`int_to_double`的具体使用：
+
+```c
+int_to_double fun(int_to_double p1, int_to_double p2);
+```
+
+这个看起来好多了，清晰明了。按照这个思路，我们可以创建一系列通用的函数指针类型别名：
+
+```c
+typedef int (*IntBiFunction)(int, int);
+typedef void (*IntConsumer)(int);
+typedef void (*Callback)(void);
+typedef bool (*IntPredicate)(int);
+typedef int (*IntSupplier)(void);
+```
+
+传递函数指针参数就可以像这样简洁了：
+
+```c
+int op(int a, int b, IntBiFunction fun) {
+    return fun(a, b);
+}
+void iter(IntConsumer fun, int x) {
+    for (unsigned int i = 0; i < x; ++i) {
+        fun(i);
+    }
+}
+callback writeln(char *str) {
+    return lambda(void, (void), { printf("%s\n", str); });
+}
+```
+
+这看起来像不像其他高级编程语言的**Lambda**？😄
+
+## 具体用途
+
+做一些简单的数学计算：
+
+```c
+int add(int a, int b);
+int sub(int a, int b);
+int result = op(2, 1, add); // => 3
+result = op(2, 1, sub);     // => 1
+```
+
+赋值给其他指针变量：
+
+```c
+IntBiFunction addptr = add;
+IntBiFunction subptr = sub;
+int result = op(2, 1, addptr);  // => 3
+result = op(2, 1, subptr);      // => 1
+```
+
+返回函数指针：
+
+```c
+IntBiFunction op(char c) {
+    if (c == '+') {
+        return add;
+    } else {
+        return sub;
+    }
+}
+```
+
+还可以存在数组里面：
+
+```c
+typedef void (*Action)(void);
+void pull(void);
+void push(void);
+void idle(void);
+Action actions[] = { pull, push, idle };
+```
+
+变量比较：
+
+```c
+if (fptr == push) {
+  ...
+}
+```
+
+我们可以做很多事情，唯独一件事情做不了：匿名函数。
+
+## 匿名函数
+
+C 语言标准没有定义匿名函数，但是编译器做了些 magic 的操作，可以让我们实现类似匿名函数或 Lambda 函数。
+
+> 匿名函数顾名思义就是没有定义名称的函数，通常是`inline`的函数，当然这跟 C 语言通常说的"内联函数"不一样。匿名函数的另一个叫法是 Lambda 函数，Lambda 这个概念来自数学里面的 Lambda 微积分，也是没有名字的函数。
+> 另一个跟匿名函数经常在一起的概念是`closure`，俗称闭包。闭包也是匿名函数，能够捕获函数体内使用到的变量，即使脱离了作用域依然可以使用这些变量。
+> 在一门语言中，函数可以被当作参数传递给其他函数，可以作为另一个函数的返回值，还可以被赋值给一个变量时，我们就说这门语言拥有一级函数（First-class Function）。
+
+为什么我们需要在意概念这个东西？
+
+因为匿名函数效率更好，创建起来更容易，而且还可以在运行时定义，并传递给高阶函数做参数。这些都有助于写一些算法，尤其是一些并行计算。有了这些概念，也有助于我们以声明式的方式写代码，说明我们要实现什么，而不是给出如何实现的指令。如果没有高阶函数，实现一些逻辑会相对更复杂。
+
+接下来，我们看看编译器帮我们做的额外操作。这里主要介绍两个编译器：GCC，Clang。
+
+### GCC
+
+1. 语句表达式
+
+最简单的语句表达式，初始化一个变量，然后返回这个变量：
+
+```c
+({ char *s = "Hello"; s; })
+```
+
+然后看一个复杂一点的:
+
+```c
+({ char *s; s = calloc(20, sizeof(char)); if (argc > 1) { strcpy(s, "We take no arguments"); } else { strcpy(s, "Welcome to GCC"); } s; })
+```
+
+这也是一个表达式，但是里面计算的值是动态的。它可以赋值给变量，或者当做函数参数。
+
+2. 嵌套函数
+
+嵌套函数是指函数可以在其他函数体内定义，具体的定义可以查看[GNU 编译器文档](https://gcc.gnu.org/onlinedocs/gcc/Nested-Functions.html#Nested-Functions)。
+
+```c
+({ void prn(int x) { printf("x = %d\n", x); } &prn; })
+   ^                                        ^ ^
+   |                                        | `------- 返回值
+   `----------------------------------------`--------- 嵌套函数
+```
+
+但这个可读性实在不咋地，幸好 C 语言给我们提供了另一个强大的工具，那就是宏。我们可以将一些重复性的的东西，通过宏来处理。
+
+```c
+#define lambda(lambda$_ret, lambda$_args, lambda$_body)\
+  ({\
+    lambda$_ret lambda$__anon$ lambda$_args\
+      lambda$_body\
+    &lambda$__anon$;
+  \})
+```
+
+这个宏有三个参数； 返回值类型，参数列表， 函数体。整个宏返回一个函数指针，用法如下：
+
+```c
+iter(lambda(void, (int x), { printf("%d\n", x); }), 5);
+```
+
+> 但用这个要小心一点，提出这个方法的人叫 AI Williams，他写了一篇文章"[LAMBDAS FOR C — SORT OF](https://hackaday.com/2019/09/11/lambdas-for-c-sort-of/)"，详细介绍了宏定义 Lambda 的用法，但是评论区就不是很和谐了，一片骂声。
+
+### Clang
+
+Clang 比 GNU 走的更远，这个远是相对 C 语言标准来说的。
+
+Clang 的匿名函数叫闭包，来看个简单的例子：
+
+```c
+typedef void (^Callback)(void);
+Callback writeln(char *str);
+void call(Callback callback);
+// ...
+Callback my_callback = ^ { printf("I was called!"); };
+int y = 5;
+iter(^ (int x) { printf("%d + %d = %d\n", y, x, y + x); }, 5);
+```
+
+语法比 GCC 简单多了，关键部分就是`^`，长得很像"λ(lambda)"。注意局部变量`y`，我们在闭包里面捕获了`y`，即使闭包已经 return，不在作用域内了，依然可以可以使用变量`y`。
+
+Apple 开发的同学应该很熟悉了，这不就是 Objective-C 的"[Blocks](https://clang.llvm.org/docs/BlockLanguageSpec.html)"吗？是的，没错！Xcode 默认就是 Clang 编译器，苹果在 [GCD](https://medium.com/nerd-for-tech/higher-order-functions-in-c-74f6c4b550ee#:~:text=Clang%2C%20and%20Apple-,advocated%20it,-.%20Y%20tho) 里发扬光大了 Blocks 的使用，他们认为这个有利于多核计算。这也从另外一个侧面反映了，结合函数式编程里呼声最高的功能对 C 在并行计算、速度、硬件结合等方面有推动作用。
+
+但是，Blocks 脱离了 macOS 等苹果系统就废了。Blocks 依赖于`BlocksRuntime`，但`BlocksRuntime`不是 Clang(LLVM) 默认分发的一部分，得手动启用这一功能。即便启用这一功能，它会包含很多其他不必要的东西，过于臃肿。所以有人尝试把这个部分单独 clone 下来，做成一个库，供想要这个功能的人自己去[下载编译](http://mackyle.github.io/blocksruntime/)。
+
+### 突破 C 的极限
+
+上面说的这些功能都是比较前沿的，突破了 C 语言本身的极限。同时，这些功能的使用也受限于编译器的支持，可移植性不好。
+
+GCC 编译还需要开启 level 2 的优化，并且使用 C99 标准的扩展版本:
+
+```bash
+gcc -O2 -o fun.exe --std=gnu99 fun.c
+```
+
+Clang 编译:
+
+```c
+clang -fblocks -o fun-clang.exe fun-clang.c -lBlocksRuntime
+```
+
+这里要注意的是，即使编译通过，某些情况下可能会崩溃，比如当我们在 GCC 里面使用局部变量时，又或者不小心将函数指针转成`void *`，然后再转回来的时候。这就令人蛋疼了！
+
+尽管这项技术的可用性有限，但它依然值得我们去关注它，毕竟某些特别的场景需要它。
+
+高阶函数不是什么新东西，C 标准库的`bsearch`和 `qsort`都用到。Linux 内核的驱动层用了很多高阶函数，GTK 里面也用到了很多高阶函数作为 callback。
+
+## 总结
+
+C 语言是一种极其强大的语言，毫不夸张地说，C 语言控制着整个世界。现代的高级编程语言层出不穷，带来了各种不同的编程范式，但没有任何一种编程语言会将自己限制在一种范式中。C 也是如此，即使 C 标准一直没怎么变过，但不要刻板的认为 C 仅仅是命令式、过程式编程。我们可以学习更多的编程范式，了解它们所擅长的东西。如果我们在其他范式的概念里找到了有效的例子，我们就可以从这些概念中借鉴它的使用方法，即使这可能不是 C 语言惯用的方法。令人欣慰的是，C 语言提供了函数指针、宏等概念，可用于高阶函数和一级函数的功能支持，甚至可以在我们现有的编译器的帮助下进行扩展。
+
+对在 C 语言中应用这些概念的利弊，开发者要做到心里有数。C 语言的互操作性(interoperability)可以让我们选择其他更高级的编程语言，不仅仅局限于 C 语言。
+
+作为对比，我们可以在 C++、C#和 Java 等语言中找到对函数式概念的内置支持。如果我们不考虑 C 语言，还有一些围绕函数式概念从头开始设计的语言，如 OCaml 和 Haskell。
+
+无论我们的本职工作用的是什么语言，我们仍然可以从其他语言的概念中受益，并在最适合的地方使用它们。有人可能会反驳说“贪多嚼不烂”，但我们并不需要“嚼烂”，只要学到了一点点东西就够了。读一本书，并不需要书的每一页内容都能给你醍醐灌顶、致富密码，只需要 500 页的书里有一句话感动你，这本书对你来说就是有用的。
+
+了解更多的编程语言，更多的编程范式，只会让我们成为更好的开发者。
+
+## 参考
+
+- [LAMBDAS FOR C — SORT OF](https://hackaday.com/2019/09/11/lambdas-for-c-sort-of/)
+- [Grand Central Dispatch](https://web.archive.org/web/20090920043909/http://images.apple.com/macosx/technology/docs/GrandCentral_TB_brief_20090903.pdf)
+- [方程式语言中扩充高阶函数](http://www.cnki.com.cn/Article/CJFDTotal-SHJT199306001.htm)
+- [高阶函数式语言到逻辑式语言的转移](http://jos.org.cn/ch/reader/create_pdf.aspx?file_no=19961004&journal_id=jos)

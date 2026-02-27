@@ -1,0 +1,90 @@
+---
+title: "Chrome 浏览器隐藏功能"
+slug: "chrome-hiden-functions"
+description: "Chrome 浏览器隐藏技巧：开启并行下载（Parallel Downloading）提升速度与实验性功能（Flags）推荐。"
+date: 2021-12-13
+lastUpdated: 2021-12-13
+tags:
+  - Softwares
+---
+
+测试环境：Chrome v90，macOS v10.15.7。
+
+如果是是 Edge 浏览器，则将下面的 **chrome** 替换成 **edge**。
+
+
+
+## 多线程下载 （默认开启）
+
+```sh
+chrome://flags/#enable-parallel-downloading
+```
+
+需要服务器的文件支持分片下载，并支持同一个 IP 创建多个连接，当然大部分网站是支持多线程的，除了百度网盘这种限速的除外。
+
+开启之后，浏览器下载速度提升非常明显，看下面的对比：
+
+**开启前**
+
+![image.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1620530802914/WI8NRFYXO.png)
+
+**开启后**
+![image.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1620530885381/kCAro1xM4.png)
+
+## 可为页面指定文本创建链接
+
+```sh
+chrome://flags/#copy-link-to-text
+```
+
+这个功能给别人分享部分文字的时候很有用，选中你需要分享的文字，然后点击右键，找到"复制指向突出显示的内容的链接"，粘贴打开链接会看到你选中的文字有黄色高亮提示。
+
+## 地址生成二维码（已默认开启）
+
+```sh
+chrome://flags/#sharing-qr-code-generator
+```
+
+两种使用方法：
+
+1. 鼠标定位到地址栏，右边有一个二维码的图标，点击即可出现二维码。
+2. 页面内点击右键，选择“**为此页面创建二维码**”。
+
+![image.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1620531085703/NW6sd9Qk6.png)
+
+出现二维码之后，还可以修改链接内容，会实时生成二维码
+
+## 标签页预览
+
+需要开启两个功能选项：
+
+```sg
+chrome://flags/#tab-hover-cards
+chrome://flags/#tab-hover-card-images
+```
+
+鼠标移动到标签上，显示预览图。
+
+![image.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1620531375659/RplR1aX4A.png)
+
+## 视频解码 GPU 硬件加速
+
+```
+chrome://flags/#disable-accelerated-video-decode
+```
+
+这个需要看情况，如果是比较新的电脑，显卡不错，开启 GPU 加速是很好的，看 YouTube、B 站视频没那么卡顿。
+
+但如果是比较老的电脑，或者干脆是核显，那就没必要启用了，因为启用之后更糟糕，CPU 解码会更快。
+
+## 实时英文字幕
+
+```sh
+chrome://flags/#enable-accessibility-live-caption
+```
+
+这是我很喜欢的功能，在看一些比较难又没有字幕的英文视频时，可以借助这个浏览器字幕来理解意思。
+
+其实这是无障碍功能里面的一项，在“设置——高级——无障碍”里面，开启后会自动下载一些资源包。
+
+![image.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1620529818983/sCm7CVr4X.png)

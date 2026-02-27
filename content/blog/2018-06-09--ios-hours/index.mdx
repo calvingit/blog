@@ -1,0 +1,24 @@
+---
+title: "判断iOS系统的小时制"
+slug: "ios-hours"
+description: "iOS 国际化开发：如何正确判断与监听系统 12/24 小时制设置变化。"
+date: 2018-06-09
+lastUpdated: 2018-06-09
+tags:
+  - iOS
+---
+
+对时间做一些国际化操作时，有时需要区分是 12 小时显示还是 24 小时显示，用户可以在设置里面自由选择，App 还需要实时监听改了小时制的变化。
+
+
+
+```objc
+// 是否24小时制
++ (BOOL)is24Hours{
+    NSString *formatStringForHours = [NSDateFormatter dateFormatFromTemplate:@"j" options:0 locale:[NSLocale autoupdatingCurrentLocale]];
+    NSRange containsA = [formatStringForHours rangeOfString:@"a"];
+    return containsA.location == NSNotFound;
+}
+```
+
+如果需要实时获取系统时间的改变，可以监听通知`NSCurrentLocaleDidChangeNotification`。

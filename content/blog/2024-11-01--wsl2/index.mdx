@@ -1,0 +1,182 @@
+---
+title: "Windows 11 配置 WSL2"
+slug: "wsl2"
+description: "Windows 开发环境配置：Windows 11 配置 WSL2 (Ubuntu) 进行 Android 开发的踩坑记录与解决方案。"
+date: 2024-11-01
+lastUpdated: 2024-11-01
+tags:
+  - Softwares
+---
+
+在 Windows 11 系统中，使用 Windows Subsystem for Linux 2 (WSL2) 开发 Android 应用可以显著提高开发效率。然而，在配置开发环境的过程中，可能会遇到一些问题。
+
+本文将记录在设置过程中遇到的常见问题及其解决方案。
+
+
+
+## 导出、导入Linux系统到其他盘
+
+### 导出实例
+
+命令
+
+```bash
+wsl --export <实例名称> <导出的地址>
+```
+
+举例
+
+```bash
+wsl --export ubuntu2404 D:\Linux\Ubuntu2404.tar
+```
+
+:::info
+
+记得最后需要卸载原来的实例: `wsl --unregister <实例名称>`
+
+:::
+
+### 导入实例
+
+命令
+
+```bash
+wsl --import <新的实例名称> <新的导入地址> <导入的地址>
+```
+
+举例
+
+```bash
+wsl --import new_ubuntu2404 D:\Linux\Ubuntu2404.tar D:\old/ubuntu2404.tar
+```
+
+## WSL设置Ubuntu默认登陆用户
+
+从应用商店安装的ubuntu默认在C盘很占用空间，后来导出wsl再导入D盘里面后发现一个问题，每次登录都是root用户。网上很多教程都使用ubuntu2004 config --default-user来更改默认用户，但是更改ubuntu默认路径后这个命令就找不到了。同样的，从外面导入的wsl分发版也存在这个问题。
+
+综合网上各类教程，这里介绍两种方法。
+
+### 添加`wsl.conf`文件
+
+创建/etc/wsl.conf文件，写入以下内容，username为自己的用户名
+
+```ini
+[user]
+default=username
+```
+
+还可以在Windows 的 用户目录下添加 `.wslconfig` 文件，给所有的WSL实例设置通用配置。
+下面是一个`.wslconfig`模板，可以根据需要修改：
+
+```ini
+# 推荐的一些配置项如下
+[wsl2]
+
+# 是否强制 WSL2/WSLg 子系统使用 Windows 代理设置（请根据实际需要启用）
+autoProxy=true
+
+# WSL2/WSLg DNS 代理隧道，以便由 Windows 代理转发 DNS 请求（请根据实际需要启用）
+dnsTunneling=true
+
+# WSL2/WSLg 子系统的 Windows 防火墙集成，以便 Hyper-V 或者 WPF 能过滤子系统流量（请根据实际需要启用）
+firewall=true
+
+# 启用 WSLg GUI 图形化程序支持
+guiApplications=true
+
+# 启用 IPv6 网络支持
+ipv6=true
+
+# 启用 localhost 网络转发支持
+#localhostForwarding=true
+
+# 限制 WSL2/WSLg 子系统的最大内存占用
+memory=8GB
+
+# 启用 WSL2/WSLg 子系统嵌套虚拟化功能支持
+nestedVirtualization=true
+
+# 启用镜像网络特性支持
+networkingMode=mirrored
+
+# 设置 WSL2/WSLg 子系统的逻辑 CPU 核心数为 8（最大肯定没法超过硬件的物理逻辑核心数）
+processors=8
+
+# 实验性功能
+[experimental]
+
+# 启用空闲内存自动缓慢回收
+autoMemoryReclaim=gradual
+
+# 启用 WSL2/WSLg 子系统和 Windows 宿主之间的本地回环互通支持
+hostAddressLoopback=true
+
+# 启用 WSL2/WSLg 子系统虚拟硬盘空间自动回收
+sparseVhd=true
+
+```
+
+
+### 使用`wsl`命令启动子系统
+
+Windows Terminal ——设置——选择配置文件——命令行
+
+```xml
+wsl --distribution [Distribution Name] --user [User Name]
+```
+
+`[Distribution Name]` 替换为你 Linux 发行版的名称，`[User Name]` 是用户的名称。例如：`wsl -d Ubuntu-20.04 -u root`
+
+## Windows 和 Linux之间互相访问文件系统
+
+### Windows中查看Linux子系统目录
+
+打开文件资源管理器（快捷方式：win+e），在窗口地址栏输入 `\\wsl$`
+
+### Linux子系统中查看Windows目录
+
+命令行输入
+
+```text
+cd /mnt
+```
+
+## 在Ubuntu 24.04中更换为清华源的步骤
+
+- 备份原有的源配置文件：
+
+从 Ubuntu 24.04 开始，Ubuntu 的软件源配置文件变更为 DEB822 格式，路径为 `/etc/apt/sources.list.d/ubuntu.sources`。
+
+备份原有的源配置文件：
+
+```bash
+sudo cp /etc/apt/sources.list.d/ubuntu.sources  /etc/apt/sources.list.d/ubuntu.sources.bak
+```
+
+- 编辑源配置文件
+
+```bash
+sudo vim /etc/apt/sources.list.d/ubuntu.sources
+```
+
+- 添加清华源的配置　　
+
+在打开的文件中，删除原有的内容，并粘贴以下清华源的配置：
+
+```txt
+Types: deb
+URIs: https://mirrors.tuna.tsinghua.edu.cn/ubuntu/
+Suites: noble noble-updates noble-security
+Components: main restricted universe multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+```
+
+- 更新源配置并升级系统
+
+```bash
+sudo apt-get update
+sudo apt-get upgrade
+```
+
+通过以上步骤，你可以成功将Ubuntu 24.04的源更换为清华源。
+

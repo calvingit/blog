@@ -1,0 +1,164 @@
+---
+title: "摸鱼精选第 20 期"
+slug: "摸鱼精选第20期"
+description: "本期精选：深入理解 SwiftUI Layout Protocol：布局协议基础与自定义容器实现；探索视图层级中的家族动态（Family Dynamics）。"
+date: 2022-10-01
+lastUpdated: 2022-10-01
+tags:
+  - Reading
+---
+
+
+## 1. The SwiftUI Layout Protocol
+
+**Part 1 – The Basics:**
+
+- [What is the Layout Protocol?](https://swiftui-lab.com/layout-protocol-part-1/#whatis)
+- [Family Dynamics of the View Hierarchy](https://swiftui-lab.com/layout-protocol-part-1/#family-dynamics)
+- [Our First Layout Implementation](https://swiftui-lab.com/layout-protocol-part-1/#first-layout)
+- [Container Alignment](https://swiftui-lab.com/layout-protocol-part-1/#container-alignment)
+- [Custom Values: LayoutValueKey](https://swiftui-lab.com/layout-protocol-part-1/#custom-values)
+- [Default Spacing](https://swiftui-lab.com/layout-protocol-part-1/#default-spacing)
+- [Layout Properties and Spacer()](https://swiftui-lab.com/layout-protocol-part-1/#layout-properties)
+- [Layout Cache](https://swiftui-lab.com/layout-protocol-part-1/#layout-cache)
+- [Great Pretenders](https://swiftui-lab.com/layout-protocol-part-1/#great-pretenders)
+- [Switching Layouts with AnyLayout](https://swiftui-lab.com/layout-protocol-part-1/#switching-layouts)
+- [Part 1 Conclusion](https://swiftui-lab.com/layout-protocol-part-1/#conclusion)
+
+**Part 2 – Advanced Layouts:**
+
+- [And The Fun Begins!](https://swiftui-lab.com/layout-protocol-part-2/#intro)
+- [Custom Animations](https://swiftui-lab.com/layout-protocol-part-2/#custom-animations)
+- [Bi-directional Custom Values](https://swiftui-lab.com/layout-protocol-part-2/#bidirectional)
+- [Avoiding Layout Loops and Crashes](https://swiftui-lab.com/layout-protocol-part-2/#avoid-loops)
+- [Recursive Layouts](https://swiftui-lab.com/layout-protocol-part-2/#recursive)
+- [Layout Composition](https://swiftui-lab.com/layout-protocol-part-2/#composition)
+- [Another Composition Example: Interpolating Two Layouts](https://swiftui-lab.com/layout-protocol-part-2/#interpolation)
+- [Using Binding Parameters](https://swiftui-lab.com/layout-protocol-part-2/#binding)
+- [A Helpful Debugging Tool](https://swiftui-lab.com/layout-protocol-part-2/#tool)
+- [Final Thoughts](https://swiftui-lab.com/layout-protocol-part-2/#final)
+
+## 2. [你真的懂 iOS 的异常捕获吗？](https://mp.weixin.qq.com/s/Std2zpGST8__qCV6KbuIZA)
+
+本文探讨了 iOS 的 Exception 捕获原理，对了解 Bugliy 之类的工具有些帮助。
+
+## 3. [Higher-Order Functions in C](https://medium.com/nerd-for-tech/higher-order-functions-in-c-74f6c4b550ee)
+
+C 语言里的高阶函数，实际是函数指针的运用。
+
+## 4. [Uber Go Style Guide](https://github.com/xxjwxc/uber_go_guide_cn)
+
+Uber 公司推出的 Go 语言规范，网友翻译的中文版，原版点击[这里](https://github.com/uber-go/guide)。
+
+## 5. [The SwiftUI Series](https://michaellong.medium.com/the-swiftui-series-abc180690a9d)
+
+作者 Michael Long 写了一系列关于 SwiftUI 的文章，涉及应用开发、架构设计等。
+
+## 6. [Clean Architecture for SwiftUI](https://nalexn.github.io/clean-architecture-swiftui/)
+
+本文探讨了 iOS 开发从命令式 UIKit 到声明式 SwiftUI 的架构设计的进化过程。
+
+在传统的 UIKit 开发中，MVVM 事实上已经占据大部分场景了，当然还是有些 MVP、RIBs、VIPER 的存在。而响应式 Rx 也已经深入人心，基本上和 MVVM 绑定在一起了，比如常见的框架 ReactiveObjc 和 RxSwift 之类的框架。
+
+来到 SwiftUI 的世界，MVVM 可以开箱即用了。`@State` 、用于本地的状态更新，状态变化立马刷新 UI，`Binding` 用于双向状态变化。这样，传统的 MVC 已经无需实现了，不必在变量的`didSet`方法再写刷新 View 的更新操作了。更复杂的场景，我们有`ObservableObject`，这个就有些类似`ViewModel`了。
+
+而 **Combine** 框架的出现，又对 RxSwift 等响应式框架进行了降维式打击，RxSwift 的大部分 operator 都能在 Combine 找到对应的，而且使用更方便，性能也更好。
+
+作者创建了一个基于 Clean 架构的 [Demo](https://github.com/nalexn/clean-architecture-swiftui)，还有一个 [mvvm](https://github.com/nalexn/clean-architecture-swiftui/tree/mvvm) 架构的分支进行对比。
+
+作者认为 SwiftUI 本质上是基于 [Elm](https://guide.elm-lang.org/architecture/) 架构，早在 2017 年就有人尝试在 Swift 中应用 Elm 架构。
+
+Elm 架构由三部分组成：
+
+- Model — 状态
+- View — 将状态转成 HTML
+- Update — 基于消息机制更新状态的方式
+
+SwiftUI 和 Elm 唯一不同就是 Update 部分，但这里我们可以使用 Redux 来实现。
+
+路由，比如在 MVVM-R 或 VIPER 里面的 Coordinator，在 SwiftUI 里面变的无关重要。我们先来看路由解决的两个问题：
+
+- 解耦 UIViewController
+- 动态导航
+
+首先 SwiftUI 的 View 都是 Struct 类型，都是静态的，在编译期就已经决定了。而且导航也是 View 的一种，通常导航状态改变通过`Bindings` 来实现，所以动态导航在 SwiftUI 里面无法实现。
+
+View 的解耦就更不需要了，SwiftUI 可以将 view A 直接指向 view B。`@ViewBuilder` 和 `AnyView` 也可以解耦 View。
+
+最后，作者提出了 Clean 的架构设计：
+
+- AppState: 存储全局状态，`ObservableObject` 类型
+- View: 注入环境变量`@EnvironmentObject var appState: AppState`，以及 `@Environment(\.interactors) var interactors: InteractorsContainer`
+- Interactor: 处理业务逻辑，面向协议模式，隐藏真实实现逻辑，反馈到`appState`
+- Repository: 读写数据，处理各种接口或服务的数据，跟 AppState、View、Interactor 都没有联系
+
+## 7. [Visual Studio Code 配置 C/C++ 开发环境最佳实践(VSCode+Clang+Clangd+LLDB)](https://zhuanlan.zhihu.com/p/398790625)
+
+整个配置过程还是有点复杂的，Clang 完整设置下来，配置文件很多，但是懂了之后，最终的效果也不错，毕竟是免费的。
+
+## 8. [Sanitizers 系列之 Sanitizers 概述](https://mp.weixin.qq.com/s/Gk12D04aQFu7I8vhWdh0_A)
+
+本系列文章旨在向读者详细介绍用于动态检测 C++ 程序内存错误的 Sanitizers 工具集，由于内容较多，故分多篇来进行讲述。这是本系列文章的第一篇，它提纲挈领地概述了 Sanitizers 工具集。除此之外，本文还会带领读者回顾内存的基础知识、C++ 语言标准中关于内存的说明，目的是为后续的内容打下理论基础。
+
+## 9. [终极 C++避坑指南](https://mp.weixin.qq.com/s/Isr5-FojMTRK36g-Gh2_yQ)
+
+作者做 C++ 后台开发多年的沉淀总结，内容很多，主要针对 C++的特性的用法、编程技巧等内容。
+
+## 10. [Memory Management Refrence](https://www.memorymanagement.org/)
+
+一个专门讲内存管理的网站，也包含一些 GC 的东西。
+
+## 11. [Understanding Swift's ObjectIdentifier](https://swiftrocks.com/understanding-swifts-objectidentifier)
+
+Swift 中 class 对象相等比较有两种：
+
+- `===` 三个等号比较表示引用地址比较，跟 C 语言的指针比较一样
+- `==` 两个等号比较需要实现 `Equatable` 协议
+
+下面是`===`的内部实现:
+
+```swift
+public func === (lhs: AnyObject?, rhs: AnyObject?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return ObjectIdentifier(l) == ObjectIdentifier(r)
+  case (nil, nil):
+    return true
+  default:
+    return false
+  }
+}
+```
+
+当`===`两边都有值的时候，会用`ObjectIdentifier`再封装一下比较，下面是`ObjectIdentifier`的实现逻辑：
+
+```swift
+public struct ObjectIdentifier {
+
+  internal let _value: Builtin.RawPointer
+
+  public init(_ x: AnyObject) {
+    self._value = Builtin.bridgeToRawPointer(x)
+  }
+
+  public init(_ x: Any.Type) {
+    self._value = unsafeBitCast(x, to: Builtin.RawPointer.self)
+  }
+}
+
+extension ObjectIdentifier: Equatable {
+  public static func == (x: ObjectIdentifier, y: ObjectIdentifier) -> Bool {
+    return Bool(Builtin.cmp_eq_RawPointer(x._value, y._value))
+  }
+}
+
+extension ObjectIdentifier: Hashable {
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(Int(Builtin.ptrtoint_Word(_value)))
+  }
+}
+```
+
+可以看到`ObjectIdentifier` 内部实现了 `Equatable`，比较的内容就是 rawPointer 指针。
+
+另外，`ObjectIdentifier` 还可以用于元类型的封装，比如`ProfileViewController.self`当构造函数参数。当你使用`Set`当容器时，它的`contains`函数默认使用`==`进行是否相等比较，如果直接讲 class 对象存到 `Set` ，需要对象实现 `Equtable` 协议才行，这时就可以用 `ObjectIdentifier` 包装一下，存到 `Set` 里面。

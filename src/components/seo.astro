@@ -2,31 +2,31 @@
 import { SITE } from '@constants'
 
 interface Props {
-	title?: string
-	forceTitle?: string
-	description?: string
-	image?: string
-	noIndex?: boolean
+  title?: string
+  forceTitle?: string
+  description?: string
+  image?: string
+  noIndex?: boolean
 }
 
 const { title, forceTitle, description, image, noIndex = false } = Astro.props
 const {
-	title: siteTitle,
-	titleDefault: siteTitleDefault,
-	description: siteDescription,
-	url: siteUrl,
-	defaultOgImage: siteImage,
+  title: siteTitle,
+  titleDefault: siteTitleDefault,
+  description: siteDescription,
+  url: siteUrl,
+  defaultOgImage: siteImage,
 } = SITE
 
 const seo = {
-	title: title ? `${title} | ${siteTitle}` : siteTitleDefault,
-	description: description || siteDescription,
-	url: new URL(Astro.url.pathname, siteUrl),
-	image: new URL(image || siteImage, siteUrl),
+  title: title ? `${title} | ${siteTitle}` : siteTitleDefault,
+  description: description || siteDescription,
+  url: new URL(Astro.url.pathname, siteUrl),
+  image: new URL(image || siteImage, siteUrl),
 }
 
 if (forceTitle) {
-	seo.title = forceTitle
+  seo.title = forceTitle
 }
 ---
 

@@ -1,0 +1,72 @@
+---
+title: "摸鱼精选第 36 期"
+slug: "摸鱼精选第36期"
+description: "本期精选：C++20 协程（Coroutines）入门指南：从原理到 std::generator 实现；深入理解 C++ 异步编程模型。"
+date: 2024-06-01
+lastUpdated: 2024-06-01
+tags:
+  - Reading
+---
+
+
+## [Daily bit(e) of C++ | Coroutines: step by step](https://simontoth.substack.com/p/daily-bite-of-c-coroutines-step-by)
+
+C++20 标准引入了对协程的支持。协程可以用于实现自定义协程类型，需要包括至少一个协程关键字（co_return、co_yield、co_await）并符合协程要求的返回类型。标准库已经提供了一种协程类型 std::generator（C++23），可用于实现惰性计算的元素序列。协程类型的实现需要考虑返回类型、promise 类型和可等待类型。另外，还介绍了异常处理、协作任务、协作任务与异步性以及可等待协程等七种协程类型。
+**关键段落**
+
+- **C++20 标准引入协程支持**: C++20 标准引入了对协程的支持，可以通过库的文档来使用协程类型。
+- **自定义协程类型的实现**: 实现自定义协程类型需要包括协程关键字和符合协程要求的返回类型。标准库提供了一种协程类型 std::generator，用于实现惰性计算的元素序列。
+- **协程类型的实现考虑因素**: 实现协程类型需要考虑返回类型、promise 类型和可等待类型。同时介绍了异常处理、协作任务、协作任务与异步性以及可等待协程等七种协程类型。
+- **协作任务与异步性**: 介绍了协作任务与异步性的实现，以及处理异常的方法。
+- **可等待协程类型**: 介绍了可等待协程类型的实现，以及如何避免堆栈空间不足的问题。
+
+## [Thread dispatching and Actors: understanding execution](https://www.avanderlee.com/concurrency/thread-dispatching-actor-execution/)
+
+本文介绍了在 Swift 中使用 actors 时，如何确保代码在特定线程上执行，以及在异步和同步环境中如何分派线程。同时还介绍了在 Swift 6 中的严格并发检查功能，以及如何预防意外的线程目标。最后强调了了解编译器的行为和预期线程目标的重要性。
+**关键点**
+
+- **Actors 的作用**：Actors 可确保代码在特定线程上执行，帮助同步对可变状态的访问，避免数据竞争。
+- **异步环境中的线程分派**：在异步环境中，需要使用任务或采用相同的全局 actor 来访问带有 actor 属性的方法。编译器会阻止在非异步上下文中向 actor 线程分派。
+- **同步环境中的线程分派**：@MainActor 属性并不总是保证方法在主线程上执行，需要注意 API 调用可能在后台线程上执行。编译器只有在有潜在失败时才会建议更改。
+- **严格并发检查**：Swift 6 中引入了严格并发检查功能，可以帮助预防意外的线程目标。
+- **了解编译器行为的重要性**：了解编译器的行为和预期线程目标的重要性。
+
+## [【数据结构】Jemalloc 中的 Radix Tree](https://zhuanlan.zhihu.com/p/675177015)
+
+在 jemalloc 中，使用基数树（Radix Tree）来快速查找线性地址对应的元数据，提高内存管理效率。基数树是一种压缩的 Trie 数据结构，通过共享公共前缀来减少存储需求，适用于需要快速查找的场景。jemalloc 的基数树针对内存线性地址做索引，具有高效的查找和插入操作，仅有两层结构，通过槽位定位唯一的线性地址区域。这种简单而高效的数据结构体现了“简单性是真理的标志”的理念，易于维护和操作。
+
+## [Swift Tooling: Windows Edition](https://speakinginswift.substack.com/p/swift-tooling-windows-edition)
+
+在 Windows 上编写 Swift 代码的开发体验非常出色。Visual Studio Code（以下简称“VS Code”）是在 Windows 上编写 Swift 代码的首选开发环境。官方的 Swift 扩展为 VS Code 提供了丰富的集成功能，包括构建、调试、代码导航、自动补全等。此外，Swift 工具链包括 Swift Package Manager（SPM），CMake 等工具，为开发者提供了更多的控制和支持。同时，开发者可以使用 LLDB 进行调试，也可以利用 Windows 的第一方调试工具进行性能分析和调试。
+**关键内容**
+
+- **VS Code 是首选开发环境**: VS Code 是在 Windows 上编写 Swift 代码的首选开发环境，提供了丰富的集成功能，包括构建、调试、代码导航、自动补全等。
+- **Swift 扩展功能**: 官方的 Swift 扩展为 VS Code 提供了构建和调试的集成功能，生成启动配置、检测依赖关系，并且在第一次构建后，项目的测试会在 VS Code 的测试资源管理器中列出，为运行和调试测试提供了便利的方式。
+- **代码编辑**: VS Code 通过语言服务器协议可扩展语言特定的编辑器服务，Swift 扩展通过 sourcekit-lsp 提供此功能，简化 API 发现和代码导航，同时提供内联错误报告。
+- **构建和测试**: Swift 工具链包括 Swift Package Manager（SPM），可构建项目、运行测试、管理依赖等，同时支持 CMake 用于对项目的构建进行精细控制。
+- **调试**: Swift 工具链附带 LLDB，实现了 Microsoft 的调试适配器协议（DAP），支持与 VS Code 的无缝集成。同时，Windows 提供了一系列第一方调试工具，如 WinDBG 和 Windows Performance Analyzer（WPA），用于性能分析和调试。
+- **开发体验**: 在 Windows 上开发 Swift 代码是高效且有趣的，只需安装 Swift 扩展的 VS Code，即可开始编码。
+
+## [How to dismiss a multiline SwiftUI TextField by pressing the return key](https://danielsaidi.com/blog/2023/09/15/how-to-dismiss-a-multiline-swiftui-textfield-by-pressing-the-return-key)
+
+在 SwiftUI 中，对于多行文本字段，可以使用 onSubmit 修饰符来触发当按下回车键提交文本字段并关闭键盘时的操作。另外，还可以创建自定义的视图修饰符来实现多行文本字段的提交功能。
+**关键段落**
+
+- **onSubmit 修饰符**: 可以应用 onSubmit 修饰符来触发按下回车键提交文本字段并关闭键盘时的操作。
+- **使用 FocusState 和 onChange**: 可以使用 FocusState 和 onChange 来实现多行文本字段在按下回车键时的提交操作。
+- **创建自定义视图修饰符**: 可以创建自定义的视图修饰符来实现多行文本字段的提交功能，并且可以轻松地将这些修饰符应用到任何多行文本字段中。
+
+## [Organize Your Global Providers in Flutter Riverpod with Mixin Class](https://medium.com/@ximya/organize-your-global-providers-in-flutter-riverpod-with-mixin-class-562ae2aa3376)
+
+这篇文章介绍了如何在 Flutter 应用中使用 Riverpod 包来组织全局状态管理。作者推荐了一个使用 Mixin 类来管理 Provider 的策略，这样可以简化代码并提高可维护性。文章提供了一个清晰的步骤指导，包括如何创建和使用 Mixin，以及如何将 Provider 集成到 Flutter 的 State 管理中。通过示例代码，作者展示了如何通过 Riverpod 的 ProviderMixin 来访问和管理状态，使得整个状态管理过程更加直观和高效。
+
+## [解析 Jemalloc 的关键数据结构](https://zhuanlan.zhihu.com/p/671608149)
+
+介绍了所在项目使用的 jemalloc5.3.0 及其内部关键数据结构，包括与其他内存分配器的比较、各种数据结构的细节和相互关系等。
+
+**重要亮点**：
+
+- **📚 jemalloc 的选用及优势**：项目使用 jemalloc5.3.0 是最优内存分配器方案，相比其他有独特优势。
+- **🔍 关键数据结构**：详细阐述了 base_block_t、edata_t、base_t、arena_t、bin_t、Page、tcache_t 等数据结构的功能和特点。
+- **💻 数据结构间的协作与运作**：如 arena_t 与 pac_t 的紧密协作，以及 slabcur、slabs_full、slabs_nonfull 之间的关系，还有 TCache 的原理和运作方式。
+- **🌐 全景图与关系梳理**：呈现了所有数据结构的全景图，并强调关系是通过自研源码整理所得。

@@ -1,0 +1,141 @@
+---
+title: "iOS APNS 推送服务接入问题汇总"
+slug: "ios-apns-problems"
+description: "iOS APNS 推送故障排查：常见错误（Not registered, Missing token）原因分析与解决方案。"
+date: 2022-09-26
+lastUpdated: 2022-09-26
+tags:
+  - iOS
+---
+
+在开发 iOS 应用时，推送通知是与用户保持联系的关键功能。然而，在接入苹果的 APNS（Apple Push Notification Service）时，可能会遇到各种技术挑战。以下是一些常见的 APNS 推送服务接入问题及其解决方案。
+
+
+
+## 未注册（Not registered）
+
+- **类型**：提供商错误
+- **描述**：此错误由 FCM 提供，表明现有的 registration token 可能在以下情况下不再有效：
+  - 客户端应用与 FCM 取消注册。
+  - 用户卸载应用。
+  - registration token 过期。
+  - 应用更新但新版本未配置以接收消息。
+- **解决方案**：
+  - 检查应用实现，确保设置了 push tokens。
+  - 检查分群标准，只包括 Push Enabled 用户。
+- **联系谁**：应用开发者。
+
+## 缺失 Push Token（Missing Push token）
+
+- **类型**：分群错误
+- **描述**：在发送时发现，一些与您的联系人关联的设备没有有效的 push token，这意味着它们无法接收推送通知。
+- **解决方案**：
+  - 检查应用实现，确保设置了 push tokens。
+  - 检查分群标准，只包括 Push Enabled 用户。
+- **联系谁**：应用开发者。
+
+## 发送者 ID 不匹配（Mismatch sender ID）
+
+- **类型**：提供商错误
+- **描述**：在 Android 上的实现问题。一个 registration token 与特定的发送者组绑定。当客户端应用注册到 FCM 时，必须指定允许哪些发送者发送消息。如果切换到不同的发送者，现有的 registration tokens 将无法工作。
+- **解决方案**：
+  - 检查应用中的 Google 项目编号是否与 Google 开发者控制台中的编号匹配。
+  - 登录 Firebase 控制台，打开项目。在 General 标签下，下载最新的 config 文件`google-services.json`（应包括正确的项目和 sender IDs）。
+- **联系谁**：应用开发者。
+
+## 无效注册（Invalid registration）
+
+- **类型**：提供商错误
+- **描述**：此错误由 APNs 提供，表明 device token 对指定主题无效。现有的 registration token 可能在以下情况下不再有效：
+  - 客户端应用与 APNs 取消注册。
+  - 用户卸载应用。
+  - registration token 过期。
+  - 应用更新但新版本未配置以接收消息。
+- **解决方案**：
+  - 检查应用实现，确保设置了 push tokens。
+  - 检查分群标准，只包括 Push Enabled 用户。
+- **联系谁**：应用开发者。
+
+## 未知设备（Unknown device）
+
+- **类型**：提供商错误
+- **描述**：现有的 registration token 可能在以下情况下不再有效：
+  - 客户端应用取消注册。
+  - 用户卸载应用。
+  - registration token 过期。
+  - 应用更新但新版本未配置以接收消息。
+- **解决方案**：
+  - 检查应用实现，确保设置了 push tokens。
+  - 检查分群标准，只包括 Push Enabled 用户。
+- **联系谁**：应用开发者。
+
+## 无法获取 iOS 提供商选项（Cannot get iOS provider options）
+
+- **类型**：证书错误
+- **描述**：我们无法为您的 iOS 应用获取有效的证书。
+- **解决方案**：检查应用设置并添加有效的 p12 证书文件或授权 token。
+- **联系谁**：应用开发者。
+
+## 错误的 Device Token（Bad device token）
+
+- **类型**：提供商错误
+- **描述**：此错误由 APNs 提供，表明指定的 device token 无效。验证请求是否包含有效的 token，并且 token 与环境匹配。
+- **解决方案**：检查应用实现。应用证书是否最近已更改？
+- **联系谁**：应用开发者。
+
+## 证书已过期（Certificate Has Expired）
+
+- **类型**：证书错误
+- **描述**：应用的证书已过期。
+- **解决方案**：检查应用设置并添加应用的有效证书。
+- **联系谁**：应用开发者。
+
+## 排除：无效 Push Token（Excluded: Invalid Push token）
+
+- **类型**：提供商错误
+- **描述**：基于之前发送的无效 push token 状态，设备被排除在推送活动分发之外。如果用户再次使用应用，状态将更新。
+- **解决方案**：检查分群标准，只包括 Push Enabled 用户。
+- **联系谁**：市场营销人员。
+
+## 推送通知已关闭（Push notifications turned off）
+
+- **类型**：提供商错误
+- **描述**：联系人在设备上撤销了推送通知权限。
+- **解决方案**：考虑使用另一个渠道（例如应用内、电子邮件、短信等）来重新获得联系人接受推送消息。
+- **联系谁**：市场营销人员。
+
+## 排除：标准（Excluded: Criteria）
+
+- **类型**：分群错误
+- **描述**：在发送时，联系人的设备不匹配分群下的 Apply segment criteria for devices 选项中的设备级标准。
+- **解决方案**：检查 Apply segment criteria for devices 选项下的分群标准。
+- **联系谁**：不适用。
+
+## 设备 Token 不适用于主题（Device token not for topic）
+
+- **类型**：证书错误
+- **描述**：iOS 证书/Token 主题与应用的 bundle identifier 不匹配。
+- **解决方案**：检查 Xcode 项目 bundle identifier。它应该与 Emarsys 平台应用设置相同。
+- **联系谁**：应用开发者。
+
+## 错误：流意外结束，状态为空，正文为空（Error: stream ended unexpectedly with status null and empty body）
+
+- **类型**：证书错误
+- **描述**：您的证书状态已被撤销。当发生这种情况时，您将在 Channels > Mobile Engage > Apps 标签上收到警报。
+- **解决方案**：您需要续订应用证书。
+- **联系谁**：应用开发者。
+
+## 无效的 Collapse ID（Invalid Collapse ID）
+
+- **类型**：提供商错误
+- **描述**：Internal ID 超出了 APNS 允许的最大大小。
+- **解决方案**：检查 Internal ID 的值和长度。该值不得超过 64 字节。
+- **联系谁**：市场营销人员。
+
+以上是 iOS APNS 推送服务接入时可能遇到的一些问题及其解决方案。在处理这些问题时，通常需要应用开发者的协助。希望这篇文章能帮助您更好地理解和解决 APNS 推送服务中遇到的问题。
+
+## 参考文章
+
+- [Undelivered push error messages](https://help.emarsys.com/hc/en-us/articles/360026114314-Advanced-topics-Troubleshooting-Undelivered-push-error-messages#)
+- [Setting up a remote notification server](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/)
+- [Handling notification responses from APNs](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/handling_notification_responses_from_apns)

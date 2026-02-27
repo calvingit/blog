@@ -1,0 +1,37 @@
+---
+title: "iOS 打开/关闭闪光灯"
+slug: "ios-toggle-torch"
+description: "闪光灯的操作，在扫描二维码的时候需要用到"
+date: 2018-05-04
+lastUpdated: 2018-05-04
+tags:
+  - iOS
+---
+
+闪光灯的操作，在扫描二维码的时候需要用到
+
+
+
+```swift
+/// import AVFoundation.AVCaptureDevice
+
+func toggleTorch(on: Bool) {
+    guard
+        let device = AVCaptureDevice.default(for: AVMediaType.video),
+        device.hasTorch
+    else { return }
+
+    do {
+        try device.lockForConfiguration()
+        device.torchMode = on ? .on : .off
+        // Optional thing you may want when the torch it's on, is to manipulate the level of the torch
+        if on {
+            try device.setTorchModeOn(level: AVCaptureDevice.maxAvailableTorchLevel.significand)
+        }
+        device.unlockForConfiguration()
+    } catch {
+        print("Torch could not be used")
+    }
+}
+```
+

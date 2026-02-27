@@ -1,0 +1,211 @@
+---
+title: "2023 Forward 之 专业提升"
+slug: "2023-forward-1"
+description: "2023 年度展望（一）：专业技能提升规划，告别“达芬奇综合症”，深耕技术领域。"
+date: 2023-02-04
+lastUpdated: 2023-02-04
+tags:
+  - Thoughts
+---
+
+一年之计在于春，展望并规划一下 2023 年。
+
+
+
+想到什么写什么，比较个人情绪化，定了几个主题：
+
+- 专业提升
+- 投资理财
+- 家庭规划
+
+> PS: 预计是写成一篇文章的，写着写着就超字数了，还是分成三篇吧。
+
+本文是第一篇，专业提升。
+
+## 2022 Review
+
+去年学到一个新词，叫“达芬奇综合症”。
+
+![alert text](https://cdn.zhangwen.site/uPic/l2oSIS.png)
+
+这就是我啊，惭愧！
+
+回顾去年，在软件编程上的学习跨越了多个不同的领域，从 iOS 的 SwiftUI、Concurrency，到 Android 的 Jetpack Compose，再到跨平台的 Flutter、React Native、Tauri，Linux 的 Nginx、Docker，后端的 Go、Node，Modern C++，以及半途而废的 Rust，CI/CD 的 Jenkins......真是茫茫多啊！
+
+上面罗列的大部分都是浅尝辄止，并没有花时间和精力去深入研究一下，所以对各个不同技术的优缺点了解的还不够透彻。
+
+但也不是说走马观花，没学到一点，最起码了解到了解决同一个问题可以有不同的技术思路，很多概念性的东西是跨语言、跨平台的。比如 Redux 的概念，不仅仅在 Web 端的 React App 上使用，还可以用其他语言实现一个类似的状态管理库，比如 Swift 的 [ReSwift](https://github.com/ReSwift/ReSwift)，Kotlin 的 [Redux-Kotlin](https://reduxkotlin.org/)，Flutter 的 [flutter_redux](https://pub.dev/packages/flutter_redux)。
+
+当你脑子里有这些杂七杂八的东西的时候，你可以迅速的知道适合用哪一种技术更快捷或者更稳妥的实现产品需求。
+
+我自认为自己不是智商很高的人，也没有对某一细分领域能够一直钻下去的耐心，思维相对很跳脱。
+
+我是很喜欢编程，但我也喜欢去了解一些产品、设计、运营的东西，总是梦想着做一款自己喜欢又能给别人带来便利的工具型产品。
+
+**我的学习理念就是二八定律，用 80% 的时间学习 20% 的知识。**
+
+任何一门新技术出现时，它的核心功能只有 20% 左右，但是却能满足 80% 的场景。我要学习的是精髓，我不需要掌握这门技术的方方面面或者一些少见偏门的奇技淫巧，又或者花大量时间去钻研一些实际上用不太上的东西，因为这些都是比较难学的部分，却能够靠搜索就找到答案。
+
+举个具体的例子，比如 Docker，我自己的服务器正在跑的镜像有 12 个，我只会用 Docker Compose 来管理服务，对其他的 Docker 命令完全不熟，也记不住那些命令，我甚至连怎么自己创建一个 Docker 镜像都不知道。我不是专业运维，没有必要去了解那些东西。只要能满足我的日常服务器管理，那些命令的用法，会用 Google 就够了。
+
+## 2023 Forward
+
+**今年的学习规划，我觉得应该要返璞归真了。尽量摈弃一些目前阶段不太实用的东西，从宏观上去学习一些 Theory 的概念，然后钻到稍微底层一些地方，减少上层应用的无效探索。**
+
+2023 年重点学习的首先还是跟工作相关的 iOS 领域，以及跨平台的 Flutter，现代 C++，算法与数据结构。
+
+闲话少说，下面就展开细说一下这几个主题：
+
+### iOS
+
+iOS 开发的所有重心转移到 Swift 上，Objective-C 相关的东西已经没有任何研究的价值了。而 Swift 的重点则放在 Swift 5.5 的 Concurrency 和 Actor， 5.7 的 Sendable 上，这几个新添加的新特性比较具有实用性，能够较大的解决实际应用上的很多繁琐问题。Swift 5.8 在 2022 年 11 月 19 日宣布，估计不久就会在三月份正式发布了。
+
+Swift 6 也已经在路上，Swift Core Team 表示这是今年的重点，会在开发体验上大力改善，然后强化 Swift 语言本身的能力，为主要语言特性（例如内存 ownership 和并发性）提供出色的解决方案。今年的 WWDC 大会上估计会发布 Swift 6 相关的东西，拭目以待吧。
+
+怎么通过实际项目去学习上述这些东西呢？在公司的项目上很难做，尝试过接入 Swift 做 UI 层，不太理想。很多不规范的 Objective-C 变量没有用 `nullable` 或 `nonnull`修饰，没法对应到 Swift 的 optional。然后很多 header 文件是通过 pch 全局引入的，bridge header 会引入非常多的文件导致无效编译，各种宏定义完全没法用在 Swift 上。
+
+将 Swift 用于 OC 老项目的唯一可行部分是用 Swift 做独立模块，通过 framework 引入，比如 network 部分等，这部分已经在尝试做了。
+
+我还打算弄一个 Swift on Server 的项目，基于 [Vaper](https://github.com/vapor/vapor) 做一个 Web Server，托管自己的一些 API 以及网站。这就会涉及到方方面面了，如数据库、高性能 HTTP、TLS 等等。
+
+### Flutter
+
+Flutter 越来越火，发展也越来越快。最新的稳定版本是 v3.7，此版本更新了很多内容，其中包括 iOS 平台的 [Impeller 渲染引擎](https://github.com/flutter/engine/tree/main/impeller)，增加`build ipa` 命令的发布校验功能， 减少 iOS 设备上动画效果的卡顿等等。
+
+Flutter 目前对 iOS 的支持好于 Android，给 iOS 开发者准备了一系列资源，包括：
+
+- [给 SwiftUI 开发者的 Flutter 指南](https://flutter.cn/docs/get-started/flutter-for/swiftui-devs)
+- [给 Swift 开发者的 Dart 指南](https://dart.dev/guides/language/coming-from/swift-to-dart)
+- [给 Swift 开发者的 Flutter 并发开发指南](https://flutter.cn/docs/resources/dart-swift-concurrency)
+- [将 Flutter 添加到现有的 SwiftUI 应用中](https://flutter.cn/docs/development/add-to-app/ios/add-flutter-screen)
+- [为 Flutter 创建多渠道](https://flutter.cn/docs/deployment/flavors) (针对 Android 和 iOS)
+
+公司内有一个半死不活的项目是 Flutter 2.5 的版本，另外还有两个别的公司的 App 项目用 Flutter 3.1 实现的，打算都升级到最新版本，跑一段时间试试稳定性。
+
+为了跨平台，加大对 Flutter 的投入是值得的。同时，如果需要开发 Windows PC 应用的话，也可以抛弃 .net WPF 或 MAUI 那一套。
+
+去年我用 [GetX](https://github.com/jonataslaw/getx) 整了一套开发小型 Flutter App 的项目模板，用起来很爽，虽然说 GetX 隐藏了 Context 的复杂性，变的不是很纯粹，但就是开发体验爽啊。今年打算在此基础之上再完善一下，升级依赖库的最新版本，看看有没有其他想法加进去。
+
+然后还有基于 Riverpod 的状态管理思路，Isolate Group 的新玩法。。。都可以尝试一下。
+
+> PS: 我个人认为，Flutter 是接私活赚外快的利器。😄
+
+### 现代 C++ 11/14/17/20
+
+我最开始是 C 语言出身的，由于 C 语言本身的稳定性，20 多年来没啥变化，只要你精通了数组、结构体、指针三个重点，几乎就是调用系统 API 的事了，即使用 C 语言写面向对象的应用，也不是不可能。
+
+但是 C++就不一样了，从 C++ 11 之后，就完全换了一番面貌，你可以当做一门新语言去学习。而且 C++ 标准也更新很快，每三年就发布一个版本，带来非常多现代的特性，编译器 MSVC、GCC、CLANG 对新语法的支持力度也很积极。
+
+但我工作写 C++软件的时候还是 2012 年，C++ 11 还没有很普及，后面转向 iOS 开发之后，新出来的 14/17/20 标准几乎就没有实际玩过了，大部分都是从别人的文章里了解到。
+
+那学习现代 C++ 能干嘛呢？
+
+对客户端来说，C++目前还是开发跨平台 SDK 库的首选语言。对服务端来说，高性能的服务虽然渐渐被 Go 语言蚕食一些份额，但是 C++依然还是主导，比如多媒体、AI 计算、游戏后端等，只能靠 C++ 来榨取 CPU 性能。
+
+我现在的 iOS 岗位上还用不到 C++ ，公司用 C++开发的软件也不多。但是我可以去 GitHub 上看一些知名的 C++ 项目，比如 Google 的 [leveldb](https://github.com/google/leveldb)、Facebook 的 [folly](https://github.com/facebook/folly)、腾讯的 [mmkv](https://github.com/Tencent/MMKV)、[yoga](https://github.com/facebook/yoga)、陈硕的 [muduo](https://github.com/chenshuo/muduo)、搜狐的[workflow](https://github.com/sogou/workflow.git)等等，我有太多喜欢的项目了，想去一探究竟。
+
+还有一个不想放弃 C/C++ 的原因，那就是保持对底层技术的敏感性，内存管理这个话题再过 20 年依然值得探讨。
+
+当然，这一块内容我已经预感到一定会遇到很大阻力了。当你习惯了现代语言的基础设施、开发工具，再去看 C++ 的原始生态，会有一种断层的感觉。
+
+Jetbrains 最近出了一份关于 [2022 年 C++ 生态系统使用报告](https://blog.jetbrains.com/clion/2023/01/cpp-ecosystem-in-2022/)，包括 C++ 17 和 C++20 的使用情况，编译工具 Cmake 使用率，代码分析使用率做了个列举，这里直接贴一下。
+
+![](https://cdn.zhangwen.site/uPic/sOiJQZ.jpg)
+
+总趋势就是用过 C++ 11 和 C++ 14 的人，越来越多迁移到 C++ 17 和 C++ 20 了。但是仍然有 16%左右的人还在用 C++ 98 / C++ 03，这里的大部分人会比较难去升级 C++ 标准，大部分都是老项目或老系统。
+
+> PS: Swift 跟 C++的交互性也已经提上日程了，已经组建了一个 [C++ Interoperability Workgroup](https://www.swift.org/cxx-interop-workgroup/)
+
+### 算法与数据结构
+
+算法与数据结构算是炒冷饭吧，把算法提上新的学习日程，也是很纠结的。实际工作几乎用不着，这是大部分客户端程序员的共同体会。
+
+但我最近有些不一样的思考，不是我们的业务用不到，而是能用到的地方，我们想不到什么算法，然后美其名曰不需要。
+
+30 岁之后，我也越来越感到自己的逻辑思维，尤其是数学思维，越来越迟钝了，这不是什么好事。
+
+学习方法也很简单，找一本经典的算法书，然后疯狂刷 [Leetcode](https://leetcode.cn/problemset/all/)，可以用各种不同的编程语言来实现。
+
+巩固算法还有另一个好处：面试。平时多了解，避免临时抱佛脚。
+
+今年主动换工作的概率不高，稳定率 70% 吧，比去年初的 90% 要低。主要也是因为疫情放开了，各个企业慢慢恢复过程中，用工需求肯定越来越多。对招聘市场保持更高的关注度，有好机会也不要错过。
+
+我一贯的观点就是，每年在招聘网站上更新一下你的简历。你可以不找工作，但也没必要拒绝跟其他公司的交流。在一个公司待久了，容易温水煮青蛙，什么时候死透，全凭资本家的想法。
+
+### 暂且搁置的技术
+
+"暂且搁置"的意思不是说完全不看，那我还每两个星期记录一下 [摸鱼精选](https://zhangwen.site/reading) 呢。如果有相关的技术更新，我也能通过订阅的 RSS 了解到，但不会像去年一样去挨个做实验了，保持关注即可。
+
+#### Web
+
+不仅仅是 Javascript，还包括 Typescript、React、React Native、Electron、Node 等。
+
+Typescript 发展非常快，3 个月左右就发布一个版本了，对 Web 开发人员来说值得投入，但对我用处不大。
+
+React Native 今年会发个大版本更新，Lean Core 之后值得关注一波。
+
+Node 目前主要应用在 Express Web 框架上，其他的 CLI 工具之类的用的不多。
+
+#### Rust
+
+去年年底了解了一波 Rust 的落地应用，Rust 语言本身非常棒，我个人很喜欢。这种严格的语法模式，类似约定大于配置的意思，和动态语言比起来是两个极端。开发者自己无需担心，编译器来保证你写的代码很安全。即使是顽固的 Linux，也在 6.1 内核版本上带来了 Rust 支持。
+
+Rust 在嵌入式领域的前景是不错的，像乐鑫的 ESP32-C3 现在就已经有 Rust DevKit 了，而且后续的投入也很大。
+
+但是目前招聘市场上还是比较少这类岗位，属于非常小众的市场，投入产出比不高。
+
+所以，虽然我看好 Rust 的未来，但今年我打算放弃进一步学习 Rust ，让子弹再飞一会儿。
+
+#### Backend
+
+我还是认为后端开发人员不能只会 Java，太限制自己的技术视野了，即使不想学 C++，Go 还是值得投入一部分时间去深入了解的。其中 Go 让我感触最深的就是：**使用通信来共享内存，而不是通过共享内存来通信**。这是一句使用 Go 语言编程的人经常能听到的观点，然而我们可能从来都没有这么思考过。为什么 Go 语言鼓励我们遵循这一设计哲学呢？值得去探索。
+
+但我今年不考虑 Go 的学习了，我会把自己网站上的 API，用 Swift 来重写一遍目前的 Go API。
+
+#### SwiftUI
+
+总体而言，SwiftUI 实用性不大，主要体现在版本限制的问题，真正可堪一用的是 SwiftUI 3，但是要使用 SwiftUI 3 必须是 iOS 15 起步，我不知道 Apple 团队为啥这么考虑，弄得开发者这么难受。如果是个人的玩具型应用可以从 iOS 16 开始支持，SwiftUI 4 还是非常不错的。
+
+跟 Flutter 对比起来，我认为 SwiftUI 的开发体验还差几个档次。
+
+#### Android
+
+去年年中花了 1 个月左右重新看 Android 开发相关的书籍和官方文章，上一次看的时候还是 Android 5，现在已经是 Android 13 了。希望从中能获得一些在 iOS 开发上比较少见的架构思维，拓宽一下自己的思路。结果是收效甚微，并没有得到很多颠覆性的东西，还是 Java 那一套老的东西，更多是对传统设计模式或者 MVVM 的又一种语法实现。Kotlin 相关的东西，相比于已经熟悉 Swift 的我来说，味同嚼蜡。
+
+我的了解重点放在[Android Jetpack](https://developer.android.google.cn/jetpack?hl=zh-cn) 上，到底什么是 Jetpack，很多 Android 开发人员都说不清楚，有的说是 MVVM 架构，有的说是 Room、LiveData、ViewModel 等这些东西组成。我们可以来看一下官方的定义：
+
+> Jetpack 是一个由多个库组成的套件，可帮助开发者遵循最佳做法、减少样板代码并编写可在各种 Android 版本和设备中一致运行的代码，让开发者可将精力集中于真正重要的编码工作。
+
+Jetpack 诞生的核心就两个：
+
+- Google 给出一套 MVVM 编码规范，基于此规范实现了各种功能的库，可按需自由组合
+- Google 知道 Android 版本和设备之间的不一致性，了解开发者的痛苦，它来帮你做这些适配
+
+你要应用这一套组件库，必须认同 Google 这一套规范，所以带来的问题是官方的就是好的吗？就是适合你项目的吗？不一定，得根据你的团队、项目背景来做分析。
+
+更蛋疼的是，Google 推荐的东西也经常变化，比如早期推荐 LiveData 来管理数据库与 Model，现在又推荐 Flow 了，因为 Google 在推广 Kotlin，而 Flow 是用 Kotlin Coroutine 实现的。。。
+
+Jetpack Compose 是目前 Google 官方在推广的 UI 技术路线，属于 Modern Android Development 的一部分，类似 SwiftUI 和 Flutter，纯代码写 UI 的方式跟 Android 传统的 xml 布局有些不太一样，需要一定的时间来适应。除非有些很激进的公司或 App 项目，一般是不会将 Compose 整合进现有项目的，目前阶段还是有很多坑要踩。
+
+整的来说，Android 的架构路线图经历了从 MVC，到 MVP，到 MVVM，到现在的 MVI，真实历经磨难。
+
+预计今年 Android 开发整体变动不大，MVI 模式已经定型了，后面就是针对各个组件库进行升级更新。
+
+## 总结
+
+在保持对以上四个方面的技术学习的同时，继续关注国外 Saas 产品和工具型 App 的进展 ，以及独立开发者的 News，一颗创业的心永远在跳动。
+
+2023 年，加油吧，一起努力！
+
+## 参考资料
+
+- [Swift CHANGELOG](https://github.com/apple/swift/blob/main/CHANGELOG.md)
+- [[On the road to Swift 6 - Announcements](https://forums.swift.org/t/on-the-road-to-swift-6/32862)]
+- [Swift on Server](https://www.swift.org/server/)
+- [Vapor](https://vapor.codes/)
+- [Flutter 3.7 更新内容](https://flutter.cn/posts/announcing-flutter-3-7)
+- [Linux 6.1 正式发布：带来 MGLRU、初始 Rust 支持](https://www.ithome.com/0/660/456.htm)
+- [Linux 6.2 获得一批新的 Rust 基础设施代码](https://www.oschina.net/news/221181/linux-6-2-first-rust-patch)
+- [为什么使用通信来共享内存](https://draveness.me/whys-the-design-communication-shared-memory/)
+- [C++ Ecosystem in 2022: Fast Adoption of C++17 and C++20, C++ Toolset Landscape, and Better Code Analysis Practices](https://blog.jetbrains.com/clion/2023/01/cpp-ecosystem-in-2022/)
+- [Android Jetpack](https://developer.android.google.cn/jetpack?hl=zh-cn)

@@ -6,8 +6,8 @@ import type { HTMLAttributes } from 'astro/types'
  * Wrap the main content of a page with this, thus also the <main> tag
  */
 interface Props extends HTMLAttributes<'main'> {
-	id?: string
-	searchIndex?: boolean
+  id?: string
+  searchIndex?: boolean
 }
 
 const { id: idProp, class: className, searchIndex = false } = Astro.props

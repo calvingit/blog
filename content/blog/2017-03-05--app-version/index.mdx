@@ -1,0 +1,64 @@
+---
+title: "App 版本号"
+slug: "app-version"
+description: "App 版本号规范详解：语义化版本（Semantic Versioning）与 iOS/Android 版本号比较的最佳实践。"
+date: 2017-03-05
+lastUpdated: 2017-03-05
+tags:
+  - iOS
+---
+
+## App 版本规范
+
+在软件开发中，版本控制是一个重要的环节，它帮助开发者和用户追踪软件的不同阶段。App 版本规范最好遵照语义化版本格式（Semantic Versioning），通常表示为：主版本号.次版本号.修订号。这种格式有助于清晰地传达版本之间的差异和兼容性。详细的语义化版本规则可以[点击查看](https://semver.org/lang/zh-CN/)。
+
+
+
+## 版本号的比较
+
+版本比较通常做法是先分割“.”符号，从左往右挨个比较对应的数字大小。例如，版本号 "2.1.9" 与 "2.2.0" 比较，首先比较主版本号，两者都是 "2"，然后比较次版本号，"1" 小于 "2"，因此 "2.1.9" 比 "2.2.0" 旧。
+
+我见过有些 Android 开发人员将版本号当做浮点数去比较，这是错误的。例如，将 "2.10.1" 和 "2.9.9" 直接作为浮点数比较，会错误地认为 "2.10.1" 小于 "2.9.9"，因为浮点数比较时 "2.1" 小于 "2.9"。正确的做法是按照语义化版本规范，逐级比较每个部分。
+
+## iOS 中的版本比较
+
+在 iOS 开发中，可以使用 `NSString` 的 `compare:options:` 方法来比较版本号。为了正确比较，需要指定 `NSNumericSearch` 选项，这样字符串中的数字会按照数值进行比较，而不是按照字符串的字典顺序。
+
+```objc
+NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
+// App 版本
+NSString *version = infoDict[@"CFBundleShortVersionString"] ?: infoDict[@"CFBundleVersion"];
+NSString *certainVersion = @"1.13.4";
+NSComparisonResult result = [version compare:certainVersion options:NSNumericSearch];
+
+if (result == NSOrderedDescending) {
+    NSLog(@"%@ is bigger", version);
+} else if (result == NSOrderedAscending) {
+    NSLog(@"%@ is bigger", certainVersion);
+} else {
+    NSLog(@"Both versions are equal");
+}
+```
+
+注意：在实际开发中，通常使用 `CFBundleShortVersionString` 来表示对外的版本号，而 `CFBundleVersion` 表示内部构建版本号。在比较版本时，应根据实际需求选择合适的键。
+
+## Android 中的版本比较
+
+在 Android 开发中，可以通过 `Version` 类来比较版本号。这个类提供了 `parseVersion` 方法，可以将版本号字符串解析为 `Version` 对象，然后使用 `compareTo` 方法进行比较。
+
+```java
+import android.util.Version;
+import android.util.VersionInfo;
+
+// 假设 version 和 certainVersion 是两个版本号字符串
+Version version = Version.parseVersion(version);
+Version certainVersion = Version.parseVersion("1.13.4");
+
+if (version.compareTo(certainVersion) > 0) {
+    Log.d("VersionComparison", version + " is bigger");
+} else {
+    Log.d("VersionComparison", "1.13.4 is bigger");
+}
+```
+
+正确地管理和比较版本号对于确保软件的兼容性和用户的良好体验至关重要。遵循语义化版本规范，可以帮助开发者更清晰地传达软件的更新内容和兼容性信息。

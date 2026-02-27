@@ -13,53 +13,53 @@ import { getCollection } from 'astro:content'
  * 2. Each tag page will have a list of entries associated with that tag.
  */
 export async function getStaticPaths() {
-	const entries = await getCollection('blog')
+  const entries = await getCollection('blog')
 
-	let result = []
+  let result = []
 
-	for (const [tagName, tagSlug] of FRONTMATTER_TAGS) {
-		const postsWithTag = getPostsByTag(entries, tagName)
+  for (const [tagName, tagSlug] of FRONTMATTER_TAGS) {
+    const postsWithTag = getPostsByTag(entries, tagName)
 
-		result.push({
-			params: {
-				tag: tagSlug,
-			},
-			props: {
-				tagName,
-				tagSlug,
-				postsWithTag,
-			},
-		})
-	}
+    result.push({
+      params: {
+        tag: tagSlug,
+      },
+      props: {
+        tagName,
+        tagSlug,
+        postsWithTag,
+      },
+    })
+  }
 
-	return result
+  return result
 }
 
 const { tagName, postsWithTag } = Astro.props
 ---
 
 <Layout>
-	<Seo slot="seo" title={`Tag: ${tagName}`} />
-	<SkipNavContent>
-		<div class="border-b border-border pb-4 flex justify-between items-center">
-			<h1 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Tag: {tagName}</h1>
-			<div><Link href="/tags/">See all tags</Link></div>
-		</div>
-		<Spacer axis="vertical" size={8} />
-		<div class="flex gap-10 flex-col">
-			{
-				postsWithTag.map(({ data: post }) => (
-					<div>
-						<Link variant="highlight" href={`/${post.slug}/`}>
-							{post.title}
-						</Link>
-						<Spacer axis="vertical" size={2} />
-						<div class="text-faded">
-							{defaultDateFormat(post.date)} — {post.tags.join(', ')}
-						</div>
-					</div>
-				))
-			}
-		</div>
-	</SkipNavContent>
+  <Seo slot="seo" title={`Tag: ${tagName}`} />
+  <SkipNavContent>
+    <div class="border-b border-border pb-4 flex justify-between items-center">
+      <h1 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Tag: {tagName}</h1>
+      <div><Link href="/tags/">See all tags</Link></div>
+    </div>
+    <Spacer axis="vertical" size={8} />
+    <div class="flex gap-10 flex-col">
+      {
+        postsWithTag.map(({ data: post }) => (
+          <div>
+            <Link variant="highlight" href={`/${post.slug}/`}>
+              {post.title}
+            </Link>
+            <Spacer axis="vertical" size={2} />
+            <div class="text-faded">
+              {defaultDateFormat(post.date)} — {post.tags.join(', ')}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </SkipNavContent>
 </Layout>

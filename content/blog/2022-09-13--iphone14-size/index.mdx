@@ -1,0 +1,137 @@
+---
+title: "iPhone 14 系列屏幕尺寸变化"
+slug: "iphone14-size"
+description: "设备参数速查：iPhone 14 全系列屏幕尺寸、分辨率与逻辑像素（Point）适配指南。"
+date: 2022-09-13
+lastUpdated: 2022-09-13
+tags:
+  - iOS
+---
+
+本次发布会总共 4 款 iPhone：基础款 iPhone 14，加大基础款 iPhone 14 Plus，Pro 款 iPhone 14 Pro，加大 Pro 款 iPhone 14 Pro Max。
+
+
+
+## 分辨率
+
+下面是这几款手机的分辨率：
+
+| iPhone 型号              | 竖屏原始分辨率(px) | 竖屏分辨率(pt) | Scale |
+| ------------------------ | ------------------ | -------------- | ----- |
+| iPhone 14 (6.1")         | 1170 x 2532        | 390 x 844      | 3x    |
+| iPhone 14 Plus (6.7")    | 1284 x 2778        | 428 x 926      | 3x    |
+| iPhone 14 Pro (6.1")     | 1179 x 2556        | 393 x 852      | 3x    |
+| iPhone 14 Pro Max (6.7") | 1290 x 2796        | 430 x 932      | 3x    |
+
+基础款 iPhone 的尺寸分辨率和上一代没啥变化，iPhone 14 的屏幕分辨率和 iPhone 13、iPhone 13 Pro、iPhone 13 mini 一致，iPhone 14 Plus 和 iPhone 13 Pro Max 一样。
+
+Pro 机型差别有些微改变，宽和高都相应的增加了一点点。
+
+## 状态栏、Safe Area
+
+主要关注具有**Dynamic Island**（灵动岛）的 Pro 机型，基础款的没啥变化。
+
+先来写个 Demo，创建一个默认工程，在`ViewController.swift`添加如下方法，将状态栏和 safe area 的 top 高度输出到`UILabel`上。
+
+```swift
+import UIKit
+
+class ViewController: UIViewController {
+
+    @IBOutlet weak var statusBarHeightLabel: UILabel!
+    @IBOutlet weak var topSafeAreaInsetLabel: UILabel!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view.
+        if let height = UIApplication.shared.firstWindowScene?.statusBarManager?.statusBarFrame.height {
+            statusBarHeightLabel.text = "\(height)"
+        }
+
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let topSafeArea = view.safeAreaInsets.top
+        topSafeAreaInsetLabel.text = "\(topSafeArea)"
+    }
+}
+```
+
+代码很简单，但有两个点注意一下：
+
+1. 获取状态栏高度的方法可以继续使用`UIApplication.shared.statusBarFrame.height`，能够输出正确的值，但 Xcode 会提示废弃 ⚠️。
+
+   > 'statusBarFrame' was deprecated in iOS 13.0: Use the statusBarManager property of the window scene instead.
+
+iOS 13 开始，UIKit 有一个专门的状态栏管理器`UIStatusBarManager`，可以获取`statusBarStyle` 和 `statusBarFrame`。但这个类的对象是挂载在 `UIWindowScene`对象上的。所以要获取`statusBarManager`，得先找到 App 当前的`UIWindowScene`。iPad App 可能有多个激活的`UIWindowScene`，但 iPhone App 通常只有一个`UIWindowScene`，可以简单的写个`UIApplication`扩展获取：
+
+```swift
+extension UIApplication {
+var firstWindowScene: UIWindowScene? {
+  UIApplication.shared.connectedScenes
+    .first(where: { $0 is UIWindowScene })
+    .flatMap({ $0 as? UIWindowScene })
+}
+```
+
+2. `view.safeAreaInsets.top`必需在 view 加载完成之后获取，如果放在`viewDidLoad`会返回 0。
+
+分别在 iPhone 14 和 iPhone 14 Pro 的模拟器中跑起来看看效果：
+![zz8mBC](https://cdn.zhangwen.site/uPic/zz8mBC.png)
+
+从上面两张图可以看到，状态栏高度和 top safe area 两个值都有变化，iPhone 14 看起来正常一点，因为他们是一样的，刘海的地步就是状态栏的底部。但是 iPhone 14 Pro 的 top safe area 比 状态栏高度多了 5 pt，至于为什么多出了 5pt，官方没说，我个人猜测是为了灵动岛的顶部和底部间距一致。
+
+如果是自定义的导航栏，这里就需要注意一下了，导航栏的顶部到底是对齐状态栏还是 top safe area。
+
+如果是系统的导航栏，会怎样呢？我们在工程的`main.storyboard`里面给`ViewController`嵌入一个`UINavigationController`，设置一下`title`区分一下。
+
+![coqnXI](https://cdn.zhangwen.site/uPic/coqnXI.png)
+
+![4Jndqe](https://cdn.zhangwen.site/uPic/4Jndqe.png)
+
+iPhone 14 刘海跟 iPhone 13 Pro、iPhone 13 Pro Max 一样，所以它们的两个值都是 47 和 91。
+
+但是 iPhone 14 Pro，它的 top safe area inset 变成了奇怪的小数 97.66666，而不是 取个整数 98，更让我诧异的是上面多出的 5 pt 不见了。这是个 Bug，还是故意设计成这样？
+
+## iOS 13 需要支持的 iPhone 设备列表
+
+假如你的工程最低支持 iOS 版本是 13.0，以下是需要支持的 iPhone 设备列表：
+
+- 6.7" (430 x 932 pt @3x)
+  **iPhone 14 Pro Max**
+- 6.7" (428 x 926 pt @3x)
+  **iPhone 14 Plus**, iPhone 13 Pro Max, iPhone 12 Pro Max
+- 6.5" (414 x 896 pt @3x)
+  iPhone 11 Pro Max, iPhone XS Max
+- 6.1" (393 x 852 pt @3x)
+  **iPhone 14 pro**
+- 6.1" (390 x 844 pt @3x)
+  **iPhone 14**, iPhone 13 Pro, iPhone 13, iPhone 12 Pro, iPhone 12
+- 6.1" (414 x 896 pt @2x)
+  iPhone 11, iPhone XR
+- 5.8" (375 x 812 pt @3x)
+  iPhone 11 Pro, iPhone XS, iPhone X
+- 5.5" (414 x 736 pt @3x)
+  iPhone 8 Plus, iPhone 7 Plus, iPhone 6S Plus
+- 5.4" (375 x 812 pt @3x)
+  iPhone 13 mini, iPhone 12 mini
+- 4.7" (375 x 667 pt @2x)
+  iPhone SE (2nd Gen), iPhone 8, iPhone 7, iPhone 6S
+- 4" (320 x 568 @2x)
+  iPhone SE (1st Gen), iPod Touch (7th Gen)
+
+想想还要兼容 4 寸的设备，头疼。
+
+## App Store 截图要求
+
+截图要求没有变化，依然是以下两个分辨率：
+
+- 6.5" (1242 x 2688 px)
+
+- 5.5" (1242 x 2208 px)
+
+## 参考
+
+- [Check actual size](http://www.piliapp.com/actual-size/)
+- [截屏规范](https://help.apple.com/app-store-connect/#/devd274dd925)

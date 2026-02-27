@@ -1,0 +1,97 @@
+---
+title: "360加固脚本"
+slug: "360-jiagu"
+description: "Android 自动化运维：封装 360 加固命令行工具，实现 APK/AAB 自动签名与加固脚本（Mac/Linux）。"
+date: 2024-11-07
+lastUpdated: 2024-11-07
+tags:
+  - Softwares
+---
+
+本脚本封装了 360 加固命令行工具，适用于 Mac 和 Linux 系统，可同时用于 apk 和 aab 文件。
+
+:::info
+
+1. 请先下载 360 加固的命令行工具，并解压到当前工程目录下，重命名为 jiagu_cli。
+2. 配置 360 加固需要的 licence 字段，位于 jiagu_cli/licence 文件中。
+3. 在本脚本里配置好签名keystone相关字段，包括 keystore 路径、密码等。
+
+:::
+
+
+
+```bash
+#!/bin/bash
+set -e
+
+# 全局keystore配置
+KEYSTORE_PATH="android/app/duoke.jks" # keystore路径
+KEYSTORE_PASSWORD="your_keystore_password" # keystore密码
+ALIAS="your_alias" # 别名
+ALIAS_PASSWORD="your_alias_password" # 别名密码
+
+# 假设当前工程目录下存放360的jiagu_cli/startup脚本
+case "$(uname -s)" in
+    Darwin) STARTUP_COMMAND="./jiagu_cli/startup" ;;
+    Linux) STARTUP_COMMAND="./jiagu_cli/startup.sh" ;;
+    *) echo "Unsupported OS"; exit 1 ;;
+esac
+
+# 根据文件类型初始化全局变量
+init_file_variables() {
+    FILENAME=$(basename -- "$FILE_PATH")
+    DIRECTORY=$(dirname -- "$FILE_PATH")
+    EXTENSION="${FILENAME##*.}"
+    NEW_FILENAME="${FILENAME%.*}-jiagu.$EXTENSION"
+}
+
+# keystore配置
+add_signature_config() {
+    $STARTUP_COMMAND --config-sign-$EXTENSION add "$KEYSTORE_PATH" "$KEYSTORE_PASSWORD" "$ALIAS" "$ALIAS_PASSWORD"
+}
+
+# 加固配置
+add_jiagu_config() {
+    $STARTUP_COMMAND --config-jiagu-$EXTENSION update --x86 --cert-check --name "my_config" --pn "any"
+}
+
+# 加固
+jiagu() {
+    $STARTUP_COMMAND --jiagu-$EXTENSION "$FILE_PATH" "$DIRECTORY/$NEW_FILENAME" --auto-sign
+}
+
+# 主函数
+start() {
+    init_file_variables
+    add_signature_config
+    add_jiagu_config
+    jiagu
+}
+
+echo "This script will help you to sign your Android APK or AAB file using 360 jiagu."
+
+# Check if a file path argument is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <file_path>"
+    echo "Error: Please provide a valid apk or aab file path as an argument."
+    exit 1
+fi
+
+# Check if the provided file is APK or AAB
+if [[ "$1" != *.apk ]] && [[ "$1" != *.aab ]]; then
+    echo "Error: Unsupported file type. Please provide a valid APK or AAB file."
+    exit 1
+fi
+
+FILE_PATH=$1
+
+# 将输出重定向到变量
+output=$(start 2>&1 | tee /dev/stderr)
+# 检查输出中是否包含错误信息
+if echo "$output" | grep -q "ERROR"; then
+    echo "Failed"
+else
+    echo "Done! The new file：$DIRECTORY/$NEW_FILENAME"
+fi
+
+```

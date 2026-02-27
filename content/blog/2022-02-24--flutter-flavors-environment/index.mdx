@@ -1,0 +1,318 @@
+---
+title: "Flutter 环境变量与 Flavor 的最佳实践"
+slug: "flutter-flavors-environment"
+description: "Flutter 环境变量与 Flavor 的最佳实践"
+date: 2022-02-24
+lastUpdated: 2022-02-24
+tags:
+  - Flutter
+---
+
+![flutter-flavors](https://cdn.zhangwen.site/uPic/flutter-flavors.png)
+
+:::tip
+
+2024.10.20 更新: 优化文档结构，补充 ENVied 库内容
+
+2024.6.27 更新: 补充原生环境读取 Flutter 环境变量的方法
+
+2024.3.20 更新: Flutter 3.7 已经引入了 `--dart-define-from-file` 标志，它允许从文件中读取环境变量。
+
+:::
+
+在 Flutter 开发中，如何管理 API 密钥和环境变量是一个关键问题。许多开发者可能会选择在代码中硬编码这些敏感信息，但这种做法存在诸多缺点。本文将探讨硬编码的缺陷、环境变量的优势、开源社区的可选方案，以及在真实环境中的实际应用。
+
+
+
+## 硬编码 API 密钥的缺点
+
+1. **安全风险**：将 API 密钥直接写入代码中，使得它们容易被泄露。一旦代码被分享或上传到公共版本控制系统，敏感信息就会暴露，导致安全漏洞。
+
+2. **维护成本高**：如果需要更改密钥，开发者必须在所有相关代码文件中进行修改，增加了出错的风险和维护成本。
+
+3. **缺乏灵活性**：硬编码限制了应用程序在不同环境（如开发、测试和生产）中的灵活性。每次环境切换都需要重新修改代码。
+
+4. **不易测试**：在测试过程中，使用不同的密钥或配置会变得复杂，因为需要手动更改代码。
+
+## 环境变量的优势
+
+我们这里说的环境变量有两种：
+
+- `--dart-define`：dart 提供的命令行参数，可以在构建时传递自定义值，这些值可以在代码中通过 `String.fromEnvironment()` 方法访问。
+
+  ```sh
+  flutter run --dart-define=API_KEY=my_secret_key
+  ```
+
+- `--dart-define-from-file`: 从 Flutter 3.7 开始，我们可以将所有 API 键存储在一个 json 文件中，并从命令行将其传递给一个新的--dart-define-from-file 标志。
+
+  ```sh
+  flutter run --dart-define-from-file=./api_keys.json
+  ```
+
+然后我们就可以在代码里读取
+
+```dart
+const apiKey = String.fromEnvironment('API_KEY');
+if (apiKey.isEmpty) {
+  throw AssertionError('API_KEY is not set');
+}
+```
+
+使用环境变量来管理敏感信息和配置有以下优点：
+
+1. **安全性**：环境变量不会被版本控制系统追踪，从而减少了泄露风险。它们可以存储在本地机器上或服务器上，避免了在代码中暴露敏感信息。
+
+2. **灵活性**：可以根据不同的运行环境轻松更改配置，而无需修改代码。例如，可以为开发和生产环境设置不同的 API 密钥。
+
+3. **可移植性**：通过将配置与代码分离，可以在不同的机器上运行相同的代码，而只需修改环境变量即可适应新的环境。
+
+4. **简化部署**：在部署时，只需设置相应的环境变量，而不需要重新编译应用程序，简化了整个流程。
+
+## 环境变量的实际应用
+
+在实际开发中，使用环境变量和配置文件是常见做法。例如，一个 Flutter 应用可能会根据不同的运行环境加载相应的 API 端点：
+
+1. 在开发环境中，API 端点可能指向 `https://dev.example.com/api/`。
+2. 在生产环境中，则指向 `https://prod.example.com/api/`。
+
+### 设置环境变量
+
+要在 Flutter 中设置环境变量，可以按照以下步骤操作：
+
+1. **创建 `.env` 文件**：为每个环境创建一个 `.env` 文件，例如 `development.env` 和 `production.env`。
+
+   ```plaintext
+   # development.env
+   REST_API_URL=https://dev-example.com/api/
+   REST_API_KEY=dev-ABCD1234
+
+   # production.env
+   REST_API_URL=https://prod-example.com/api/
+   REST_API_KEY=prod-PQRS5678
+   ```
+
+2. **配置运行参数**：
+
+   - 在 Android Studio 中，打开运行配置，添加以下参数：
+     ```
+     --dart-define-from-file=.env/development.env
+     ```
+   - 在 VS Code 中，编辑 `launch.json` 文件，添加相应的参数。
+
+3. **创建 `environment.dart` 文件**：在 `/lib` 文件夹中创建一个用于访问环境变量的类。
+
+   ```dart
+   final class Environment {
+     static const restApiUrl = String.fromEnvironment('REST_API_URL');
+     static const restApiKey = String.fromEnvironment('REST_API_KEY');
+   }
+   ```
+
+4. **在 Dart 代码中使用环境变量**：
+
+   ```dart
+   final class ApiService {
+     // 使用 Environment 类中的变量
+     final baseUrl = Uri.tryParse(Environment.restApiUrl);
+     final apiKey = Environment.restApiKey;
+   }
+   ```
+
+### 在原生代码中访问环境变量
+
+#### Android
+
+在 Android 的 `build.gradle` 文件中，可以通过以下方式访问 Dart 定义的变量：
+
+```groovy
+def dartDefines = [:]
+if (project.hasProperty('dart-defines')) {
+    dartDefines = project.property('dart-defines').split(',')
+        .collectEntries { entry ->
+            def pair = new String(entry.decodeBase64(), 'UTF-8').split('=')
+            pair.length == 2 ? [(pair.first()): pair.last()] : [:]
+        }
+}
+
+android {
+    ...
+    defaultConfig {
+        resValue "string", "google_maps_api_key", dartDefines.GOOGLE_MAPS_API_KEY
+    }
+}
+```
+
+#### iOS
+
+对于 iOS，需要创建一个 shell 脚本来提取 Dart 定义，并在 Xcode 中设置预构建脚本，以便在每次运行应用时生成包含所有环境变量的配置文件。
+
+```bash
+#!/bin/sh
+OUTPUT_FILE="${SRCROOT}/Flutter/Dart-Defines.xcconfig"
+: > $OUTPUT_FILE
+IFS=',' read -r -a define_items <<<"$DART_DEFINES"
+for item in "${define_items[@]}"; do
+    echo "$item" >> "$OUTPUT_FILE"
+done
+```
+
+### 使用 Flavor 管理多种构建配置
+
+Flavor 是 Flutter 提供的一种机制，用于支持多种构建变体（如开发、测试和生产）。通过使用 Flavor，可以为每个变体定义不同的资源、包名和其他配置。
+
+#### 设置 Flavor
+
+1. **Android 配置**：
+   在 `android/app/build.gradle` 中定义 Flavor：
+
+   ```groovy
+   android {
+       flavorDimensions "version"
+       productFlavors {
+           dev {
+               applicationId "com.example.dev"
+               versionName "1.0-dev"
+           }
+           prod {
+               applicationId "com.example.prod"
+               versionName "1.0-prod"
+           }
+       }
+   }
+   ```
+
+2. **iOS 配置**：
+   在 Xcode 中，为每个 Flavor 创建不同的 Scheme，并配置相应的 Info.plist 和其他资源。
+
+3. **构建命令**：
+   使用以下命令构建指定 Flavor 的应用：
+
+   ```bash
+   flutter build apk --flavor dev -t lib/main_dev.dart
+   flutter build apk --flavor prod -t lib/main_prod.dart
+   ```
+
+通过合理使用环境变量和 Flavor，Flutter 开发者能够更高效地管理应用的不同版本和配置，提高开发效率和安全性。
+
+## 开源社区的一些可选方案
+
+在开源社区中，有许多工具和库可以帮助管理环境变量：
+
+- [flutter_dotenv](https://pub.dev/packages/flutter_dotenv)：一个流行的库，用于加载 `.env` 文件中的环境变量，使得在 Flutter 应用中使用这些变量变得简单。
+
+- [flutter_config](https://pub.dev/packages/flutter_config)：允许开发者通过配置文件来管理不同的构建设置，支持多种平台（iOS 和 Android）。
+- [ENVied](https://pub.dev/packages/envied): 在 Dart/Flutter 中处理环境变量的更干净的方法。
+
+## 为什么选择 ENVied？
+
+选择 ENVied 库有以下几个原因：
+
+1. **安全性增强**：ENVied 可以加密敏感值，使其更难以通过反向工程被攻击者提取。这种加密机制为应用提供了额外的安全层次。
+
+2. **类型安全与自动补全**：ENVied 生成一个 Dart 文件，使开发者能够享受类型安全。在 IDE 中访问环境变量时，可以获得自动补全功能，这提高了开发效率并减少了错误。
+
+3. **简化管理不同环境**：通过创建多个 `.env` 文件（如 `.env.dev` 和 `.env.prod`），可以轻松管理不同的运行环境。ENVied 提供了一种简单的方法来加载这些文件，从而确保应用在不同环境下使用正确的配置。
+
+4. **易于集成与使用**：ENVied 的使用非常直观，只需定义一个类并注解需要读取的字段。生成的 Dart 文件使得访问这些变量变得简单明了，减少了手动管理配置的复杂性。
+
+## 使用 ENVied 管理环境变量
+
+### ENVied 的介绍
+
+[ENVied](https://pub.dev/packages/envied) 是一个专为 Dart 和 Flutter 设计的库，旨在通过读取 `.env` 文件中的环境变量来简化配置管理。它提供了一种清晰而安全的方法来处理应用中的敏感信息。
+
+### 安装 ENVied
+
+要使用 ENVied，需要安装以下依赖：
+
+```bash
+flutter pub add envied
+flutter pub add --dev envied_generator
+flutter pub add --dev build_runner
+```
+
+### 创建 `.env` 文件
+
+在项目根目录下创建一个 `.env` 文件，内容如下：
+
+```plaintext
+API_KEY=your_api_key_here
+API_URL=https://api.example.com
+```
+
+### 定义环境变量类
+
+创建一个 Dart 类来读取这些环境变量（例如 `lib/env/env.dart`）：
+
+```dart
+import 'package:envied/envied.dart';
+
+part 'env.g.dart';
+
+@Envied(path: '.env')
+abstract class Env {
+  @EnviedField(varName: 'API_KEY')
+  static const String apiKey = _Env.apiKey;
+
+  @EnviedField(varName: 'API_URL')
+  static const String apiUrl = _Env.apiUrl;
+}
+```
+
+### 生成代码
+
+运行以下命令以生成访问环境变量所需的代码：
+
+```bash
+dart run build_runner build
+```
+
+### 使用环境变量
+
+现在，可以在应用中轻松访问这些环境变量：
+
+```dart
+void main() {
+  print('API Key: ${Env.apiKey}');
+  print('API URL: ${Env.apiUrl}');
+}
+```
+
+### 安全性和可选字段
+
+ENVied 提供了额外的功能，例如字段加密和可选字段支持。可以通过设置 `obfuscate` 标志来增加安全性：
+
+```dart
+@EnviedField(obfuscate: true)
+static const String apiKey = _Env.apiKey;
+```
+
+此外，还可以允许可选字段，以便在未提供值时不会抛出异常：
+
+```dart
+@Envied(allowOptionalFields: true)
+abstract class Env {
+  @EnviedField()
+  static const String? optionalApiKey = _Env.optionalApiKey;
+}
+```
+
+## 总结
+
+硬编码 API 密钥和其他敏感信息不仅带来了安全隐患，还增加了维护成本。相对而言，使用环境变量可以提升应用程序的安全性、灵活性和可维护性。
+
+在真实应用场景中，通过合理利用 ENVied，可以大大简化开发和部署流程，提高工作效率，同时确保敏感信息得到妥善管理。
+
+参考资料:
+
+- [Set Up Environment Variables in Flutter for Secure and Scalable Apps](https://medium.com/@nayanbabariya/set-up-environment-variables-in-flutter-for-secure-and-scalable-apps-7409ae0c383e)
+- [How to Store API Keys in Flutter: --dart-define vs .env files](https://codewithandrea.com/articles/flutter-api-keys-dart-define-env-files/)
+- [How to create environment variables for the Flutter app](https://blog.nonstopio.com/how-to-create-environment-variables-for-the-flutter-app-da0e95131e03?gi=71e521343524)
+- [How to use Environmental Variables in Flutter](https://www.sandromaglione.com/articles/how-to-use-environmental-variables-in-flutter)
+- [Flutter Dotenv: A Comprehensive Guide on Environment Management in Flutter Apps](https://www.dhiwise.com/post/flutter-dotenv-comprehensive-guide-on-environment-management)
+- [Environment Variables in Flutter Apps](https://blog.stackademic.com/environment-variables-in-flutter-apps-db3d07999731?gi=0123adae6fb6)
+- [The Right Way to Set Environment Variables with Compile-Time Variables](https://itnext.io/secure-your-flutter-project-the-right-way-to-set-environment-variables-with-compile-time-variables-67c3163ff9f4?gi=a65cd2c694cb)
+- [Simplifying flavor setup in the existing Flutter app: A comprehensive guide](https://saileshdahal.com.np/flavor-setup-flutter)
+- [A Comprehensive Guide to Implementing Flutter Flavors for Android and iOS Applications](https://www.mouritech.com/it-technical-articles/implementing-flutter-flavors-for-android-ios-applications/)
+- [Create flavors of a Flutter app](https://docs.flutter.dev/deployment/flavors)

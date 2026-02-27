@@ -1,5 +1,9 @@
 # Astro Theme: Minimal Blog
 
+> **Note**: This repository is a customized version of the [Astro Theme: Minimal Blog](https://github.com/LekoArts/astro-theme-minimal-blog).
+>
+> It serves as the source code for [Wen' Blog](https://zhangwen.site), migrating content from the previous Docusaurus-based site.
+
 Welcome to **Astro Theme: Minimal Blog**, an ideal option to start sharing your ideas. It's easy to set up and features everything you'd need for a blog.
 
 [**Demo Website**](https://astro-theme-minimal-blog.lekoarts.de)
@@ -55,10 +59,10 @@ You can add a new tag like so:
 
 ```ts
 export const FRONTMATTER_TAGS = new Map(
-	[
-		// Existing tags...
-		['Display name', 'slug-of-your-tag'] as const,
-	],
+  [
+    // Existing tags...
+    ['Display name', 'slug-of-your-tag'] as const,
+  ],
 )
 ```
 

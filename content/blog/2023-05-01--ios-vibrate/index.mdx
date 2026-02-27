@@ -1,0 +1,104 @@
+---
+title: "iOS 让手机振动的解决方案"
+slug: "ios-vibrate"
+description: "iOS 触感反馈指南：AudioServices、UIImpactFeedbackGenerator 实现手机振动的多种方案对比。"
+date: 2023-05-01
+lastUpdated: 2023-05-01
+tags:
+  - iOS
+---
+
+最近有一个需求，点击按钮时增加振动效果。
+
+## 方案一
+
+```swift
+import UIKit
+import AudioToolbox
+
+class ViewController: UIViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // 这句话会使iPhone产生震动效果，可以加在按钮里面。
+        let soundID = SystemSoundID(kSystemSoundID_Vibrate)
+        AudioServicesPlayAlertSoundWithCompletion(soundID) { }
+    }
+}
+```
+
+
+
+## 方案二
+
+iOS 10 以上
+
+```swift
+let generator = UIImpactFeedbackGenerator(style: .heavy)
+generator.impactOccurred()
+```
+
+## 方案三
+
+其他的振动类型
+
+```swift
+import AudioToolbox
+AudioServicesPlaySystemSound(1519) // Actuate "Peek" feedback (weak boom)
+AudioServicesPlaySystemSound(1520) // Actuate "Pop" feedback (strong boom)
+AudioServicesPlaySystemSound(1521) // Actuate "Nope" feedback (series of three weak booms)
+```
+
+## 方案四
+
+```swift
+
+enum Vibration {
+    case error
+    case success
+    case warning
+    case light
+    case medium
+    case heavy
+    @available(iOS 13.0, *)
+    case soft
+    @available(iOS 13.0, *)
+    case rigid
+    case selection
+    case oldSchool
+    public func vibrate() {
+        switch self {
+        case .error:
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+        case .success:
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+        case .warning:
+            UINotificationFeedbackGenerator().notificationOccurred(.warning)
+        case .light:
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        case .medium:
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        case .heavy:
+            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+        case .soft:
+            if #available(iOS 13.0, *) {
+                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+            }
+        case .rigid:
+            if #available(iOS 13.0, *) {
+                UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+            }
+        case .selection:
+            UISelectionFeedbackGenerator().selectionChanged()
+        case .oldSchool:
+            AudioServicesPlayAlertSoundWithCompletion(SystemSoundID(kSystemSoundID_Vibrate)){}
+        }
+    }
+}
+
+```
+
+使用方法：
+
+```swift
+Vibration.success.vibrate()
+```

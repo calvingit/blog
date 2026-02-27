@@ -1,0 +1,161 @@
+---
+title: "摸鱼精选第 37 期"
+slug: "摸鱼精选第37期"
+description: "本期精选：Dart 异步编程进阶：Completer 的实用指南与应用场景；Swift Concurrency 前沿探索：async/await 特性在 Swift 5.5+ 中的演进。"
+date: 2024-11-04
+lastUpdated: 2024-11-04
+tags:
+  - Reading
+---
+
+## 1. [Introduction to the Completers: A Practical Guide](https://www.flutteris.com/blog/completer)
+
+这篇文章深入探讨了 Dart 中的 Completer，强调其在异步编程中的重要性。Completer 允许开发者手动控制 Future 的完成状态，从而实现更灵活的异步任务管理。文章通过具体示例展示了 Completer 的基本功能和应用场景，如模拟取消操作和处理复杂的异步逻辑，强调其在提升代码可读性和可维护性方面的优势。
+
+## 2. [The Bleeding Edge of Swift Concurrency - YouTube](https://www.youtube.com/watch?v=HqjqwW12wpw)
+
+该视频讲解了 Swift 5.5 及以上版本中的新并发特性，包括 async/await 语法的引入。讲解者分析了这些新特性如何简化异步编程，使代码更易于理解和维护，同时提高应用程序的性能。视频还探讨了并发模型在实际应用中的实现方式，适合希望深入了解 Swift 并发编程的开发者。
+
+## 3. [Dismiss keyboard when return is pressed in a multiline SwiftUI TextField | Daniel Saidi](https://danielsaidi.com/blog/2023/09/15/dismiss-keyboard-when-return-is-pressed-in-a-multiline-swiftui-textfield)
+
+本文提供了一种在 SwiftUI 中实现多行 TextField 时，按下返回键自动隐藏键盘的方法。作者详细描述了实现步骤，包括使用 onCommit 修饰符和自定义视图，以提升用户体验。通过代码示例，读者能够轻松理解如何避免键盘遮挡输入内容的问题，从而改善应用的交互性。
+
+## 4. [Distributing Work Between Actors | Jack Morris](https://jackmorris.xyz/posts/2023/11/06/distributing-work-between-actors/?utm_campaign=iOS%2BDev%2BReading&utm_medium=rss&utm_source=iOS%2BDev%2BReading%2BIssue%2B636)
+
+这篇文章探讨了在 Swift 中如何有效地将任务分配给多个 Actor，以提升并发性能。作者通过具体实例展示了 Actor 模型的优势，强调其在避免数据竞争和状态不一致方面的重要性。文中还讨论了如何设计 Actor 以实现高效的任务分配，为开发者提供了实用的指导。
+
+## 5. [Debugging SwiftUI views: what caused that change? - SwiftLee](https://www.avanderlee.com/swiftui/debugging-swiftui-views/)
+
+文章探讨了调试 SwiftUI 视图中状态变化的重要性，并介绍了使用 LLDB 调试工具的方法。作者提出了“Massive SwiftUI Views”的概念，强调在动态视图中识别重绘触发因素的重要性。通过具体示例，读者可以学习如何利用 Xcode 的新调试功能来追踪视图更新原因，从而提高调试效率。
+
+## 6. [Hummer 引擎优化系列 - PlatformView 的演进历史与优化探索](https://mp.weixin.qq.com/s/R3UUlgEPVR909NB_Jz6o-w)
+
+本文回顾了 Hummer 引擎中 PlatformView 的发展历程，并探讨了相关优化策略。作者详细介绍了 PlatformView 如何在 Flutter 中显示原生控件，并分析了其与 Native 端通信的机制。这为开发者提供了深入理解 Flutter 与原生平台交互的机会，有助于提升应用性能。
+
+## 7. [探讨 SwiftUI 中的关键属性包装器：@State、@Binding、@StateObject、@ObservedObject、@EnvironmentObject 和 @Environment | 肘子的 Swift 记事本](https://fatbobman.com/zh/posts/exploring-key-property-wrappers-in-swiftui/)
+
+这篇文章深入分析了 SwiftUI 中的关键属性包装器，解释它们各自的用途和适用场景。通过实例讲解，作者帮助读者理解如何选择合适的属性包装器以管理状态和数据流，从而提升 SwiftUI 应用的设计效率。文中还讨论了不同包装器之间的相互关系及其对代码结构的影响。
+
+## 8. [Prompt engineering - OpenAI API](https://platform.openai.com/docs/guides/prompt-engineering/strategy-test-changes-systematically)
+
+本文介绍了 OpenAI API 中的提示工程技术，强调通过精心设计提示来优化模型输出的重要性。作者提供了一系列策略和示例，帮助开发者系统性地测试和改进提示，以获得更准确和相关的结果。这对于希望提高 AI 模型交互质量的开发者来说，是一份实用指南。
+
+## 9. [Exploring Actors and Protocol Extensions - Can Swift Keep Its Compile-Safe Thread Management Promise?](https://lucasvandongen.dev/swift_actors_and_protocol_extensions.php?utm_campaign=iOS%2BDev%2BReading&utm_medium=rss&utm_source=iOS%2BDev%2BReading%2BIssue%2B642)
+
+这篇文章探讨了 Swift 中的 Actor 与协议扩展之间的关系，以及它们如何共同维护线程安全。作者分析了编译时安全性对并发编程的重要性，并提供了一些最佳实践，以帮助开发者更好地利用这些特性，确保代码在多线程环境下的稳定性。
+
+## 10. [One-way bindings in SwiftUI — Dean’s blog](https://blog.thomasdurand.fr/story/2024-01-21-one-way-binding/)
+
+本文讨论了 SwiftUI 中的单向绑定概念，解释其在数据流管理中的重要性。通过具体示例，作者展示了如何实现单向绑定，以简化状态管理，提高应用程序的可预测性和稳定性。这为希望掌握数据流控制技巧的开发者提供了宝贵参考。
+
+## 11. [解谜 Dart VM 中的线程池：并发编程艺术的详细分析 - 掘金](https://juejin.cn/post/7327107254603792411)
+
+这篇文章深入解析 Dart VM 中的线程池机制，探讨其在并发编程中的应用与挑战。作者通过详细分析和示例，帮助读者理解线程池如何影响性能以及在实际开发中的最佳实践，为希望优化 Dart 应用性能的开发者提供指导。
+
+## 12. [解析 Jemalloc 的关键数据结构 - 知乎](https://zhuanlan.zhihu.com/p/671608149?utm_psn=1727335367877697536)
+
+本文对 Jemalloc 内存分配器中的关键数据结构进行了详细解析，强调其在性能优化中的作用。作者通过图示和代码示例，使复杂概念变得易于理解，为开发者提供实用参考，以便更好地掌握内存管理技术。
+
+## 13. [The Internals of Deno - The Internals of Deno](https://choubey.gitbook.io/internals-of-deno/)
+
+这篇文章深入探讨 Deno 运行时的内部机制，包括其架构设计和功能实现。作者详细描述了 Deno 如何处理异步 I/O 操作，并与 Node.js 进行了比较，为开发者提供更全面的理解，有助于掌握现代 JavaScript 运行时环境。
+
+## 14. [Xcode Console and Unified Logging](https://useyourloaf.com/blog/xcode-console-and-unified-logging/)
+
+文章介绍了 Xcode 控制台及统一日志记录功能，强调其在调试过程中的重要性。作者提供了一些实用技巧，以帮助开发者更有效地利用这些工具进行问题排查和性能监控，从而提高开发效率。
+
+## 15. [【数据结构】Jemalloc 中的 Radix Tree - 知乎](https://zhuanlan.zhihu.com/p/675177015?utm_psn=1727335511331631104)
+
+本文讲解了 Jemalloc 中使用的 Radix 树数据结构，分析其在内存管理中的应用。作者通过实例展示 Radix 树如何提高查找效率，为开发者提供深入了解内存分配机制的重要资料。
+
+## 16. [Clang 出了 Bug 怎么办？来一起修编译器吧！ - 知乎](https://zhuanlan.zhihu.com/p/659944720)
+
+这篇文章讨论了 Clang 编译器常见 Bug 处理方法，并鼓励读者参与修复工作。作者分享了一些调试技巧和资源，以激励更多开发者参与开源项目，提高编译器质量。
+
+## 17. [Visual overview of a custom malloc() implementation — The silent tower](https://silent-tower.net/projects/visual-overview-malloc)
+
+本文提供了一种自定义 malloc()实现的视觉概述，详细解释其设计思路与性能考虑，通过图示化方式使复杂概念更加直观易懂，为内存管理研究提供参考。
+
+## 18. [Organize Your “Global” Providers in Flutter Riverpod with Mixin Class](https://medium.com/@ximya/organize-your-global-providers-in-flutter-riverpod-with-mixin-class-562ae2aa3376)
+
+这篇文章介绍了如何使用 Mixin 类组织 Flutter Riverpod 中的全局提供者，以提高代码结构清晰度。作者分享具体实现步骤及最佳实践，有助于提升 Flutter 应用的可维护性，是学习 Riverpod 的重要资源。
+
+## 19. [Fetching OSLog Messages in Swift](https://useyourloaf.com/blog/fetching-oslog-messages-in-swift/?utm_campaign=iOS%20Dev%20Reading&utm_medium=rss&utm_source=iOS%20Dev%20Reading%20Issue%20656)
+
+本文讲解了如何在 Swift 中获取 OSLog 消息，强调其在调试过程中的重要性。作者提供了一些代码示例，以帮助开发者更好地利用日志信息进行故障排查，从而提升应用程序稳定性。
+
+## 20. [得物布局构建耗时优化方案实践](https://tech.dewu.com/article?id=103)
+
+这篇文章分享得物平台布局构建过程中的耗时优化方案，通过具体案例展示优化效果及实施策略。作者总结了一些实用建议，以提升用户体验和系统性能，对相关领域从业人员具有参考价值。
+
+## 21. [02-iOS 架构设计 | iOS 模块化开发 【模块的三级分类、模块划分策略、几种模块化处理方案、模块与模块管理设计】 - 掘金](https://juejin.cn/post/7221020355292233789)
+
+本文探讨 iOS 模块化开发架构设计，包括模块分类、划分策略及管理设计方案。作者通过实例分析，为 iOS 开发者提供实用指导，提高代码复用率和项目可维护性，是学习模块化开发的重要材料。
+
+## 22. [Code Generation with Dart & Flutter: The Ultimate Guide](https://codewithandrea.com/articles/dart-flutter-code-generation/)
+
+这篇文章全面介绍 Dart 与 Flutter 中的代码生成技术，包括使用源生成器和构建包的方法。作者分享最佳实践，以帮助开发者提高生产力并减少重复工作，是学习 Dart 与 Flutter 的重要资源之一。
+
+## 23. [学习 Go 语言并发编程](https://segmentfault.com/a/1190000044887066)
+
+本文介绍 Go 语言中的并发编程基础，包括 goroutine 和 channel 等核心概念，通过实例讲解使读者能够快速上手 Go 语言并发模型，提高程序性能，是对 Go 语言感兴趣的人士必读材料。
+
+## 24. [Release 5.0.0 · Instagram/IGListKit](https://github.com/Instagram/IGListKit/releases/tag/5.0.0)
+
+该更新日志记录 Instagram IGListKit 库 5.0.0 版本的新特性及修复内容，包括性能改进和 API 更新，为使用该库的开发者提供重要信息，以便及时调整项目代码。
+
+## 25. [Generative AI for Beginners](https://microsoft.github.io/generative-ai-for-beginners/#/00-course-setup/README?wt.mc_id=academic-105485-koreyst)
+
+这篇文章为初学者提供生成式人工智能（AI）的基础知识，包括基本概念与应用场景，通过简单易懂的语言引导读者逐步了解生成式 AI 技术及其潜力，是对新手友好的入门指南。
+
+## 26. [每个程序员都应该了解的硬件知识](https://mp.weixin.qq.com/s/Ol9J1ZWevHSjP2ZIyidK-g)
+
+本文总结了一些每位程序员应了解的重要硬件知识，包括 CPU、内存、存储等基本概念。这有助于提升程序员对计算机系统整体架构的理解，从而优化软件性能，对所有程序员来说都是一份有价值的信息资源。
+
+## 27. [Daily bit(e) of C++ | Coroutines: step by step](https://simontoth.substack.com/p/daily-bite-of-c-coroutines-step-by)
+
+这篇文章逐步讲解 C++协程概念及其实现方式，通过简单示例帮助读者理解协程在异步编程中的优势与应用场景，是 C++程序员学习新特性的好资源，对掌握现代 C++编程至关重要。
+
+## 28. [Comments - Swift Tooling: Windows Edition](https://speakinginswift.substack.com/p/swift-tooling-windows-edition/comment/51277199)
+
+本文讨论在 Windows 环境下使用 Swift 工具链的一些技巧与注意事项，旨在帮助 Windows 用户更顺利地进行 Swift 开发，提高跨平台兼容性与效率，对希望在 Windows 上进行 Swift 开发的人士具有指导意义。
+
+## 29. [HTTP in Swift, Part 18: Wrapping Up | Dave DeLong](https://davedelong.com/blog/2020/10/03/http-in-swift-part-18-wrapping-up/)
+
+这篇文章总结关于 Swift 中 HTTP 请求处理系列教程的重要要点，包括最佳实践与常见陷阱，为希望深入了解网络编程的 Swift 开发者提供宝贵参考，有助于提升网络请求处理能力。
+
+## 30. [Rust - 性能超越 Kotlin 的跨平台方案](https://mp.weixin.qq.com/s/b8lHRfk5G2yN7pkoURU7CA)
+
+本文探讨 Rust 作为一种跨平台编程语言，其性能优势相较于 Kotlin。在实际案例中展示 Rust 如何提升应用程序性能，是对两种语言比较感兴趣开发者的重要阅读材料，有助于理解 Rust 语言特点及应用场景。
+
+## 31. [Async await in Swift: The Full Toolkit](https://www.emergetools.com/blog/posts/swift-async-await-the-full-toolkit)
+
+这篇文章全面介绍 Swift 中的异步等待（async-await）工具，包括用法示例及最佳实践，为希望掌握现代 Swift 异步编程模式的开发者提供实用指导，有助于提升代码清晰度与可维护性，是学习异步编程的重要资源之一。
+
+## 32. [massicotte.org | I write stuff here.](https://www.massicotte.org/)
+
+这是一个个人博客网站，作者写了很多 iOS 相关的技术文章，包括使用 Swift 开发 iOS 应用、优化代码性能等。
+
+## 33. [Ubuntu：如何安装和使用 Wine 9，轻松运行 Windows 应用 - 系统极客](https://www.sysgeek.cn/ubuntu-wine/)
+
+本文介绍在 Ubuntu 系统上安装 Wine 以运行 Windows 应用程序的方法，包括详细步骤与注意事项。这对需要在 Linux 环境下使用 Windows 软件的用户非常有帮助，是一份实用指南，提高跨平台软件使用体验。
+
+## 34. [从基础到进阶：Swift 中的 KeyPath 完全指南 | 肘子的 Swift 记事本](https://fatbobman.com/zh/posts/comprehensive-guide-to-mastering-keypath-in-swift/)
+
+这篇文章全面讲解 Swift 中 KeyPath 特性的使用，从基础到高级用法都有涉及，通过实例说明 KeyPath 如何简化属性访问，提高代码可读性，是学习 Swift 的重要资源之一，对于希望深入理解 Swift 语言特性的读者尤为重要。
+
+## 35. [小心 UserDefaults：一个难以找到的 bug 和丢失数据的故事 --- Beware UserDefaults: a tale of hard to find bugs, and lost data](https://christianselig.com/2024/10/beware-userdefaults/)
+
+本文讲述 UserDefaults 使用过程中可能遇到的数据丢失问题，通过真实案例分析 Bug 产生原因及解决方法，为 iOS 开发者提供警示与建议，有助于提高数据管理安全性，是一份值得关注的重要阅读材料。
+
+## 36. [二刷 iOS 性能与编译，简单点说](https://mp.weixin.qq.com/s/X96VdTsskmNVCoqMzZjbgg)
+
+这篇文章简要回顾 iOS 应用性能优化与编译过程，通过简单易懂的语言总结关键点，为希望提升 iOS 应用性能的新手或有经验开发者提供参考资料，有助于理解 iOS 生态系统内各种技术间关系。
+
+## 37. [Migrating Combine to AsyncAlgorithms - by Jacob Bartlett](https://blog.jacobstechtavern.com/p/migrating-combine-to-asyncalgorithms)...
+
+本文讨论将 Combine 框架迁移到 AsyncAlgorithms 的新方法，强调迁移过程中的挑战与解决方案，为正在进行类似迁移工作的开发者提供宝贵经验分享，有助于顺利完成框架转换工作，提高项目效率。
+
+## 38. [How to easily create ZIP files in Swift without third-party dependencies ](https://medium.com/parable-engineering/how-to-easily-create-zip-files-in-swift-without-third-party-dependencies-a1c36a451ea1)
+
+这篇文章介绍了一种无需第三方依赖即可在 Swift 中创建 ZIP 文件的方法，通过简单示例展示实现步骤，有助于需要文件压缩功能但不想依赖外部库的开发者使用，为相关项目带来便利。
