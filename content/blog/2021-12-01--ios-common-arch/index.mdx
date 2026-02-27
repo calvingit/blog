@@ -165,7 +165,7 @@ URL 本身是一种跨多端的通用协议，使用路由 URL 统跳方案的�
 
 当无法 `import` 某个类的头文件但仍需调用其方法时，最常想到的就是基于反射来实现了。例：
 
-```objc
+```objective-c
 Class manager = NSClassFromString(@"Manager");
 NSArray *list = [manager performSelector:@selector(getGoodsList)];
 //code to handle the list
@@ -177,7 +177,7 @@ NSArray *list = [manager performSelector:@selector(getGoodsList)];
 
 类似的，我可以将模块间通讯也封装到一个“网络层”中（或者叫消息转发层）。这样危险代码只存在某几个文件里，可以特别地进行 code review 和联调测试。后期还可以通过单元测试来保障质量。模块化方案中，我们可以称这类“转发层”为 Mediator (当然你也可以起个别的名字)。同时因为 performSelector 方法附带参数数量有限，也没有返回值，所以更适合使用 NSInvocation 来实现。
 
-```objc
+```objective-c
 @interface Mediator
 //Mediator提供基于NSInvocation的远程接口调用方法的统一封装
 - (id)performTarget:(NSString *)targetName
@@ -205,7 +205,7 @@ NSArray *list = [manager performSelector:@selector(getGoodsList)];
 
 然后各个业务模块依赖 Mediator, 就可以直接调用这些方法了。
 
-```objc
+```objective-c
 //业务方依赖Mediator模块，可以直接调用相关方法
 NSArray *list = [[Mediator sharedInstance] goods_getGoodsList];
 ```
@@ -226,7 +226,7 @@ Dubbo 就是服务化的经典框架之一，它是通过服务注册的方式�
 
 例：
 
-```objc
+```objective-c
 //Goods模块提供的所有对外服务都放在GoodsModuleService中
 @protocol GoodsModuleService
 - (NSArray*)getGoodsList;

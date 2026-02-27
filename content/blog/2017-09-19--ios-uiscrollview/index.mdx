@@ -12,7 +12,7 @@ tags:
 
 旋转之后需要重新设置 contentOffset，但是设置 scrollView 的 contentOffset 会触发 scrollViewDidScroll 调用。这里使用修改 scrollView 的 bounds 来达到目的，但是可以不触发 scrollViewDidScroll 回调。
 
-```objc
+```objective-c
 CGRect bounds = self.scrollView.bounds;
 bounds.origin.x = self.segmentedControl.selectedSegmentIndex * self.view.frame.size.width;
 self.scrollView.bounds = bounds;
@@ -27,7 +27,7 @@ self.scrollView.bounds = bounds;
 
 解决办法：**将 scrollView 的 delegate 设为 nil，就可以不调用 scrollViewDidScroll，之后再恢复回来**。
 
-```objc
+```objective-c
 - (void)viewWillLayoutSubviews{
     [super viewWillLayoutSubviews];
     self.scrollView.delegate = nil;

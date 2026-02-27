@@ -24,7 +24,7 @@ tags:
 
 在 iOS 开发中，可以使用 `NSString` 的 `compare:options:` 方法来比较版本号。为了正确比较，需要指定 `NSNumericSearch` 选项，这样字符串中的数字会按照数值进行比较，而不是按照字符串的字典顺序。
 
-```objc
+```objective-c
 NSDictionary *infoDict = [[NSBundle mainBundle] infoDictionary];
 // App 版本
 NSString *version = infoDict[@"CFBundleShortVersionString"] ?: infoDict[@"CFBundleVersion"];

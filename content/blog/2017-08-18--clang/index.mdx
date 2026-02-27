@@ -10,7 +10,7 @@ tags:
 
 ### 忽略 Warning "Unknown attribute 'xxx' ignored"
 
-```objc
+```objective-c
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wattributes"
 //code
@@ -88,7 +88,7 @@ build 后会出现的 warning:
 
 开发修改完后可用#pragma 来 suppress 掉相应的 warning
 
-```objc
+```objective-c
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
 
@@ -99,7 +99,7 @@ build 后会出现的 warning:
 
 ### 指定 Objective-C 变量不被提前 release 的 attribute
 
-```objc
+```objective-c
 // Mark local variables of type 'id' or pointer-to-ObjC-object-type so that values stored into that local variable are not aggressively released by the compiler during optimization, but are held until either the variable is assigned to again, or the end of the scope (such as a compound statement, or method definition) of the local variable.
 #ifndef NS_VALID_UNTIL_END_OF_SCOPE
 #if __has_attribute(objc_precise_lifetime)
@@ -116,7 +116,7 @@ build 后会出现的 warning:
 
 这样的写法可以将成对出现的代码写在一起，比如说一个 lock：
 
-```objc
+```objective-c
 NSRecursiveLock *aLock = [[NSRecursiveLock alloc] init];
 [aLock lock];
 // 这里
@@ -127,7 +127,7 @@ NSRecursiveLock *aLock = [[NSRecursiveLock alloc] init];
 
 用了 onExit 之后，代码更集中了：
 
-```objc
+```objective-c
 
 #define onExit\
     __strong void(^block)(void) __attribute__((cleanup(blockCleanUp), unused)) = ^
@@ -150,7 +150,7 @@ onExit {
 
 ### \_\_builtin functions
 
-```objc
+```objective-c
 //当前函数的返回地址：
 void *addr = __builtin_return_address(0);
 NSLog(@">>>>>>> %p", addr);
@@ -159,6 +159,6 @@ NSLog(@">>>>>>> %p", addr);
 
 ### Unavailable attribute
 
-```objc
+```objective-c
 #define NS_AUTOMATED_REFCOUNT_UNAVAILABLE __attribute__((unavailable("not available in automatic reference counting mode")))
 ```

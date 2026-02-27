@@ -89,7 +89,7 @@ let viewController = MessageViewController(
 
 我们可以有某种形式的工厂方法，简单地请求一个`message`参数来创建一个`MessageViewController`，就像这样：
 
-```Swift
+```swift
 let viewController = factory.makeMessageViewController(for: message)
 ```
 
@@ -99,7 +99,7 @@ let viewController = factory.makeMessageViewController(for: message)
 
 我们先定义一个协议，用来创建 App 内需要的视图控制器，它并不需要知道关于依赖和初始化器的任何东西：
 
-```Swift
+```swift
 protocol ViewControllerFactory {
     func makeMessageListViewController() -> MessageListViewController
     func makeMessageViewController(for message: Message) -> MessageViewController
@@ -118,7 +118,7 @@ protocol MessageLoaderFactory {
 
 当工厂协议准备好之后，我们回到`MessageListViewController`，用一个 factory 来替代依赖实例：
 
-```Swift
+```swift
 class MessageListViewController: UITableViewController {
     // Here we use protocol composition to create a Factory type that includes
     // all the factory protocols that this view controller needs.
@@ -144,7 +144,7 @@ class MessageListViewController: UITableViewController {
 
 现在到了实现工厂协议的时候了。在此之前，我们先定义一个`DependencyContainer`，它包含了 App 内的所有需要注入的依赖，包括`MessageSender`。可能还有更底层逻辑的类，比如`NetworkManager`。
 
-```Swift
+```swift
 class DependencyContainer {
     private lazy var messageSender = MessageSender(networkManager: networkManager)
     private lazy var networkManager = NetworkManager(urlSession: .shared)
@@ -155,7 +155,7 @@ class DependencyContainer {
 
 最后，我们让依赖容器遵循工厂协议：
 
-```Swift
+```swift
 extension DependencyContainer: ViewControllerFactory {
     func makeMessageListViewController() -> MessageListViewController {
         return MessageListViewController(factory: self)
@@ -185,7 +185,7 @@ extension DependencyContainer: MessageLoaderFactory {
 
 比方说，`MessageListViewController`是 App 的根视图控制器，我们只需要创建一个`DependencyContainer`实例，然后传过去即可：
 
-```Swift
+```swift
 let container = DependencyContainer()
 let listViewController = container.makeMessageListViewController()
 

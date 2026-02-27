@@ -94,7 +94,7 @@ Ghost 官方并没有 docker 版本，但社区有维护[一个镜像](https://h
 
 通过在 CADisplayLink 回调中确认 `duration` 参数，计算得到当前屏幕的实时刷新率，并修改 `preferredFrameRateRange` 来进行跟踪:
 
-```objectivec
+```objective-c
 NSInteger currentFPS = (NSInteger)ceil(1.0 / displayLink.duration);
 displayLink.preferredFrameRateRange = CAFrameRateRangeMake(10.0, currentFPS, 0.0);
 ```

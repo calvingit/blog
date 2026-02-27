@@ -84,7 +84,7 @@ $nc 127.0.0.1 1234 < input.file    //连接1234端口，并将文件传过去
 
 `NSURLConnection`限制同一 host 只能同时建立 4 个连接，多了会超时（这应该是为什么频繁给几个 server 发请求的时候会出现超时）：
 
-```objc
+```objective-c
 //iOS限制对同一个host最多4个连接，第五个请求会超时
 - (void)startConnections {
     NSMutableArray *connections= [NSMutableArray array];
@@ -130,7 +130,7 @@ $nc 127.0.0.1 1234 < input.file    //连接1234端口，并将文件传过去
 
 `NSURLSession`的`NSURLSessionConfiguration`可以设置`httpMaximumConnectionsPerHost`,调大以后就没问题了：
 
-```objc
+```objective-c
 - (void)startConnections_session {
     NSURL *url= [NSURL URLWithString:@"https://push.lightstreamer.com/lightstreamer/create_session.txt?LS_user=&LS_adapter_set=DEMO&LS_ios_version=1.0"];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];

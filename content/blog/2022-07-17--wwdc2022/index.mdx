@@ -193,7 +193,7 @@ Swift 5.7 引入了一种新的标准方式来获取和表示时间，可分为�
 
 Clock 有 ContinuousClock 和 SuspendingClock 两种内置时钟，ContinuousClock 在系统休眠时也会保持时间递增，而 SuspendingClock 则不会。Task 休眠相关的 API 也会根据新标准有所更新。
 
-```Swift
+```swift
 extension Task {
     @available(*, deprecated, renamed: "Task.sleep(for:)")
     public static func sleep(_ duration: UInt64) async
