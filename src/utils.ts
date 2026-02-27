@@ -10,14 +10,14 @@ import { FRONTMATTER_TAGS } from './constants'
  * Returns a date in the format "MMM DD, YYYY"
  */
 export function defaultDateFormat(date: Date): string {
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
 /**
  * Returns a date in the format "YYYY"
  */
 export function yearDateFormat(date: Date): string {
-  return date.toLocaleDateString('en-US', { year: 'numeric' })
+  return date.toLocaleDateString(undefined, { year: 'numeric' })
 }
 
 /**

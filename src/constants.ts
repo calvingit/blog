@@ -29,7 +29,7 @@ export const SITE: Record<string, string> = {
   /**
    * Default author name that gets added to meta tags
    */
-  defaultAuthor: 'Zhang Wen',
+  defaultAuthor: 'Calvin',
 }
 
 interface Header {
