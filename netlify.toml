@@ -9,5 +9,4 @@
 [context.production.environment]
   ASTRO_SITE = "https://zhangwen.site"
 
-[[plugins]]
-  package = "netlify-plugin-pnpm-cache"
+
