@@ -1,0 +1,134 @@
+---
+title: 在 Node.js 中快速落地 Vercel AI SDK：统一多模型接入、流式输出与结构化结果
+slug: vercel-ai-sdk-nodejs
+description: 基于 Valeri Karpov 的实践，整理 Vercel AI SDK 在 Node.js 的三类核心能力：多 Provider 统一抽象、流式输出与 Zod 结构化对象生成，并给出可直接迁移的工程封装方式。
+date: 2026-02-28
+lastUpdated: 2026-02-28
+tags:
+  - Reading
+  - Tutorial
+---
+
+:::note[引用说明]
+本文基于 Valeri Karpov 的文章整理与延展：[Getting Started with the Vercel AI SDK in Node.js](https://thecodebarbarian.com/getting-started-with-the-vercel-ai-sdk-in-nodejs.html)。
+:::
+
+如果你已经在 Node.js 里做过一段时间 LLM 接入，通常都会经历同一个阶段：先直接调用某一家 Provider 的 HTTP API，后续再被多模型支持、消息格式差异、流式输出和结构化结果反复拖慢。  
+这篇实践文章的价值不在于“如何调用一个 SDK”，而在于它给出了一条更工程化的路线：**先抽象一层统一调用面，再把能力按文本生成、流式返回、对象生成分层封装**。
+
+## 为什么要从“单 Provider 直连”迁移到统一抽象
+
+当系统只接一个模型时，手写请求还可以接受；一旦要同时支持 OpenAI、Anthropic、Gemini，复杂度会迅速上升：
+
+- Provider 的消息结构和参数字段并不一致。
+- 权限、配额、模型命名规则各不相同。
+- 同一业务逻辑会被重复实现多次，维护成本持续累积。
+
+Vercel AI SDK 的核心收益是把这些差异收敛到 Provider 适配层，让业务代码只关注输入输出语义。对于服务端团队，这本质上是在做一次“模型网关化”。
+
+## 第一层封装：`generateText()` 统一文本生成
+
+推荐先做一个最小可用的 `callLLM()` 封装，把 API key 决策、默认模型和冲突校验放进去。
+
+```ts
+import { createAnthropic } from '@ai-sdk/anthropic'
+import { createOpenAI } from '@ai-sdk/openai'
+import { generateText } from 'ai'
+
+type CallOptions = {
+  openAIAPIKey?: string
+  anthropicAPIKey?: string
+  model?: string
+}
+
+export async function callLLM(messages: Array<{ role: 'user' | 'assistant' | 'system', content: string }>, system: string, options: CallOptions) {
+  if (options.openAIAPIKey && options.anthropicAPIKey) {
+    throw new Error('Cannot set both OpenAI and Anthropic API keys')
+  }
+
+  if (options.openAIAPIKey) {
+    const provider = createOpenAI({ apiKey: options.openAIAPIKey })
+    return generateText({
+      model: provider(options.model ?? 'gpt-4o-mini'),
+      system,
+      messages,
+    })
+  }
+
+  if (options.anthropicAPIKey) {
+    const provider = createAnthropic({ apiKey: options.anthropicAPIKey })
+    return generateText({
+      model: provider(options.model ?? 'claude-haiku-4-5-20251001'),
+      system,
+      messages,
+    })
+  }
+
+  throw new Error('Must set either OpenAI or Anthropic API key')
+}
+```
+
+这层的目标不是“功能最全”，而是先保证调用入口稳定。后续新增 Provider，只改一处分发逻辑即可。
+
+## 第二层封装：`streamText()` 降低感知延迟
+
+对于长回复场景，非流式调用会让用户在首字节前长时间等待。工程上更推荐把流式能力作为默认路径。
+
+```ts
+import { streamText } from 'ai'
+
+export async function* streamLLM(messages: Array<{ role: 'user' | 'assistant' | 'system', content: string }>, system: string, model: any) {
+  const { textStream } = streamText({ model, system, messages })
+  for await (const chunk of textStream) {
+    yield chunk
+  }
+}
+```
+
+`for await...of` 消费 async iterator 的方式非常直接，适合接到 SSE、WebSocket 或 CLI 输出管道中。
+
+:::tip[实践建议]
+在服务端保留“同一请求的最终完整文本”与“流式分片日志”，便于问题回放、计费核对和质量评估。
+:::
+
+## 第三层封装：`generateObject()` 直接产出可校验对象
+
+大量业务并不需要自然语言段落，而是需要稳定结构的数据。相比“让模型返回 JSON 再手动 parse”，`generateObject()` 的鲁棒性更高。
+
+```ts
+import { generateObject } from 'ai'
+import z from 'zod'
+
+const schema = z.object({
+  lat: z.number(),
+  lng: z.number(),
+})
+
+export async function getCoordinates(prompt: string, model: any) {
+  const result = await generateObject({ model, schema, prompt })
+  return result.object
+}
+```
+
+这能显著减少“模型输出格式漂移”造成的解析失败，尤其适合：
+
+- 工作流编排中的中间结构
+- 前后端约定字段的自动填充
+- Agent 工具调用前的参数构造
+
+## 推荐落地顺序
+
+建议按下面顺序迁移，而不是一次性重构：
+
+1. 用 `generateText()` 建立统一入口，先消除 Provider 分散调用。
+2. 将用户可见链路改为 `streamText()`，优先优化交互延迟。
+3. 在核心流程引入 `generateObject()`，把自然语言输出替换成可验证对象。
+
+这一顺序的优势是风险可控、收益可度量，且每一步都能独立上线。
+
+## 关键 trade-off
+
+- 优势：多模型接入成本显著下降，业务层更干净，扩展新 Provider 更快。
+- 代价：需要维护一层内部封装，并建立统一的监控与降级策略。
+
+如果你的系统正在从“模型实验”走向“长期维护”，这笔抽象成本通常是值得的。
