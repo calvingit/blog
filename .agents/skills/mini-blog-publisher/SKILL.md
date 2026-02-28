@@ -20,9 +20,14 @@ Fetch the user-provided URL and extract:
 
 Tool order and fallback:
 
-1. Prefer `mcp__fetch__fetch` for direct page content
-2. If that fails, use web search/open tools to recover content
-3. If both fail, report the error and stop
+1. If URL host is `weixin.qq.com` or `mp.weixin.qq.com`, use browser MCP (`chrome-devtools`) directly to extract visible page text and metadata (title/author/date)
+2. For non-WeChat sites, prefer `mcp__fetch__fetch` for direct page content
+3. If non-WeChat fetch fails, use web search/open tools to recover content
+4. If all applicable methods fail, report the error and stop
+
+WeChat-specific rule:
+
+- Do **not** start with `mcp__fetch__fetch` for `weixin.qq.com` / `mp.weixin.qq.com`; this usually hits robots restrictions and wastes attempts.
 
 Do not continue with guessed content.
 
