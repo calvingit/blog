@@ -24,3 +24,4 @@ pnpm-debug.log*
 .idea/
 .codex/hooks.json
 .memorix/hooks.json
+local_cache/
