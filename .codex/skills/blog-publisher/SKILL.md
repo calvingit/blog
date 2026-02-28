@@ -1,14 +1,24 @@
 ---
-name: mini-blog-publisher
-description: Publish a new article to the mini-blog (zhangwen.site) from a URL. Use when the user provides an article link and wants to create a new Chinese-language blog post summarizing it, following the Astro MDX conventions of the mini-blog repo, and then commit and push the post to origin. Triggers on requests like "根据这个链接发布一篇文章", "把这篇文章整理发布到博客", or similar.
+name: blog-publisher
+description: Publish a new article to the blog from a URL. Use when the user provides an article link and wants to create a new Chinese-language blog post summarizing it, following the Astro MDX conventions of the blog repo, and then commit and push the post to origin. Triggers on requests like "根据这个链接发布一篇文章", "把这篇文章整理发布到博客", or similar.
 ---
 
-# Mini-Blog Publisher
+# blog Publisher
 
-Publish a new post to `/Users/zhangwen/Workspace/mini-blog` from a URL.
+Publish a new post to the blog repo from a URL.
 Read [references/blog-conventions.md](references/blog-conventions.md) before starting — it contains the frontmatter schema, valid tags, directory naming, writing style, validation checklist, and commit format.
 
 ## Workflow
+
+### Step 0 — Resolve project root
+
+Run the following to determine `$BLOG_ROOT` (all subsequent paths are relative to it):
+
+```bash
+git rev-parse --show-toplevel
+```
+
+If the command fails (not inside a git repo), stop and ask the user to navigate to the blog project directory first.
 
 ### Step 1 — Fetch the article
 
@@ -21,15 +31,16 @@ Fetch the user-provided URL and extract:
 Tool order and fallback:
 
 1. If URL host is `weixin.qq.com` or `mp.weixin.qq.com`, use browser MCP (`chrome-devtools`) directly to extract visible page text and metadata (title/author/date)
-2. For non-WeChat sites, prefer `mcp__fetch__fetch` for direct page content
-3. If non-WeChat fetch fails, use web search/open tools to recover content
+2. For non-WeChat sites, use `markdown.new` to fetch clean Markdown content:
+   - POST to `https://markdown.new/` with body `{"url": "<target-url>", "method": "auto"}`
+   - Or simply prepend: `https://markdown.new/<target-url>`
+   - Prefer this over raw HTML fetch — returns structured Markdown with up to 80% fewer tokens
+3. If `markdown.new` returns an error or empty content, fall back to `mcp__fetch__fetch`
 4. If all applicable methods fail, report the error and stop
 
 WeChat-specific rule:
 
-- Do **not** start with `mcp__fetch__fetch` for `weixin.qq.com` / `mp.weixin.qq.com`; this usually hits robots restrictions and wastes attempts.
-
-Do not continue with guessed content.
+- Do **not** use `markdown.new` or `mcp__fetch__fetch` for `weixin.qq.com` / `mp.weixin.qq.com`; use `chrome-devtools` directly.
 
 ### Step 2 — Write the MDX post
 
@@ -61,7 +72,7 @@ Citation template:
 Run the validation checklist from blog-conventions.md and execute:
 
 ```bash
-cd /Users/zhangwen/Workspace/mini-blog
+cd $BLOG_ROOT
 pnpm build:astro
 ```
 
@@ -78,7 +89,7 @@ Fix any issues before proceeding.
 ### Step 4 — Commit and push
 
 ```bash
-cd /Users/zhangwen/Workspace/mini-blog
+cd $BLOG_ROOT
 git status --short
 git add content/blog/YYYY-MM-DD--{slug}/
 git commit -m 'docs: add post "<title>"'
