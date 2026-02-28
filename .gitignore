@@ -22,3 +22,5 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+.codex/hooks.json
+.memorix/hooks.json

@@ -94,6 +94,9 @@ export const FRONTMATTER_TAGS = new Map([
   ['Thoughts', 'thoughts'] as const,
   ['Reading', 'reading'] as const,
   ['iOS', 'ios'] as const,
+  ['Android', 'android'] as const,
+  ['Tutorial', 'tutorial'] as const,
+  ['Tool', 'tool'] as const,
 ])
 
 export type FrontmatterTag = MapKey<typeof FRONTMATTER_TAGS>
