@@ -1,5 +1,4 @@
 ---
-import { Font } from 'astro:assets'
 import { SITE } from '@constants'
 import SkipNavLink from '@components/a11y/skip-nav-link.astro'
 import Header from '@components/header.astro'
@@ -15,7 +14,6 @@ import '@styles/global.css'
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <Font cssVariable="--font-plex-sans" preload />
     <ThemeProvider />
     <slot name="seo" />
   </head>
