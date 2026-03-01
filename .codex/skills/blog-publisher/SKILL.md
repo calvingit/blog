@@ -31,16 +31,22 @@ Fetch the user-provided URL and extract:
 Tool order and fallback:
 
 1. If URL host is `weixin.qq.com` or `mp.weixin.qq.com`, use browser MCP (`chrome-devtools`) directly to extract visible page text and metadata (title/author/date)
-2. For non-WeChat sites, use `markdown.new` to fetch clean Markdown content:
+2. If URL host is `x.com` or `twitter.com`, use `agent-browser` directly to extract visible page text and metadata (title/author/date/post stats if available)
+3. For other non-WeChat/non-X sites, use `markdown.new` to fetch clean Markdown content:
    - POST to `https://markdown.new/` with body `{"url": "<target-url>", "method": "auto"}`
    - Or simply prepend: `https://markdown.new/<target-url>`
    - Prefer this over raw HTML fetch — returns structured Markdown with up to 80% fewer tokens
-3. If `markdown.new` returns an error or empty content, fall back to `mcp__fetch__fetch`
-4. If all applicable methods fail, report the error and stop
+4. If `markdown.new` returns an error or empty content, fall back to `mcp__fetch__fetch`
+5. If `markdown.new` and `mcp__fetch__fetch` both fail (for example due to robots/protection), fall back to `agent-browser` (same as WeChat handling) to extract visible page content
+6. If all applicable methods fail, report the error and stop
 
 WeChat-specific rule:
 
 - Do **not** use `markdown.new` or `mcp__fetch__fetch` for `weixin.qq.com` / `mp.weixin.qq.com`; use `chrome-devtools` directly.
+
+X/Twitter-specific rule:
+
+- Do **not** stop after `markdown.new` / `mcp__fetch__fetch` failure on `x.com` / `twitter.com`; use `agent-browser` to continue extraction.
 
 ### Step 2 — Write the MDX post
 
