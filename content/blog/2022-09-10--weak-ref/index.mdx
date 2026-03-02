@@ -26,7 +26,7 @@ tags:
 
 举个栗子，我们在一个 observer 里面使用：
 
-```vale
+```txt
 func handleClick(self &Button) {
   // 检查 self.clickObserverWeakRef 指向的对象是否还存在.
   // 如果存在，让它指向 clickObserver.
@@ -39,7 +39,7 @@ func handleClick(self &Button) {
 
 或者当做一个魔法导弹来检查它的敌人是否活着：
 
-```vale
+```txt
 func takeAction(self &Missile) {
   // 检查 self.enemyWeakRef 指向的敌人是否活着.
   // 如果活着，让它指向 enemy.
@@ -206,7 +206,7 @@ Rust 的 `Rc`和`Weak` 分别基于 C++的`shared_ptr`和`weak_ptr`实现，但�
 
 例如，一个表示文件名的字符串`myfile.txt`，我们可以用来读取文件内容，如果文件存在的话：
 
-```vale
+```txt
 func main() {
   if contents = readFileAsString("myfile.txt") {
     // File exists!
@@ -219,7 +219,7 @@ func main() {
 
 或者一个整型的 id，我们可以用来在 map 里面查找`Spaceship`:
 
-```vale
+```txt
 func printName(ships &HashMap<int, Spaceship>, ship_id int) {
   if ship = ships.get(ship_id) {
     println("Ship exists! {ship.name}")
