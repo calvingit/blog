@@ -1,0 +1,45 @@
+---
+title: Claude技能构建完整指南：从入门到精通
+slug: claude-skills-complete-guide
+description: 深入解析Anthropic官方Claude技能构建指南，涵盖核心概念、技术要求、实践模式与故障排除，助你打造可复用的AI工作流。
+date: 2026-03-02
+lastUpdated: 2026-03-02
+tags:
+  - Softwares
+  - Thoughts
+---
+
+:::note[引用说明]
+本文基于 Anthropic 官方文档整理与延展：[The Complete Guide to Building Skills for Claude](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf)。
+:::
+
+## 引言
+
+Claude技能是封装为简单文件夹的一组指令,用于教导Claude如何处理特定任务或工作流程。与其在每次对话中重复解释你的偏好、流程和领域专业知识,技能让你一次性教导并持续受益。
+
+技能在以下场景中最为强大:
+- 重复性工作流:生成前端设计、进行研究、创建文档等
+- 多步骤流程协调:跨多个MCP服务器的协调
+- 标准化输出:确保团队风格指南一致、文档格式统一
+
+## 什么是Claude技能?
+
+### 技能定义
+
+Claude技能是一个文件夹,包含以下结构:
+
+\`\`\`
+your-skill-name/
+├── SKILL.md              # 必需 - 主要技能文件
+├── scripts/              # 可选 - 可执行代码
+│   ├── process_data.py
+│   └── validate.sh
+├── references/           # 可选 - 文档
+│   ├── api-guide.md
+│   └── examples/
+└── assets/              # 可选 - 模板、图标
+    └── report-template.md
+\`\`
+
+EOF'
+wc -l content/blog/2026-03-02--claude-skills-complete-guide/index.mdx
