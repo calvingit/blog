@@ -1,0 +1,189 @@
+---
+title: Node.js 2025 工程实践：从依赖外置到运行时内建的迁移清单
+slug: nodejs-2025-modern-practices
+description: 梳理 Node.js 在 2025 年的关键工程变化，聚焦 ESM、内建 Web API、测试、并行与可观测能力，以及可分阶段落地的迁移策略。
+date: 2026-03-02
+lastUpdated: 2026-03-02
+tags:
+  - Tutorial
+  - Softwares
+---
+
+:::note[引用说明]
+本文基于 Kashw1n 的文章整理与延展：[Node.js in 2025](https://kashw1n.com/blog/nodejs-2025)。
+:::
+
+很多团队在 Node.js 上的真实问题，不是“不会写异步代码”，而是仍沿用 2019 年左右的工程基线：`require` + `axios` + `nodemon` + 第三方测试框架的组合已经跑得动，但维护成本越来越高。
+
+2025 年的 Node.js 更像一个“默认可用的后端平台”：更多能力内建、与 Web 标准对齐、部署与诊断链路更完整。对工程团队来说，这意味着可以系统性减少依赖、降低配置噪音，并让运行时行为更可控。
+
+## 先给结论：迁移优先级建议
+
+如果你在维护一个中大型服务，推荐按以下顺序升级，而不是一次性重构。
+
+1. 模块系统与运行脚本：切到 ESM、补齐 `node:` 前缀、启用 `--watch`/`--env-file`
+2. I/O 与取消语义：统一到 `fetch` + `AbortSignal.timeout()`
+3. 测试链路：优先评估 `node:test`，减少测试框架依赖
+4. CPU 密集任务：识别热点并迁移到 `worker_threads`
+5. 可观测能力：补齐 `perf_hooks` 与 `diagnostics_channel`
+
+这样做的收益是“低风险高回报”：前两步几乎不改业务模型，但能明显降低依赖和维护负担。
+
+## 1. 模块系统：ESM 不是风格问题，而是工程基线
+
+CommonJS 仍能运行，但新项目继续以它为核心会带来两个长期问题：跨端模型不一致（浏览器/边缘运行时普遍是 ESM）与工具链静态分析能力受限。
+
+推荐基线：
+
+- `package.json` 声明 `"type": "module"`
+- 内建模块使用 `node:` 前缀，避免与 npm 包命名冲突
+- 使用 Top-level Await 简化初始化流程
+
+```js
+// app.mjs
+import { readFile } from 'node:fs/promises'
+import { createServer } from 'node:http'
+
+const config = JSON.parse(await readFile('./config.json', 'utf8'))
+
+const server = createServer((_req, res) => {
+  res.end(`app=${config.appName}`)
+})
+
+server.listen(3000)
+```
+
+### 关键 trade-off
+
+- 好处：标准统一、依赖边界更清晰、初始化逻辑更线性
+- 成本：老库兼容与导入路径（扩展名）需要一次性清理
+
+## 2. Web API 内建化：先删 HTTP 客户端依赖
+
+Node.js 原生 `fetch` 已经覆盖绝大多数服务端请求场景。相比历史上的 `axios`/`node-fetch` 组合，最大的变化不是“少一个包”，而是取消语义标准化。
+
+```js
+async function requestJson(url) {
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(5000),
+  })
+
+  if (!response.ok)
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+
+  return response.json()
+}
+```
+
+工程建议：
+
+- 所有外部调用默认带超时
+- 统一把 `AbortError`/`TimeoutError` 映射成可观测的业务错误码
+- 在 iOS/Android 协作场景下，后端超时语义统一后，移动端重试策略更容易收敛
+
+## 3. 内建测试：把“测试基础设施”变轻
+
+`node:test` 已经足够支撑大量单元测试和基础集成测试。
+
+```js
+import { describe, test } from 'node:test'
+import assert from 'node:assert/strict'
+
+describe('sum', () => {
+  test('works', () => {
+    assert.equal(1 + 2, 3)
+  })
+})
+```
+
+常用命令：
+
+```bash
+node --test
+node --test --watch
+node --test --experimental-test-coverage
+```
+
+### 何时不建议替换
+
+如果你强依赖 Jest 生态（如快照体系、复杂 mock 插件、成熟的前端同构测试流程），可以保持并行一段时间，不必追求一步到位。
+
+## 4. 异步模式升级：并发与错误上下文一起设计
+
+现代 Node.js 的问题通常不是“不会 await”，而是并发边界和错误上下文缺失。
+
+```js
+import { readFile } from 'node:fs/promises'
+
+export async function loadRuntimeConfig() {
+  try {
+    const [envText, featureFlags] = await Promise.all([
+      readFile('./env.json', 'utf8'),
+      fetch('https://example.com/flags').then(r => r.json()),
+    ])
+
+    return {
+      env: JSON.parse(envText),
+      featureFlags,
+    }
+  }
+  catch (error) {
+    throw new Error(`loadRuntimeConfig failed: ${error.message}`)
+  }
+}
+```
+
+实践重点：
+
+- 用 `Promise.all` 并行独立 I/O
+- 错误中保留最小必要上下文，避免仅打印 `error.message`
+- 统一日志结构，便于后续链路追踪
+
+## 5. Worker Threads：只处理 CPU 密集热点
+
+`worker_threads` 适用于图像处理、加密、复杂压缩、批量数据计算等 CPU 密集场景。I/O 密集任务迁移到 Worker 通常收益有限。
+
+```js
+import { Worker } from 'node:worker_threads'
+import { fileURLToPath } from 'node:url'
+
+export function runHeavyTask(payload) {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(
+      fileURLToPath(new URL('./worker.js', import.meta.url)),
+      { workerData: payload },
+    )
+
+    worker.once('message', resolve)
+    worker.once('error', reject)
+    worker.once('exit', (code) => {
+      if (code !== 0)
+        reject(new Error(`Worker exit code: ${code}`))
+    })
+  })
+}
+```
+
+## 6. 可观测性：优先内建能力，再补第三方平台
+
+在接入完整 APM 前，可以先用 Node.js 内建能力完成基础观测：
+
+- `node:perf_hooks`：测量关键函数耗时
+- `node:diagnostics_channel`：输出结构化诊断事件
+
+这能在早期快速定位热点，减少“先接平台再定位问题”的冗余工作。
+
+## 7. 2025 迁移清单（可直接执行）
+
+1. 统一 Node 版本到 20+（建议在 CI 明确约束）
+2. 新模块默认 ESM，内建模块全部改成 `node:` 前缀
+3. 下线 `axios`/`node-fetch`/`nodemon`/`dotenv` 的冗余用法（由 `fetch`、`--watch`、`--env-file` 替代）
+4. 新增测试优先使用 `node:test`
+5. 对 CPU 热点建立 Worker 化候选清单
+6. 在核心链路上补齐 `perf_hooks` 指标埋点
+
+## 总结
+
+Node.js 在 2025 年最重要的变化，不是某个“新 API”，而是默认工程基线整体上移。对团队而言，最实际的策略是分阶段完成“依赖外置 -> 运行时内建”的迁移。
+
+你不需要一次性推倒重来。只要先完成 ESM 与 `fetch` 两项升级，后续测试、并行与可观测优化就会顺畅很多。
