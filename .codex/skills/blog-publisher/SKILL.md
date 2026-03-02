@@ -40,6 +40,19 @@ git rev-parse --show-toplevel
 | 3（降级） | `markdown.new` 返回空或报错                                               | `mcp__fetch__fetch`                                                           |
 | 4（兜底） | 以上均失败                                                                | `agent-browser`                                                               |
 
+**Medium 会员文章（Member-only story）特殊处理：**
+
+- 如果原始链接是 `medium.com` 且页面显示 `Member-only story`，优先使用 Freedium 镜像抓取。
+- 镜像规则：将原始 Medium URL 直接拼接到 `https://freedium-mirror.cfd/` 后面。
+- 示例：
+  - 原文：`https://alirezarezvani.medium.com/10-claude-code-commands-that-cut-my-dev-time-60-a-practical-guide-60036faed17f`
+  - 镜像：`https://freedium-mirror.cfd/https://alirezarezvani.medium.com/10-claude-code-commands-that-cut-my-dev-time-60-a-practical-guide-60036faed17f`
+- 抓取顺序建议：
+  1. 先尝试 `mcp__fetch__fetch(<freedium_url>)`
+  2. 若 `fetch` 异常或返回内容不足，降级使用 `curl -L <freedium_url>` 拉取 HTML，再做正文提取
+  3. 仍失败再回退到 `agent-browser`
+- 引用说明中的链接继续保留**原始 Medium 链接**，不要替换为 Freedium 镜像链接。
+
 所有方法均失败时，报告错误并停止。
 
 **检测到未安装`agent-browser`时，自行安装并重试抓取**
