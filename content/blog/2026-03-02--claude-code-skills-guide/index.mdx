@@ -1,0 +1,148 @@
+---
+title: Claude Code Skills 实战：把提示经验沉淀成可复用能力
+slug: claude-code-skills-guide
+description: 基于官方文档，梳理 Skills 的作用边界、frontmatter 关键字段、权限控制与高级模式，给出团队级落地建议。
+date: 2026-03-02
+lastUpdated: 2026-03-02
+tags:
+  - Tool
+  - Tutorial
+---
+
+:::note[引用说明]
+本文基于 Claude Code 官方文档整理与延展：[Skills](https://code.claude.com/docs/zh-CN/skills)。
+:::
+
+在 Claude Code 里，Skill 的本质是“可触发的能力包”：你把说明、模板、脚本和约束封装成目录，Claude 在合适时机自动调用，或者由你通过 `/skill-name` 手动触发。
+
+## 先给结论：什么时候该上 Skill
+
+推荐用 Skill 的情况：
+
+1. 某类工作反复出现，且步骤稳定。
+2. 团队有明确规范，需要持续执行。
+3. 需要把领域知识按需注入，而不是每次都塞进会话。
+
+不建议用 Skill 的情况：
+
+1. 只做一次的临时任务。
+2. 规则尚未稳定、还在频繁试错。
+
+一句话判断：**能复用、能标准化、能验证，就值得做成 Skill。**
+
+## 目录与作用域：先定“给谁用”
+
+Skill 的存放位置决定了生效范围：
+
+1. 项目级：`.claude/skills/<name>/SKILL.md`
+2. 个人级：`~/.claude/skills/<name>/SKILL.md`
+3. 企业级：托管设置统一下发
+4. Plugin 级：随插件分发
+
+优先级规则要记住：企业 > 个人 > 项目。Plugin 用命名空间隔离，不会与其他层冲突。
+
+## Skill 结构：主文件要短，细节外置
+
+每个 Skill 目录至少有一个 `SKILL.md`。推荐结构：
+
+```txt
+my-skill/
+├── SKILL.md
+├── reference.md
+├── examples/
+└── scripts/
+```
+
+实践原则：
+
+1. `SKILL.md` 只写目的、触发条件、执行路径。
+2. 详尽文档放 supporting files，按需加载。
+3. 重活交给脚本，Claude 做编排与决策。
+
+这样可以显著降低上下文负担，提升触发稳定性。
+
+## frontmatter：最关键的 6 个字段
+
+`SKILL.md` 的 YAML frontmatter 决定了行为边界。建议优先掌握：
+
+1. `name`：能力标识，建议语义清晰且稳定。
+2. `description`：触发关键，写成用户会自然表达的场景语句。
+3. `disable-model-invocation`：是否禁止 Claude 自动触发。
+4. `user-invocable`：是否允许用户在 `/` 菜单手动调用。
+5. `allowed-tools`：Skill 激活期间免审批可用工具。
+6. `context: fork` + `agent`：是否在子代理隔离上下文执行。
+
+## 调用控制：把风险动作改成“必须手动触发”
+
+对于部署、提交、发通知等副作用操作，建议统一设置：
+
+```yaml
+disable-model-invocation: true
+```
+
+这能避免 Claude 在“看起来合适”的时刻自动执行高风险动作。
+
+反过来，纯背景知识类 Skill 可设置：
+
+```yaml
+user-invocable: false
+```
+
+让它只作为自动上下文能力，不暴露为命令入口。
+
+## 参数与动态上下文：让 Skill 可编排
+
+Skill 支持参数注入：
+
+1. `$ARGUMENTS`：全部参数。
+2. `$ARGUMENTS[N]` 或 `$N`：位置参数。
+3. `${CLAUDE_SESSION_ID}`：会话级标识。
+
+另一个高价值能力是 `!`command 预执行：在 Skill 内容发送给 Claude 前先执行命令，把实时结果注入上下文。
+
+这对 PR 总结、日志分析、指标采样等场景非常有效，因为它把“拿数据”与“做判断”串成一个动作。
+
+## 与 Subagents 联动：复杂任务建议隔离执行
+
+当 Skill 会读取大量文件或需要独立推理链路时，推荐使用：
+
+```yaml
+context: fork
+agent: Explore
+```
+
+这样 Skill 在分叉上下文中运行，不污染主会话。主会话只接收结果摘要，context 成本更可控。
+
+## 权限治理：Skill 不是绕过权限系统
+
+Skill 的 `allowed-tools` 只对 Skill 激活期有效，整体权限策略仍受 `/permissions` 管控。建议团队采用白名单策略：
+
+1. 默认禁止高风险 Skill。
+2. 按名称精准放行必要 Skill。
+3. 对副作用 Skill 强制人工触发。
+
+## 常见问题与修复
+
+1. Skill 不触发：先改 `description`，让触发词贴近真实提问。
+2. Skill 误触发：缩窄描述，或直接禁自动触发。
+3. Skill 太多看不全：关注 `/context` 警告，控制描述长度和总量预算。
+
+## 团队落地建议
+
+推荐分三步推进：
+
+1. 先抽取 3-5 个高频流程做项目级 Skill。
+2. 再把通用规范沉淀到个人/企业层。
+3. 最后用 plugin 打包分发，建立版本化治理。
+
+一个可执行标准是：每个 Skill 都应回答清楚三件事
+
+1. 何时触发。
+2. 执行什么。
+3. 如何验收。
+
+## 结语
+
+Skill 不是“把提示词文件化”，而是把团队经验工程化、产品化。
+
+当你把触发条件、执行路径和权限边界都定义清楚，Claude 的行为会从“偶尔正确”升级为“可复用、可审计、可扩展”的能力系统。
