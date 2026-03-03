@@ -1,0 +1,119 @@
+---
+title: 把工单分析 SOP 做成 Skill：用 Copy as fetch 取代脆弱的页面自动化
+slug: ticket-analysis-sop-to-skill
+description: 通过将 DevTools 的 Copy as fetch 与 agent-browser eval 组合，绕开不稳定的页面点击自动化，把内网工单分析流程固化为可复用 Skill。
+date: 2026-03-03
+lastUpdated: 2026-03-03
+tags:
+  - Tool
+  - Tutorial
+---
+
+:::note[引用说明]
+本文基于阿里云开发者发布的文章整理与延展：[Skills 真的可以帮我干活了：把工单分析变成一个可复用的 Skill](https://mp.weixin.qq.com/s/SQRUti3-j13yOyI6sCclcQ?click_id=4)。
+:::
+
+## 结论先行
+
+如果你的目标是把企业内网中的工单分析流程稳定交给 AI，推荐方案不是让 Agent 反复点击页面，而是把页面里已经验证过的接口请求抽出来复用。
+
+更具体地说：
+
+1. 人工完成登录，拿到合法会话。
+2. 在 DevTools Network 里 `Copy as fetch`。
+3. 让 Skill 通过 `agent-browser eval` 执行请求脚本，直接拿 JSON。
+4. 再把结果交给模型做分类、归因和建议生成。
+
+这条路径在工程上更稳，维护成本也更低。
+
+## 为什么传统页面自动化很难长期可用
+
+工单分析是典型的高频重复任务，但它和公开站点自动化不一样，通常有三个现实约束：
+
+- 数据在内网，必须登录，权限模型复杂。
+- 每周都要重复拉数、筛选、导出，流程长且机械。
+- 同一份工单数据，研发、产品、管理者关注的分析维度不同。
+
+如果用 Playwright 或通用页面操作方案把整条链路自动化，短期可跑，长期容易退化：
+
+- 动态 DOM 导致定位规则脆弱。
+- 页面微调就会触发脚本维护。
+- 大量快照与反复交互会拉高 token 和执行成本。
+
+问题不在于“AI 不会点按钮”，而在于“把可变 UI 当成主接口”。
+
+## 关键观察：SPA 的核心是请求，不是页面
+
+多数企业后台都是 SPA。页面里的表格和图表，本质来自接口返回。
+
+所以应该把自动化对象从“页面行为”切换成“请求行为”：
+
+1. 在页面里完成一次业务查询。
+2. 对对应请求执行 `Copy as fetch`。
+3. 在同一登录态下复现请求并获取结构化数据。
+
+只要页面能展示数据，接口请求通常就能在当前会话里被稳定复现。这个思路把不稳定的交互问题转成了可验证的脚本问题。
+
+## 一套可落地的 Skill 结构
+
+下面是一个精简但可直接运行的结构：
+
+```text
+order-analysis-skill/
+├── scripts/
+│   ├── check-agent-browser.sh
+│   ├── check-cdp.sh
+│   └── order-analysis.js
+└── SKILL.md
+```
+
+核心执行链路可以压缩为四步：
+
+```bash
+# 1) 前置检查
+sh scripts/check-cdp.sh
+sh scripts/check-agent-browser.sh
+
+# 2) 打开目标系统（登录由人工完成）
+agent-browser --cdp 9222 open "https://inner.example.com"
+
+# 3) 执行通过 Copy as fetch 得到的请求脚本
+OUTPUT_DIR=".output/order-analysis/$(date +%Y%m%d-%H%M%S)"
+mkdir -p "$OUTPUT_DIR"
+agent-browser --cdp 9222 eval "$(cat scripts/order-analysis.js)" > "$OUTPUT_DIR/order.json"
+
+# 4) 让模型生成分析报告
+# 输入: order.json
+# 输出: $OUTPUT_DIR/order_report.md
+```
+
+:::caution[边界说明]
+这个方案的前提是合法访问与合规授权，只适用于你本来就有权限访问的数据系统。
+:::
+
+## 这条路线真正解决了什么
+
+它解决的不是“怎么写一个更聪明的 Agent”，而是“怎么把人类已经跑通的 SOP 固化成机器可重复执行的流程”。
+
+工程收益主要有三点：
+
+- 可复用：流程沉淀在 `SKILL.md + scripts`，不是散落在聊天历史里。
+- 可维护：系统变化时，通常只需要改请求脚本或提示词，不必重做整套页面点击逻辑。
+- 可协作：同一份 Skill 可以由不同角色按需改造，例如切换产品线、变更筛选条件、调整分析维度。
+
+## 对移动端团队的启发
+
+对于 iOS / Android 双端协作场景，这个方法尤其有价值：
+
+- 你可以按端拆分分析口径，例如崩溃、卡顿、升级失败、兼容性问题。
+- 也可以按角色拆分报告模板：研发看根因，产品看共性需求，管理看趋势与优先级。
+- 数据采集层保持稳定，请求脚本复用；上层提示词按角色快速迭代。
+
+这会比“每个角色维护一套独立自动化脚本”更轻量，也更容易在团队内持续演进。
+
+## 参考资源
+
+- 原文：[Skills 真的可以帮我干活了：把工单分析变成一个可复用的 Skill](https://mp.weixin.qq.com/s/SQRUti3-j13yOyI6sCclcQ?click_id=4)
+- Anthropic Skills 文档：[Agent Skills Overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)
+- 官方示例仓库：[anthropics/skills](https://github.com/anthropics/skills)
+- 相关示例项目：[heimanba/order-analysis-skill](https://github.com/heimanba/order-analysis-skill)
