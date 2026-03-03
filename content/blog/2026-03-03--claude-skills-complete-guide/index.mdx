@@ -67,7 +67,7 @@ your-skill-name/
 
 ### 成功标准（建议作为验收口径）
 
-官方给出了一组可操作的评估维度，你可以直接转成测试用例：
+官方给出了一组可操作的评估维度，你可以直接转成测试用例。注意这些是**目标值（aspirational targets）**，不是硬性 SLA：
 
 - **触发率**：对一组应触发的查询，自动加载占比是否足够高（文档举例为 90%）。
 - **工具调用效率**：同一任务有无 Skill 时的 tool calls、tokens 是否显著下降。
@@ -96,7 +96,7 @@ description: What it does. Use when user asks to [specific phrases].
 可选字段（文档示例）：
 
 - `license`：开源分发时标注（如 MIT、Apache-2.0）。
-- `compatibility`：写明环境依赖（产品形态、系统包、网络访问等）。
+- `compatibility`：写明环境依赖（产品形态、系统包、网络访问等），长度建议在 1-500 字符。
 - `metadata`：作者、版本、MCP server 名称、分类、支持渠道等。
 - `allowed-tools`：限制工具访问范围（更偏安全与可控性）。
 
@@ -105,7 +105,7 @@ description: What it does. Use when user asks to [specific phrases].
 文档明确指出以下 frontmatter 内容会被禁止或引发安全风险：
 
 - 禁止出现 `<`、`>`（system prompt 注入风险）。
-- Skill 名称中包含 `claude` 或 `anthropic` 属于保留（命名避免踩保留字）。
+- 避免使用 `claude` 或 `anthropic` 前缀（保留命名）。
 
 ## 写出“可执行的指令”，而不是“可读的说明文”
 
@@ -148,17 +148,25 @@ description: What it does. Use when user asks to [specific phrases].
 - overtrigger：加入负向触发或收窄范围定义。
 - 执行质量不稳定：精简并结构化指令，加入错误处理与校验脚本。
 
-## 分发与定位：把“能用”变成“被用”
+## 分发与接入：把“能用”变成“被用”
 
 文档以 2026 年 1 月的分发模型为例，总结了当前路径：
 
-- 个人用户：下载 skill folder，必要时 zip；在 Claude.ai 上传（Settings 内 Skills/Capabilities）；或放入 Claude Code 的 skills 目录。
+- 个人用户：下载 skill folder，必要时 zip；在 Claude.ai 上传（`Settings > Capabilities > Skills`）；或放入 Claude Code 的 skills 目录。
 - 组织级：管理员可在 workspace 维度部署并自动更新（文档注明该能力于 2025-12-18 交付）。
 
 推荐的工程化分发方式（适用于公开 Skill 与 MCP 生态）：
 
 - GitHub 托管（仓库根部 README 面向人类，Skill 文件夹内不放 README）。
 - 在 MCP 文档中串联“工具接入 + Skill 工作流”的故事，强调 outcomes 而非文件结构。
+
+### API 集成要点（容易遗漏）
+
+如果你是在应用或 Agent 系统里程序化调用 Skill，官方建议走 API 通道，而不是把 Claude.ai 的交互路径“脚本化”：
+
+- 通过 `/v1/skills` 做技能管理。
+- 在 Messages API 里通过 `container.skills` 注入技能。
+- API 侧使用时，需关注 Code Execution Tool beta 这一前置条件（文档中的明确限制）。
 
 ## 常见模式：从“编排”到“智能”的五类结构
 
@@ -185,6 +193,20 @@ description: What it does. Use when user asks to [specific phrases].
 - MCP 调用失败：先独立验证 MCP 连通性与鉴权，再检查工具名大小写与参数。
 - 指令不遵循：减少冗长文本，前置关键约束，歧义点改成可验证的 checklist；关键验证改为脚本。
 - 上下文过大：把长文移到 `references/`；控制 `SKILL.md` 体积（文档建议 < 5000 words）；减少同时启用的 Skill 数量（文档给出 20-50 的经验范围）。
+
+## 发布后迭代闭环：哪些信号说明你该改 Skill
+
+如果你只做“上传成功”验收，通常会错过真实问题。官方给出的迭代信号非常实用：
+
+- **Undertrigger 信号**：该触发时不触发、用户经常手动启用。
+- **Overtrigger 信号**：无关请求被频繁触发、用户经常关闭该 Skill。
+- **执行信号**：输出不稳定、API/MCP 调用失败、用户频繁纠偏。
+
+对应的优先修复动作：
+
+- 先改 `description` 的触发短语与边界（必要时增加负向触发）。
+- 再改正文结构与错误处理（必要时脚本化校验）。
+- 最后做对比回归（有/无 Skill 的工具调用数、tokens、纠偏轮次）。
 
 ## 附：一个可落地的 `SKILL.md` 模板（示例）
 
@@ -236,3 +258,4 @@ metadata:
 - `SKILL.md` 指令可执行、关键约束前置、包含示例与故障排查。
 - 做过触发测试、功能测试，以及至少一次与无 Skill 的基线对比。
 - 大体积资料放到 `references/`，避免把一切都塞进 `SKILL.md`。
+- 上线后持续观察 undertrigger/overtrigger，并在 `metadata.version` 里维护迭代版本。
