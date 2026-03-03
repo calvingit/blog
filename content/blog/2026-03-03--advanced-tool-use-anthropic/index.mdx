@@ -1,0 +1,107 @@
+---
+title: Anthropic Advanced Tool Use 解读：让 Agent 在大规模工具系统中稳定工作
+slug: advanced-tool-use-anthropic
+description: Anthropic 提出的 Tool Search Tool、Programmatic Tool Calling、Tool Use Examples，分别解决工具发现、执行效率与参数正确性问题，可组合为可扩展的 Agent 工程方案。
+date: 2026-03-03
+lastUpdated: 2026-03-03
+tags:
+  - Tool
+  - Reading
+---
+
+:::note[引用说明]
+本文基于 Anthropic Engineering 团队文章整理与延展：[Advanced Tool Use](https://www.anthropic.com/engineering/advanced-tool-use)。
+:::
+
+## 结论先行
+
+这篇文章最有价值的地方，不是新增了三个 API 能力，而是给出了一个更可持续的 Agent 架构方向：
+
+1. 把“全部工具一次性塞进上下文”的模式，改成按需发现（Tool Search Tool）。
+2. 把“每次工具调用都走一次模型推理”的模式，改成代码编排（Programmatic Tool Calling）。
+3. 把“只靠 JSON Schema 猜调用方式”的模式，改成样例驱动（Tool Use Examples）。
+
+推荐优先级也很明确：先解决上下文和准确率瓶颈，再优化执行路径，最后补齐参数语义。
+
+## 背景：传统 Tool Calling 为什么会失效
+
+当工具数量从 5 个增长到 50 个、500 个之后，传统模式会出现三个结构性问题：
+
+- 启动即高成本：工具定义本身先吃掉大段上下文，真正业务问题还没开始就接近窗口上限。
+- 调用链过长：每一次工具调用都要回到模型做一次推理，延迟和费用线性增长。
+- 正确性下降：相似工具、可选参数和隐式约定一多，模型很容易“调错工具”或“填错参数”。
+
+本质上，问题不在“模型不会调用工具”，而在“系统没有给模型提供合适的工具工作方式”。
+
+## Tool Search Tool：从全量加载转向按需发现
+
+Tool Search Tool 的核心价值是把工具目录和推理上下文解耦。
+
+在 API 侧，你可以把大量工具标记为 `defer_loading: true`，默认不注入上下文；模型只有在需要某类能力时才搜索并加载对应工具定义。这一做法有三个直接收益：
+
+- 上下文可用空间显著增大，能留给任务本身。
+- 工具选择准确率提升，尤其是名称相近或跨 MCP server 的场景。
+- Prompt caching 更稳定，因为基础 prompt 不再被大体积工具定义频繁扰动。
+
+工程建议：始终保留 3-5 个高频核心工具常驻，剩余工具走延迟加载。这样可以在首轮响应速度和长期扩展性之间取得较好平衡。
+
+## Programmatic Tool Calling：把流程控制从自然语言搬到代码
+
+Programmatic Tool Calling（PTC）的重点，不是“能写 Python”，而是“把中间态留在执行环境，不污染模型上下文”。
+
+传统方式下，模型会看到每个工具的原始返回，再在自然语言层做汇总、比较和筛选。数据量一大，模型既慢又容易丢重点。PTC 则把这部分工作放进代码：
+
+- 并发调用：`asyncio.gather` 等方式并行请求多个工具。
+- 中间处理：聚合、过滤、排序在代码里完成。
+- 最终回传：只把结果摘要返回给模型继续推理。
+
+这对日志分析、批量巡检、多实体对账等任务特别有效。推荐把“可并行、可重试、幂等”的工具优先接入 PTC，收益最大。
+
+## Tool Use Examples：用样例补齐 Schema 的语义空洞
+
+JSON Schema 只能告诉模型“参数结构合法”，但无法告诉模型“在什么场景该怎么填”。
+
+`input_examples` 的作用就是把团队内部约定显式化，例如：
+
+- 日期格式用 `YYYY-MM-DD` 还是 ISO 时间戳。
+- 用户 ID 是 `USR-12345` 还是 UUID。
+- 高优先级工单是否必须带 escalation 信息。
+
+建议每个复杂工具准备 1-5 个高质量样例，覆盖最小输入、常规输入和完整输入三类路径。样例要短、真实、可复用，避免“字段全填满”的演示式示例。
+
+## 三项能力如何组合成一条可落地链路
+
+推荐组合策略：
+
+1. 工具发现层：Tool Search Tool 负责缩小候选工具集合。
+2. 工具执行层：PTC 负责并发调用与中间数据处理。
+3. 工具调用层：Tool Use Examples 约束参数格式与调用习惯。
+
+这三层分工清晰，能分别对冲“找不到”“调不动”“调不准”三个常见故障域。
+
+## 在移动端团队里的实践建议
+
+如果你的 Agent 要服务 iOS/Android 双端协作（CI、崩溃治理、发布流水线、工单流转），可以按下面方式拆分：
+
+- 将 GitHub、Jira、Slack、Crash 平台、发布平台作为独立工具域，并全部接入搜索式发现。
+- 把“批量构建状态检查、崩溃聚合、版本对账”这类高数据量任务放入 PTC。
+- 为跨平台高风险操作（如热修复发布、回滚）补充严格的 `input_examples`，避免参数误用。
+
+这样做的结果通常是：上下文压力更小，自动化流程更快，跨工具链路的可预期性更高。
+
+## 边界与取舍
+
+这三项能力并非总是必要：
+
+- 工具少于 10 个、且每次都会用到，Tool Search Tool 收益有限。
+- 单次简单查询，PTC 可能增加额外执行开销。
+- 参数语义非常直观的简单工具，不一定需要示例。
+
+推荐做法是先识别主要瓶颈，再按需开启，而不是一次性全部上齐。
+
+## 参考链接
+
+- 原文：[Advanced Tool Use](https://www.anthropic.com/engineering/advanced-tool-use)
+- Tool Search Tool 文档：[Anthropic Docs](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool)
+- Programmatic Tool Calling 文档：[Anthropic Docs](https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling)
+- Tool Use Examples 文档：[Anthropic Docs](https://platform.claude.com/docs/en/agents-and-tools/tool-use/implement-tool-use#providing-tool-use-examples)
