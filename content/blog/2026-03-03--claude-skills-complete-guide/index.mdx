@@ -105,7 +105,7 @@ description: What it does. Use when user asks to [specific phrases].
 文档明确指出以下 frontmatter 内容会被禁止或引发安全风险：
 
 - 禁止出现 `<`、`>`（system prompt 注入风险）。
-- 避免使用 `claude` 或 `anthropic` 前缀（保留命名）。
+- 名称中避免使用 `claude` 或 `anthropic` 等保留词（文档示例中也特别提到前缀场景）。
 
 ## 写出“可执行的指令”，而不是“可读的说明文”
 
@@ -134,13 +134,15 @@ description: What it does. Use when user asks to [specific phrases].
 - **把关键约束前置**：重要事项放到开头，用明确标识（例如 `CRITICAL:`），必要时重复。
 - **对确定性校验优先用脚本**：关键验证交给 `scripts/` 做程序化检查，避免自然语言解释带来的“解释性偏差”。
 
-## 测试与迭代：三类测试覆盖 80% 的质量问题
+## 测试与迭代：三类测试先覆盖核心质量风险
 
 官方建议的测试层级与方法可以直接落地：
 
 1. **触发测试**：应触发的句子能触发；改写/同义词也能触发；无关请求不触发。
 2. **功能测试**：输出是否正确、API/MCP 调用是否成功、容错是否工作、边界条件是否覆盖。
 3. **对比测试**：与无 Skill 基线相比，交互轮次、失败调用、token 消耗是否显著改善。
+
+补充一点：`skill-creator` 适合用于草稿生成与结构审查，但不替代自动化测试套件，也不直接产出量化评测结果。
 
 迭代信号与修复方向（文档给出明确映射）：
 
@@ -166,7 +168,9 @@ description: What it does. Use when user asks to [specific phrases].
 
 - 通过 `/v1/skills` 做技能管理。
 - 在 Messages API 里通过 `container.skills` 注入技能。
-- API 侧使用时，需关注 Code Execution Tool beta 这一前置条件（文档中的明确限制）。
+- 可通过 Claude Console 做版本管理。
+- 可与 Claude Agent SDK 结合使用。
+- API 侧使用时，需关注“代码执行工具（Beta）”这一前置条件（文档中的明确限制）。
 
 ## 常见模式：从“编排”到“智能”的五类结构
 
