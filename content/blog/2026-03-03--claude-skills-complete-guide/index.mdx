@@ -1,0 +1,238 @@
+---
+title: Claude Skill 构建完整指南：从入门到精通
+slug: claude-skills-complete-guide
+description: 深入解析 Anthropic 官方 Claude Skill 构建指南，涵盖核心概念、技术要求、实践模式与故障排除，助你打造可复用的 AI 工作流。
+date: 2026-03-03
+lastUpdated: 2026-03-03
+tags:
+  - Softwares
+  - Thoughts
+---
+
+:::note[引用说明]
+本文基于 Anthropic 官方文档整理与延展：[The Complete Guide to Building Skills for Claude](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf)。
+:::
+
+## 结论先行：Skill 的“工程化价值”是什么
+
+Claude Skill 的本质是把“你希望 Claude 反复遵循的工作流”固化为一个可移植的文件夹。它不是提示词堆砌，而是一个可版本化、可分发、可复用的工作流封装，使 Claude 在不同入口（Claude.ai、Claude Code、API）里都能稳定触发并执行同一套方法论。
+
+工程视角下，Skill 的收益通常体现在三点：
+
+- **把隐性经验转成显式流程**：把最佳实践、质量门禁、错误处理写进 Skill，减少反复解释。
+- **降低 token 与交互成本**：采用 Progressive Disclosure（渐进式加载），只在需要时加载正文与引用资料。
+- **让工具接入可用起来**：对 MCP（Model Context Protocol）/ Connector 来说，工具只是“厨房”，Skill 提供“菜谱”，决定工具调用顺序与参数策略。
+
+## Skill 的基本结构与设计原则
+
+### 文件结构（最小可用）
+
+```text
+your-skill-name/
+├── SKILL.md        # 必需：包含 YAML frontmatter + 主要指令
+├── scripts/        # 可选：可执行代码（Python/Bash 等，用于确定性校验/处理）
+├── references/     # 可选：按需加载的参考资料（长文档、API 说明、规范）
+└── assets/         # 可选：模板、示例、字体、图标等产物依赖
+```
+
+关键规则（官方明确强调）：
+
+- `SKILL.md` 必须严格同名（区分大小写）；文件夹与 `name` 建议一致，使用 `kebab-case`。
+- Skill 文件夹内不要放 `README.md`；面向人类的说明放到仓库根部（用于 GitHub 分发）。
+
+### Progressive Disclosure（三层加载）
+
+- **第 1 层：YAML frontmatter**（永远进入 system prompt）：让模型决定“何时触发”。
+- **第 2 层：`SKILL.md` 正文**（判定相关时加载）：完整工作流与约束。
+- **第 3 层：关联文件**（按需导航加载）：`references/`、模板、脚本等。
+
+### Composability 与 Portability
+
+- **可组合**：Claude 可同时加载多个 Skill，单个 Skill 不应假设自己是唯一能力来源。
+- **可移植**：同一 Skill 可在 Claude.ai、Claude Code、API 入口复用（前提是环境满足依赖与权限）。
+
+## 规划与设计：从“用例”而不是“文件”开始
+
+官方推荐先写清楚 2-3 个具体用例，每个用例至少包含：
+
+- **Trigger**：用户会怎么说（关键词、同义表达、文件类型）。
+- **Steps**：多步骤流程（需要哪些内置能力或 MCP 工具）。
+- **Result**：可验证的交付物（例如创建了哪些对象、生成了哪些文件、返回了哪些链接）。
+
+文档中给出的常见用例类型（可直接用于定位你的 Skill 形态）：
+
+- **Category 1：文档与资产生成**（无外部工具也能产出一致结果：报告、代码、设计稿、PPT 等）。
+- **Category 2：工作流自动化**（固定方法论的多步骤流程，可带校验门禁与迭代环）。
+- **Category 3：MCP 增强**（在工具接入之上补齐“怎么用好工具”的最佳实践、编排、容错）。
+
+### 成功标准（建议作为验收口径）
+
+官方给出了一组可操作的评估维度，你可以直接转成测试用例：
+
+- **触发率**：对一组应触发的查询，自动加载占比是否足够高（文档举例为 90%）。
+- **工具调用效率**：同一任务有无 Skill 时的 tool calls、tokens 是否显著下降。
+- **稳定性**：MCP/API 调用失败率是否接近 0（至少在“正常输入”路径上）。
+- **一致性**：重复运行 3-5 次输出结构是否稳定，是否需要用户纠错。
+
+## YAML frontmatter：决定“能不能触发”的核心
+
+frontmatter 是 Skill 的第一道闸门，也是最容易踩坑的地方。最小格式如下：
+
+```yaml
+---
+name: your-skill-name
+description: What it does. Use when user asks to [specific phrases].
+---
+```
+
+### 字段约束（高优先级）
+
+- `name`（必需）：`kebab-case`，无空格/大写；建议与文件夹同名。
+- `description`（必需）：必须同时包含：
+  - **What**：做什么
+  - **When**：在什么输入下使用（触发条件/短语/文件类型）
+  - 文档强调：长度 < 1024 字符；禁止出现 XML 角括号（`<`、`>`）。
+
+可选字段（文档示例）：
+
+- `license`：开源分发时标注（如 MIT、Apache-2.0）。
+- `compatibility`：写明环境依赖（产品形态、系统包、网络访问等）。
+- `metadata`：作者、版本、MCP server 名称、分类、支持渠道等。
+- `allowed-tools`：限制工具访问范围（更偏安全与可控性）。
+
+### 安全限制（必须遵守）
+
+文档明确指出以下 frontmatter 内容会被禁止或引发安全风险：
+
+- 禁止出现 `<`、`>`（system prompt 注入风险）。
+- Skill 名称中包含 `claude` 或 `anthropic` 属于保留（命名避免踩保留字）。
+
+## 写出“可执行的指令”，而不是“可读的说明文”
+
+### description 的写法：触发能力取决于具体性
+
+官方给出的结构化建议可以概括为：
+
+`[What] + [When/Trigger] + [Key capabilities]`
+
+反例也很典型：
+
+- 过于抽象（例如“帮助做项目”）会导致严重 undertrigger。
+- 只写技术实现、不写用户语言（用户不会说“实现实体模型”）也会导致不触发。
+
+### `SKILL.md` 正文：推荐模块
+
+工程上可按以下骨架组织，确保可读、可执行、可测试：
+
+1. **Instructions**：步骤化工作流（按顺序、注明依赖与数据传递）。
+2. **Validation gates**：每一步“进入下一步”的条件，失败时如何回滚/重试。
+3. **Examples**：至少 2-3 组典型输入，覆盖同义表达。
+4. **Troubleshooting**：常见错误与定位路径（尤其是 MCP 连接与工具名大小写）。
+
+文档还强调两条非常实用的写作原则：
+
+- **把关键约束前置**：重要事项放到开头，用明确标识（例如 `CRITICAL:`），必要时重复。
+- **对确定性校验优先用脚本**：关键验证交给 `scripts/` 做程序化检查，避免自然语言解释带来的“解释性偏差”。
+
+## 测试与迭代：三类测试覆盖 80% 的质量问题
+
+官方建议的测试层级与方法可以直接落地：
+
+1. **触发测试**：应触发的句子能触发；改写/同义词也能触发；无关请求不触发。
+2. **功能测试**：输出是否正确、API/MCP 调用是否成功、容错是否工作、边界条件是否覆盖。
+3. **对比测试**：与无 Skill 基线相比，交互轮次、失败调用、token 消耗是否显著改善。
+
+迭代信号与修复方向（文档给出明确映射）：
+
+- undertrigger：补充 `description` 的关键词与触发短语。
+- overtrigger：加入负向触发或收窄范围定义。
+- 执行质量不稳定：精简并结构化指令，加入错误处理与校验脚本。
+
+## 分发与定位：把“能用”变成“被用”
+
+文档以 2026 年 1 月的分发模型为例，总结了当前路径：
+
+- 个人用户：下载 skill folder，必要时 zip；在 Claude.ai 上传（Settings 内 Skills/Capabilities）；或放入 Claude Code 的 skills 目录。
+- 组织级：管理员可在 workspace 维度部署并自动更新（文档注明该能力于 2025-12-18 交付）。
+
+推荐的工程化分发方式（适用于公开 Skill 与 MCP 生态）：
+
+- GitHub 托管（仓库根部 README 面向人类，Skill 文件夹内不放 README）。
+- 在 MCP 文档中串联“工具接入 + Skill 工作流”的故事，强调 outcomes 而非文件结构。
+
+## 常见模式：从“编排”到“智能”的五类结构
+
+文档把 Skill 模式总结为两种 framing 与五类模式：
+
+- framing
+  - **Problem-first**：用户说目标，Skill 负责把工具调用串起来。
+  - **Tool-first**：用户已接入工具，Skill 提供最佳实践与高质量路径。
+
+- patterns
+  - **顺序编排**：严格步骤顺序与依赖传递（最常见）。
+  - **多 MCP 协调**：跨服务阶段化推进，强调数据传递与统一错误处理。
+  - **迭代改进环**：生成初稿 + 质量检查 + 迭代修复，直到满足阈值。
+  - **上下文决策树**：根据文件类型/大小/协作需求选择最佳工具。
+  - **领域智能**：把合规/风控/业务规则内嵌进流程，先判断再执行。
+
+## 故障排查：优先排“结构与触发”，再排“工具与环境”
+
+常见问题的定位顺序建议如下（对应文档中的 Troubleshooting）：
+
+- 上传失败：先检查 `SKILL.md` 是否严格命名、frontmatter 是否有 `---` 分隔、YAML 是否闭合。
+- 不触发：优先改 `description` 的触发短语；可以直接问 Claude“什么时候会用这个 Skill”来回显当前描述。
+- 触发过度：加入负向触发与更明确的范围限定。
+- MCP 调用失败：先独立验证 MCP 连通性与鉴权，再检查工具名大小写与参数。
+- 指令不遵循：减少冗长文本，前置关键约束，歧义点改成可验证的 checklist；关键验证改为脚本。
+- 上下文过大：把长文移到 `references/`；控制 `SKILL.md` 体积（文档建议 < 5000 words）；减少同时启用的 Skill 数量（文档给出 20-50 的经验范围）。
+
+## 附：一个可落地的 `SKILL.md` 模板（示例）
+
+以下示例强调两点：`description` 触发足够具体，以及每一步都可验证。内容为示意，你需要替换为自己的工具与流程。
+
+```markdown
+---
+name: projecthub-onboarding
+description: End-to-end customer onboarding workflow for ProjectHub. Use when user says "onboard new customer", "set up subscription", "create ProjectHub account", or asks to "create a new workspace" for a team.
+license: MIT
+compatibility: Claude.ai / Claude Code. Requires network access and ProjectHub MCP connected.
+allowed-tools: "WebFetch Bash(python:*)"
+metadata:
+  author: Your Team
+  version: 1.0.0
+  mcp-server: projecthub
+---
+
+# ProjectHub Onboarding
+
+## CRITICAL
+- Before any write action, confirm required fields: `name`, `email`, `plan_id`.
+- If any MCP call fails, stop and report: tool name, parameters, error code, and retry suggestion.
+
+## Instructions
+### Step 1: Create customer
+- Call MCP tool: `create_customer` with `name`, `email`, `company`.
+- Verify: returns `customer_id`.
+
+### Step 2: Setup payment method
+- Call MCP tool: `setup_payment_method` with `customer_id`.
+- Wait for: payment verification success.
+
+### Step 3: Create subscription
+- Call MCP tool: `create_subscription` with `customer_id`, `plan_id`.
+- Verify: subscription is `active`.
+
+## Examples
+- User: "onboard new customer Alice for the Pro plan"
+  - Actions: Step 1-3
+  - Result: return subscription summary + next steps
+```
+
+## 快速检查清单（发布前自检）
+
+- 已定义 2-3 个具体用例（Trigger/Steps/Result）。
+- 文件夹名与 `name` 为 `kebab-case`，`SKILL.md` 严格命名。
+- frontmatter 有 `---`，`description` 同时包含 What/When，且不含 `<`、`>`。
+- `SKILL.md` 指令可执行、关键约束前置、包含示例与故障排查。
+- 做过触发测试、功能测试，以及至少一次与无 Skill 的基线对比。
+- 大体积资料放到 `references/`，避免把一切都塞进 `SKILL.md`。
