@@ -87,6 +87,13 @@ export const HEADER: Header = {
  * A map of name - slug pairs
  */
 export const FRONTMATTER_TAGS = new Map([
+  ['AI', 'ai'] as const,
+  ['Claude', 'claude'] as const,
+  ['Claude Code', 'claude-code'] as const,
+  ['Codex', 'codex'] as const,
+  ['Skills', 'skills'] as const,
+  ['Agents', 'agents'] as const,
+  ['OpenClaw', 'openclaw'] as const,
   ['Flutter', 'flutter'] as const,
   ['Invest', 'invest'] as const,
   ['Others', 'others'] as const,
