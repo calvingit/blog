@@ -35,27 +35,27 @@ git rev-parse --show-toplevel
 
 **抓取工具优先级与降级策略：**
 
-| 优先级    | 适用场景                                                                  | 工具                                                                          |
-| --------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| 1（直接） | `weixin.qq.com`、`mp.weixin.qq.com`、`medium.com`、`x.com`、`twitter.com` | `agent-browser`                                                               |
-| 2（默认） | 其他网站                                                                  | `markdown.new` — `POST https://markdown.new/` 或 `https://markdown.new/<url>` |
-| 3（降级） | `markdown.new` 返回空或报错                                               | `mcp__fetch__fetch`                                                           |
-| 4（兜底） | 以上均失败                                                                | `agent-browser`                                                               |
+| 优先级    | 说明                          | 工具                                                                          |
+| --------- | ----------------------------- | ----------------------------------------------------------------------------- |
+| 1（默认） | 所有 URL 一律先走主通道       | `markdown.new` — `POST https://markdown.new/` 或 `https://markdown.new/<url>` |
+| 2（回退） | `markdown.new` 返回空或报错   | `chrome-devtools`                                                             |
+| 3（兜底） | `chrome-devtools` 仍然失败    | `agent-browser`                                                               |
+
+禁止使用 `fetch` 作为抓取路径。不要因为站点类型不同而改变主流程，统一先尝试 `markdown.new`。
 
 **Medium 会员文章（Member-only story）特殊处理：**
 
-- 如果原始链接是 `medium.com` 且页面显示 `Member-only story`，优先使用 Freedium 镜像抓取。
-- 镜像规则：将原始 Medium URL 直接拼接到 `https://freedium-mirror.cfd/` 后面。
+- 如果原始链接是 `medium.com` 且页面显示 `Member-only story`，先把原始 Medium URL 直接拼接到 `https://freedium-mirror.cfd/` 后面，再把这个 Freedium 链接交给 `markdown.new`。
 - 示例：
   - 原文：`https://alirezarezvani.medium.com/10-claude-code-commands-that-cut-my-dev-time-60-a-practical-guide-60036faed17f`
   - 镜像：`https://freedium-mirror.cfd/https://alirezarezvani.medium.com/10-claude-code-commands-that-cut-my-dev-time-60-a-practical-guide-60036faed17f`
-- 抓取顺序建议：
-  1. 先尝试 `mcp__fetch__fetch(<freedium_url>)`
-  2. 若 `fetch` 异常或返回内容不足，降级使用 `curl -L <freedium_url>` 拉取 HTML，再做正文提取
-  3. 仍失败再回退到 `agent-browser`
+- 抓取顺序固定为：
+  1. 先尝试 `markdown.new(<freedium_url>)`
+  2. 若失败，回退到 `chrome-devtools`
+  3. 仍失败，再回退到 `agent-browser`
 - 引用说明中的链接继续保留**原始 Medium 链接**，不要替换为 Freedium 镜像链接。
 
-所有方法均失败时，报告错误并停止。
+如果 `markdown.new`、`chrome-devtools`、`agent-browser` 都失败，整个流程立即终止，并明确报告失败原因，不要继续进入写作阶段。
 
 **检测到未安装`agent-browser`时，自行安装并重试抓取**
 

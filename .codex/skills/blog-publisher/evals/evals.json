@@ -4,12 +4,13 @@
     {
       "id": 0,
       "prompt": "根据这篇英文技术文章发布一篇中文博客，要求重点解释为什么这个系统重要、核心思路是什么，以及工程上怎么落地：https://www.anthropic.com/engineering/built-multi-agent-research-system",
-      "expected_output": "在隔离副本里生成一篇中文 MDX 博客，包含引用说明、清晰结构，并体现对术语与关键信息的受控整理。",
+      "expected_output": "在隔离副本里生成一篇中文 MDX 博客，包含引用说明、清晰结构，并体现对术语与关键信息的受控整理。执行记录应体现新的抓取策略：默认先用 markdown.new，失败后才回退到 chrome-devtools 或 agent-browser。",
       "files": [],
       "expectations": [
         "生成了一个新的 content/blog/YYYY-MM-DD--slug/index.mdx 文件",
         "文章包含引用说明块，且链接指向给定 URL",
         "文章结构先解释背景或重要性，再进入原理或实践",
+        "执行记录体现抓取主通道是 markdown.new，且没有使用 fetch",
         "执行记录包含最小术语表或等价的术语一致性控制",
         "执行记录体现了两轮翻译/重写或等价的分阶段整理流程",
         "执行记录体现了对关键段落的抽样校对，而不是整篇回译"
@@ -18,12 +19,13 @@
     {
       "id": 1,
       "prompt": "把这篇中文文章整理并发布到博客，重点保留它对翻译提示词的判断，不要写成逐段复述：https://baoyu.io/blog/prompt-engineering/a-prompt-for-better-translation-result",
-      "expected_output": "在隔离副本里生成一篇中文 MDX 博客，保持学习者视角，引用透明，并体现事实提炼而不是逐段翻译。",
+      "expected_output": "在隔离副本里生成一篇中文 MDX 博客，保持学习者视角，引用透明，并体现事实提炼而不是逐段翻译。执行记录应体现新的抓取策略：默认先用 markdown.new，失败后才回退到 chrome-devtools 或 agent-browser。",
       "files": [],
       "expectations": [
         "生成了一个新的 content/blog/YYYY-MM-DD--slug/index.mdx 文件",
         "文章包含引用说明块，且链接指向给定 URL",
         "文章正文不是逐段复述，而是按主题重构为背景、方法或实践等结构",
+        "执行记录体现抓取主通道是 markdown.new，且没有使用 fetch",
         "执行记录包含事实稿、要点提炼或等价的中间整理痕迹",
         "执行记录包含最小术语表或明确说明原文为中文因此跳过翻译动作",
         "文章在结尾保留了参考资源或等价的来源收束"
