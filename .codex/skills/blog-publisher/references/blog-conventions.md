@@ -35,19 +35,7 @@ image: https://... # optional, absolute URL only
 
 ## Valid Tags
 
-Must be one of (use display name exactly):
-
-- `Flutter`
-- `Invest`
-- `Others`
-- `Softwares`
-- `Thoughts`
-- `Reading`
-- `iOS`
-- `Tutorial`
-- `Tool`
-
-Adding any tag not in this list will fail build-time schema validation.
+Read valid tags from `FRONTMATTER_TAGS` variable in `./src/constants.ts`
 
 ## Writing Style
 
