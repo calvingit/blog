@@ -37,11 +37,11 @@ git rev-parse --show-toplevel
 
 **抓取工具优先级与降级策略：**
 
-| 优先级    | 说明                          | 工具                                                                          |
-| --------- | ----------------------------- | ----------------------------------------------------------------------------- |
-| 1（默认） | 所有 URL 一律先走主通道       | `markdown.new` — `POST https://markdown.new/` 或 `https://markdown.new/<url>` |
-| 2（回退） | `markdown.new` 返回空或报错   | `chrome-devtools`                                                             |
-| 3（兜底） | `chrome-devtools` 仍然失败    | `agent-browser`                                                               |
+| 优先级    | 说明                        | 工具                                                                          |
+| --------- | --------------------------- | ----------------------------------------------------------------------------- |
+| 1（默认） | 所有 URL 一律先走主通道     | `markdown.new` — `POST https://markdown.new/` 或 `https://markdown.new/<url>` |
+| 2（回退） | `markdown.new` 返回空或报错 | `chrome-devtools`                                                             |
+| 3（兜底） | `chrome-devtools` 仍然失败  | `agent-browser`                                                               |
 
 禁止使用 `fetch` 作为抓取路径。不要因为站点类型不同而改变主流程，统一先尝试 `markdown.new`。
 

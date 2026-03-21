@@ -1,6 +1,6 @@
 import { glob } from 'astro/loaders'
-import { defineCollection } from 'astro:content'
 import { z } from 'astro/zod'
+import { defineCollection } from 'astro:content'
 import { FRONTMATTER_TAGS } from './constants'
 
 const zodEnum = <T>(arr: T[]): [T, ...T[]] => arr as [T, ...T[]]
