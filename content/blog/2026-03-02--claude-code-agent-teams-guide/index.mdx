@@ -1,9 +1,9 @@
 ---
 title: Claude Code Agent Teams 实战：多代理并行协作的边界与方法
 slug: claude-code-agent-teams-guide
-description: 基于官方文档，系统拆解 Agent Teams 与 Subagents 的选择标准、协作机制、成本边界与落地实践。
+description: 官方文档真正讲清楚的，不是怎样多开几个 Claude，而是什么时候值得为并行协作付出额外的协调和 token 成本。
 date: 2026-03-02
-lastUpdated: 2026-03-02
+lastUpdated: 2026-03-20
 tags:
   - Claude Code
   - Claude
@@ -15,9 +15,11 @@ tags:
 本文基于 Claude Code 官方文档整理与延展：[Agent teams](https://code.claude.com/docs/zh-CN/agent-teams)。
 :::
 
-如果你的任务需要多个 Claude 实例并行协作，`Agent Teams` 是官方提供的系统化方案。它不是简单的多开会话，而是带有负责人、队友、共享任务列表与邮箱通信机制的协作系统。
+`Agent Teams` 不是“多开几个 Claude 窗口”的别名，而是一套带负责人、队友、共享任务列表和消息系统的协作机制。
 
-## 先给结论：什么时候该用 Agent Teams
+官方文档真正讲清楚的，不是这个功能怎么打开，而是一个更实际的判断：只有当并行探索带来的收益明显大于协调成本时，`Agent Teams` 才值得上。
+
+## 什么时候该用 Agent Teams
 
 推荐使用场景：
 
@@ -33,7 +35,7 @@ tags:
 
 核心判断标准很直接：**如果并行探索的收益大于协调和 token 成本，就用 Agent Teams。否则优先单会话或 Subagents。**
 
-## Agent Teams vs Subagents：别混用概念
+## 别把 Agent Teams 当 Subagents
 
 两者都能并行，但设计目标不同：
 

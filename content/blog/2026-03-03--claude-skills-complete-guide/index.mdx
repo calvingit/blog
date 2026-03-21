@@ -1,9 +1,9 @@
 ---
 title: Claude Skill 构建完整指南：从入门到精通
 slug: claude-skills-complete-guide
-description: 深入解析 Anthropic 官方 Claude Skill 构建指南，涵盖核心概念、技术要求、实践模式与故障排除，助你打造可复用的 AI 工作流。
+description: Anthropic 这份 PDF 真正讲清楚的，不是 Skill 目录长什么样，而是如何把触发条件、工作流门禁和验证资产封装成可复用的工程能力。
 date: 2026-03-03
-lastUpdated: 2026-03-03
+lastUpdated: 2026-03-20
 tags:
   - Claude
   - Skills
@@ -14,253 +14,46 @@ tags:
 本文基于 Anthropic 官方文档整理与延展：[The Complete Guide to Building Skills for Claude](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf)。
 :::
 
-## 结论先行：Skill 的“工程化价值”是什么
+如果你已经写过几次 Skill，很容易把注意力放在 `SKILL.md`、frontmatter、`references/`、`assets/` 这些外层结构上。Anthropic 这份完整指南真正有价值的地方，是把 Skill 从“提示词格式”重新定义成“工作流封装”。它关心的不是文件摆得像不像样，而是这套能力能不能被稳定触发、按预期执行、并且随着反馈持续迭代。
 
-Claude Skill 的本质是把“你希望 Claude 反复遵循的工作流”固化为一个可移植的文件夹。它不是提示词堆砌，而是一个可版本化、可分发、可复用的工作流封装，使 Claude 在不同入口（Claude.ai、Claude Code、API）里都能稳定触发并执行同一套方法论。
+所以我读完后的核心判断是：Skill 不是给模型多塞一段说明，而是把你的最佳实践拆成三层资产管理好。第一层是触发条件，决定它该不该被调起；第二层是步骤和门禁，决定它执行时会不会跑偏；第三层是脚本、模板和参考资料，决定它能不能既稳定又节省上下文。
 
-工程视角下，Skill 的收益通常体现在三点：
+## Skill 本质上是工作流包，不是提示词包
 
-- **把隐性经验转成显式流程**：把最佳实践、质量门禁、错误处理写进 Skill，减少反复解释。
-- **降低 token 与交互成本**：采用 Progressive Disclosure（渐进式加载），只在需要时加载正文与引用资料。
-- **让工具接入可用起来**：对 MCP（Model Context Protocol）/ Connector 来说，工具只是“厨房”，Skill 提供“菜谱”，决定工具调用顺序与参数策略。
+文档一开始就把 Skill 说得很清楚：它是一个可移植的文件夹，最少包含 `SKILL.md`，必要时再配 `scripts/`、`references/` 和 `assets/`。但这个文件夹结构只是容器，不是重点。重点在于 Skill 要解决的，是“把反复出现的工作方法封装成稳定能力”，而不是“写一段很长的指令”。
 
-## Skill 的基本结构与设计原则
+这也是为什么文档反复强调 Progressive Disclosure。frontmatter 常驻、`SKILL.md` 在相关时加载、参考资料按需读取，这套分层的价值并不是形式优雅，而是让模型只在需要的时候吃到需要的信息。对长工作流和重知识型 Skill 来说，这直接决定了 token 成本和执行稳定性。
 
-### 文件结构（最小可用）
+另一个容易被忽视的点是可组合和可移植。官方默认同一时间可能会有多个 Skill 并存，也默认同一个 Skill 可以被 Claude.ai、Claude Code 和 API 路径复用。也就是说，Skill 从一开始就不是“某个界面里的宏”，而是一种能力打包格式。
 
-```text
-your-skill-name/
-├── SKILL.md        # 必需：包含 YAML frontmatter + 主要指令
-├── scripts/        # 可选：可执行代码（Python/Bash 等，用于确定性校验/处理）
-├── references/     # 可选：按需加载的参考资料（长文档、API 说明、规范）
-└── assets/         # 可选：模板、示例、字体、图标等产物依赖
-```
+## 设计起点不是 YAML，而是用例和验收口径
 
-关键规则（官方明确强调）：
+文档里最值得拿回去实践的，不是 frontmatter 字段说明，而是它要求你先定义 2 到 3 个具体用例。每个用例都要写清楚 Trigger、Steps 和 Result。这一步非常关键，因为 Skill 写得再漂亮，如果你说不清它在什么输入下触发、会走哪些步骤、最后交出什么结果，它就没有工程边界。
 
-- `SKILL.md` 必须严格同名（区分大小写）；文件夹与 `name` 建议一致，使用 `kebab-case`。
-- Skill 文件夹内不要放 `README.md`；面向人类的说明放到仓库根部（用于 GitHub 分发）。
+文档同时给了一组很实用的评估指标：触发率、工具调用效率、失败率和重复运行的一致性。它甚至明确提示这些更像目标值，而不是硬 SLA。我觉得这反而更真实，因为 Skill 的主要问题通常不是“功能不存在”，而是触发不稳定、输出不一致、用户需要频繁纠偏。
 
-### Progressive Disclosure（三层加载）
+从这个角度看，Skill 设计更像产品设计，而不是文件格式设计。你不是在写一份 prompt，而是在定义一个可以被观察、被评估、被调参的运行单元。
 
-- **第 1 层：YAML frontmatter**（永远进入 system prompt）：让模型决定“何时触发”。
-- **第 2 层：`SKILL.md` 正文**（判定相关时加载）：完整工作流与约束。
-- **第 3 层：关联文件**（按需导航加载）：`references/`、模板、脚本等。
+## 真正拉开效果差距的是三层设计
 
-### Composability 与 Portability
+官方对 frontmatter、正文和外部资产分别给了很清晰的责任边界，这点值得直接照搬。
 
-- **可组合**：Claude 可同时加载多个 Skill，单个 Skill 不应假设自己是唯一能力来源。
-- **可移植**：同一 Skill 可在 Claude.ai、Claude Code、API 入口复用（前提是环境满足依赖与权限）。
+第一层是触发层，也就是 frontmatter。这里最关键的不是字段齐全，而是 `description` 是否同时说清楚它做什么、何时该触发、用户会用哪些语言来表达需求。文档强调不要写得抽象，不要只写实现词汇，也不要出现 `<`、`>` 这类会引入 system prompt 风险的字符。这一层决定的是 undertrigger 和 overtrigger。
 
-## 规划与设计：从“用例”而不是“文件”开始
+第二层是执行层，也就是 `SKILL.md` 正文。文档建议把步骤、校验门禁、示例和故障处理明确写出来，并把关键约束前置。这里的核心不是“让说明更完整”，而是让模型知道什么时候能继续、什么时候必须停下来、失败了该怎么转向。
 
-官方推荐先写清楚 2-3 个具体用例，每个用例至少包含：
+第三层是证据层，也就是 `references/`、模板和脚本。官方反复强调，确定性校验优先写进 `scripts/`，长文档和规范放进 `references/` 按需加载。这个分工很重要，因为自然语言擅长说明，但不擅长保证校验过程稳定；真正关键的检查，应该程序化。
 
-- **Trigger**：用户会怎么说（关键词、同义表达、文件类型）。
-- **Steps**：多步骤流程（需要哪些内置能力或 MCP 工具）。
-- **Result**：可验证的交付物（例如创建了哪些对象、生成了哪些文件、返回了哪些链接）。
+## 把 Skill 当产品迭代，而不是一次性交付
 
-文档中给出的常见用例类型（可直接用于定位你的 Skill 形态）：
+这份文档后半部分关于测试、排障和分发，其实都在服务同一个观点：Skill 发布成功不代表 Skill 可用。真正该观察的是三个问题。
 
-- **Category 1：文档与资产生成**（无外部工具也能产出一致结果：报告、代码、设计稿、PPT 等）。
-- **Category 2：工作流自动化**（固定方法论的多步骤流程，可带校验门禁与迭代环）。
-- **Category 3：MCP 增强**（在工具接入之上补齐“怎么用好工具”的最佳实践、编排、容错）。
+第一，它该触发的时候有没有触发，不该触发的时候有没有乱入。第二，它执行时有没有稳定完成目标，而不是每次都需要人手纠偏。第三，它相对“没有 Skill”到底节省了什么，是 token、工具调用轮次，还是用户解释成本。
 
-### 成功标准（建议作为验收口径）
+文档给出的修复顺序也很实用：先改 `description` 处理触发问题，再改正文结构和错误处理稳定执行，必要时把校验移进脚本，最后再做有无 Skill 的对比回归。这是一个很工程化的顺序，因为它优先解决入口和主流程，而不是先打磨措辞。
 
-官方给出了一组可操作的评估维度，你可以直接转成测试用例。注意这些是**目标值（aspirational targets）**，不是硬性 SLA：
+## 我的判断
 
-- **触发率**：对一组应触发的查询，自动加载占比是否足够高（文档举例为 90%）。
-- **工具调用效率**：同一任务有无 Skill 时的 tool calls、tokens 是否显著下降。
-- **稳定性**：MCP/API 调用失败率是否接近 0（至少在“正常输入”路径上）。
-- **一致性**：重复运行 3-5 次输出结构是否稳定，是否需要用户纠错。
+Anthropic 这份“完整指南”真正教你的，不是怎么把 `SKILL.md` 写合法，而是怎么把一套工作方法做成能被触发、能被执行、也能被验证的资产。如果只学到了目录结构和 frontmatter 写法，基本还停留在包装层；如果把触发、门禁和证据三层责任分开管理，Skill 才算开始进入工程化状态。
 
-## YAML frontmatter：决定“能不能触发”的核心
-
-frontmatter 是 Skill 的第一道闸门，也是最容易踩坑的地方。最小格式如下：
-
-```yaml
----
-name: your-skill-name
-description: What it does. Use when user asks to [specific phrases].
----
-```
-
-### 字段约束（高优先级）
-
-- `name`（必需）：`kebab-case`，无空格/大写；建议与文件夹同名。
-- `description`（必需）：必须同时包含：
-  - **What**：做什么
-  - **When**：在什么输入下使用（触发条件/短语/文件类型）
-  - 文档强调：长度 < 1024 字符；禁止出现 XML 角括号（`<`、`>`）。
-
-可选字段（文档示例）：
-
-- `license`：开源分发时标注（如 MIT、Apache-2.0）。
-- `compatibility`：写明环境依赖（产品形态、系统包、网络访问等），长度建议在 1-500 字符。
-- `metadata`：作者、版本、MCP server 名称、分类、支持渠道等。
-- `allowed-tools`：限制工具访问范围（更偏安全与可控性）。
-
-### 安全限制（必须遵守）
-
-文档明确指出以下 frontmatter 内容会被禁止或引发安全风险：
-
-- 禁止出现 `<`、`>`（system prompt 注入风险）。
-- 名称中避免使用 `claude` 或 `anthropic` 等保留词（文档示例中也特别提到前缀场景）。
-
-## 写出“可执行的指令”，而不是“可读的说明文”
-
-### description 的写法：触发能力取决于具体性
-
-官方给出的结构化建议可以概括为：
-
-`[What] + [When/Trigger] + [Key capabilities]`
-
-反例也很典型：
-
-- 过于抽象（例如“帮助做项目”）会导致严重 undertrigger。
-- 只写技术实现、不写用户语言（用户不会说“实现实体模型”）也会导致不触发。
-
-### `SKILL.md` 正文：推荐模块
-
-工程上可按以下骨架组织，确保可读、可执行、可测试：
-
-1. **Instructions**：步骤化工作流（按顺序、注明依赖与数据传递）。
-2. **Validation gates**：每一步“进入下一步”的条件，失败时如何回滚/重试。
-3. **Examples**：至少 2-3 组典型输入，覆盖同义表达。
-4. **Troubleshooting**：常见错误与定位路径（尤其是 MCP 连接与工具名大小写）。
-
-文档还强调两条非常实用的写作原则：
-
-- **把关键约束前置**：重要事项放到开头，用明确标识（例如 `CRITICAL:`），必要时重复。
-- **对确定性校验优先用脚本**：关键验证交给 `scripts/` 做程序化检查，避免自然语言解释带来的“解释性偏差”。
-
-## 测试与迭代：三类测试先覆盖核心质量风险
-
-官方建议的测试层级与方法可以直接落地：
-
-1. **触发测试**：应触发的句子能触发；改写/同义词也能触发；无关请求不触发。
-2. **功能测试**：输出是否正确、API/MCP 调用是否成功、容错是否工作、边界条件是否覆盖。
-3. **对比测试**：与无 Skill 基线相比，交互轮次、失败调用、token 消耗是否显著改善。
-
-补充一点：`skill-creator` 适合用于草稿生成与结构审查，但不替代自动化测试套件，也不直接产出量化评测结果。
-
-迭代信号与修复方向（文档给出明确映射）：
-
-- undertrigger：补充 `description` 的关键词与触发短语。
-- overtrigger：加入负向触发或收窄范围定义。
-- 执行质量不稳定：精简并结构化指令，加入错误处理与校验脚本。
-
-## 分发与接入：把“能用”变成“被用”
-
-文档以 2026 年 1 月的分发模型为例，总结了当前路径：
-
-- 个人用户：下载 skill folder，必要时 zip；在 Claude.ai 上传（`Settings > Capabilities > Skills`）；或放入 Claude Code 的 skills 目录。
-- 组织级：管理员可在 workspace 维度部署并自动更新（文档注明该能力于 2025-12-18 交付）。
-
-推荐的工程化分发方式（适用于公开 Skill 与 MCP 生态）：
-
-- GitHub 托管（仓库根部 README 面向人类，Skill 文件夹内不放 README）。
-- 在 MCP 文档中串联“工具接入 + Skill 工作流”的故事，强调 outcomes 而非文件结构。
-
-### API 集成要点（容易遗漏）
-
-如果你是在应用或 Agent 系统里程序化调用 Skill，官方建议走 API 通道，而不是把 Claude.ai 的交互路径“脚本化”：
-
-- 通过 `/v1/skills` 做技能管理。
-- 在 Messages API 里通过 `container.skills` 注入技能。
-- 可通过 Claude Console 做版本管理。
-- 可与 Claude Agent SDK 结合使用。
-- API 侧使用时，需关注“代码执行工具（Beta）”这一前置条件（文档中的明确限制）。
-
-## 常见模式：从“编排”到“智能”的五类结构
-
-文档把 Skill 模式总结为两种 framing 与五类模式：
-
-- framing
-  - **Problem-first**：用户说目标，Skill 负责把工具调用串起来。
-  - **Tool-first**：用户已接入工具，Skill 提供最佳实践与高质量路径。
-
-- patterns
-  - **顺序编排**：严格步骤顺序与依赖传递（最常见）。
-  - **多 MCP 协调**：跨服务阶段化推进，强调数据传递与统一错误处理。
-  - **迭代改进环**：生成初稿 + 质量检查 + 迭代修复，直到满足阈值。
-  - **上下文决策树**：根据文件类型/大小/协作需求选择最佳工具。
-  - **领域智能**：把合规/风控/业务规则内嵌进流程，先判断再执行。
-
-## 故障排查：优先排“结构与触发”，再排“工具与环境”
-
-常见问题的定位顺序建议如下（对应文档中的 Troubleshooting）：
-
-- 上传失败：先检查 `SKILL.md` 是否严格命名、frontmatter 是否有 `---` 分隔、YAML 是否闭合。
-- 不触发：优先改 `description` 的触发短语；可以直接问 Claude“什么时候会用这个 Skill”来回显当前描述。
-- 触发过度：加入负向触发与更明确的范围限定。
-- MCP 调用失败：先独立验证 MCP 连通性与鉴权，再检查工具名大小写与参数。
-- 指令不遵循：减少冗长文本，前置关键约束，歧义点改成可验证的 checklist；关键验证改为脚本。
-- 上下文过大：把长文移到 `references/`；控制 `SKILL.md` 体积（文档建议 < 5000 words）；减少同时启用的 Skill 数量（文档给出 20-50 的经验范围）。
-
-## 发布后迭代闭环：哪些信号说明你该改 Skill
-
-如果你只做“上传成功”验收，通常会错过真实问题。官方给出的迭代信号非常实用：
-
-- **Undertrigger 信号**：该触发时不触发、用户经常手动启用。
-- **Overtrigger 信号**：无关请求被频繁触发、用户经常关闭该 Skill。
-- **执行信号**：输出不稳定、API/MCP 调用失败、用户频繁纠偏。
-
-对应的优先修复动作：
-
-- 先改 `description` 的触发短语与边界（必要时增加负向触发）。
-- 再改正文结构与错误处理（必要时脚本化校验）。
-- 最后做对比回归（有/无 Skill 的工具调用数、tokens、纠偏轮次）。
-
-## 附：一个可落地的 `SKILL.md` 模板（示例）
-
-以下示例强调两点：`description` 触发足够具体，以及每一步都可验证。内容为示意，你需要替换为自己的工具与流程。
-
-```markdown
----
-name: projecthub-onboarding
-description: End-to-end customer onboarding workflow for ProjectHub. Use when user says "onboard new customer", "set up subscription", "create ProjectHub account", or asks to "create a new workspace" for a team.
-license: MIT
-compatibility: Claude.ai / Claude Code. Requires network access and ProjectHub MCP connected.
-allowed-tools: "WebFetch Bash(python:*)"
-metadata:
-  author: Your Team
-  version: 1.0.0
-  mcp-server: projecthub
----
-
-# ProjectHub Onboarding
-
-## CRITICAL
-- Before any write action, confirm required fields: `name`, `email`, `plan_id`.
-- If any MCP call fails, stop and report: tool name, parameters, error code, and retry suggestion.
-
-## Instructions
-### Step 1: Create customer
-- Call MCP tool: `create_customer` with `name`, `email`, `company`.
-- Verify: returns `customer_id`.
-
-### Step 2: Setup payment method
-- Call MCP tool: `setup_payment_method` with `customer_id`.
-- Wait for: payment verification success.
-
-### Step 3: Create subscription
-- Call MCP tool: `create_subscription` with `customer_id`, `plan_id`.
-- Verify: subscription is `active`.
-
-## Examples
-- User: "onboard new customer Alice for the Pro plan"
-  - Actions: Step 1-3
-  - Result: return subscription summary + next steps
-```
-
-## 快速检查清单（发布前自检）
-
-- 已定义 2-3 个具体用例（Trigger/Steps/Result）。
-- 文件夹名与 `name` 为 `kebab-case`，`SKILL.md` 严格命名。
-- frontmatter 有 `---`，`description` 同时包含 What/When，且不含 `<`、`>`。
-- `SKILL.md` 指令可执行、关键约束前置、包含示例与故障排查。
-- 做过触发测试、功能测试，以及至少一次与无 Skill 的基线对比。
-- 大体积资料放到 `references/`，避免把一切都塞进 `SKILL.md`。
-- 上线后持续观察 undertrigger/overtrigger，并在 `metadata.version` 里维护迭代版本。
+我会用一个很简单的标准检验自己有没有真的吃透这份文档：当一个 Skill 出问题时，我能不能立刻判断它是触发层的问题、执行层的问题，还是证据层的问题。如果能，说明这份指南已经从“格式说明”变成了工程方法；如果不能，多半还在把 Skill 当 prompt 文件写。

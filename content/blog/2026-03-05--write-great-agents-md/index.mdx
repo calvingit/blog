@@ -3,7 +3,7 @@ title: 如何写好 agents.md：从 2500+ 仓库提炼的可执行规范
 slug: write-great-agents-md
 description: GitHub 对 2500+ agents.md 的分析显示，高质量 Agent 配置的关键不在“提示词文案”，而在可执行命令、清晰边界与可验证流程。
 date: 2026-03-05
-lastUpdated: 2026-03-05
+lastUpdated: 2026-03-20
 tags:
   - Agents
   - Tutorial
@@ -14,12 +14,9 @@ tags:
 本文基于 Matt Nigh 的文章整理与延展：[How to write a great agents.md: Lessons from over 2,500 repositories](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/)。
 :::
 
-很多团队已经在给 AI 编码助手写规则文件，但效果差异很大：
+很多团队已经在给 AI 编码助手写规则文件，但效果差异很大。真正拉开差距的，往往不是文案写得多像“人格设定”，而是你有没有把运行环境、命令、边界和验收标准写成可执行约束。
 
-1. 有的仓库里，Agent 真正变成了“稳定的专项工程师”。
-2. 有的仓库里，Agent 还是“听话但不靠谱”的通用聊天机器人。
-
-GitHub 对 2500+ 公开仓库的 `agents.md` 做了分析，结论很直接：决定上限的不是你写了多少“人格化描述”，而是你是否把运行环境、命令、边界和验收标准写成可执行约束。
+GitHub 对 2500+ 公开仓库的 `agents.md` 做了分析，结论也很直接：高质量的 `agents.md` 更像一份协作协议，而不是一段提示词自我介绍。
 
 ## 为什么很多 agents.md 会失效
 
