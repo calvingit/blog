@@ -3,7 +3,7 @@ title: AGENTS.md 可能在伤害你的编码 Agent：一项实证研究给出的
 slug: agents-md-might-hurt-you
 description: ETH Zurich 在多代理与多仓库基准上的研究显示，自动生成的 AGENTS.md 往往增加推理成本并拉低正确率；真正有效的是短小、动态维护的“风险清单”。
 date: 2026-03-05
-lastUpdated: 2026-03-05
+lastUpdated: 2026-03-20
 tags:
   - Agents
   - Claude Code
@@ -15,14 +15,11 @@ tags:
 本文基于 JP 的文章整理与延展：[The research is in: your AGENTS.md might be hurting you](https://sulat.com/p/agents-md-hurting-you)。
 :::
 
-很多团队已经把 `AGENTS.md` 当成 AI 协作的标准配置：跑一次 `/init`，提交到仓库，默认“质量会更好”。
+很多团队已经把 `AGENTS.md` 当成 AI 协作的标准配置：跑一次 `/init`，提交到仓库，默认质量就会更好。
 
-这篇文章最有价值的地方在于，它没有停留在经验层面，而是把问题变成可测假设：
+这篇文章真正有价值的地方，在于它没有停留在经验判断，而是把问题变成了可以实测的假设：给 Agent 一个 context file，到底会让它更正确，还是只会让它更忙？
 
-1. 给 Agent 一个 context file，是否能让它更正确地完成任务？
-2. 如果不能，它到底提升了什么，牺牲了什么？
-
-结论并不讨喜：在不少场景里，`AGENTS.md` 可能让结果更差、成本更高。
+结论并不讨喜。在不少场景里，`AGENTS.md` 可能让结果更差、成本更高。
 
 ## 研究到底测了什么
 

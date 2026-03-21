@@ -1,9 +1,9 @@
 ---
 title: "Harness Engineering：Agent-First 时代的软件工程实践"
 slug: "harness-engineering-agent-first"
-description: "基于 OpenAI 工程团队实践，拆解在不手写代码约束下如何通过环境、文档与反馈回路，让 Codex 稳定交付百万行级别产品。"
+description: "OpenAI 这篇实践真正重要的不是“零手写代码”，而是团队如何把环境、文档和反馈回路做成 Agent 的工作底座。"
 date: 2026-03-01
-lastUpdated: 2026-03-01
+lastUpdated: 2026-03-20
 tags:
   - Codex
   - Agents
@@ -15,11 +15,11 @@ tags:
 本文基于 Ryan Lopopolo 的文章整理与延展：[Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)。
 :::
 
-很多团队在用代码生成工具时，第一反应是“怎么让模型写得更快”。
+很多团队谈代码生成时，注意力还停留在“怎么让模型写得更快”。
 
-这篇文章更有价值的地方在于，它把问题换成了：**当“写代码”不再是工程师的主要工作时，工程团队应该把精力放在哪里？**
+这篇文章更值得看的地方，是它把问题改写成了另一种工程命题：**当工程师不再亲手写大部分代码，团队该怎样设计环境、规则和反馈回路，才能让 Agent 持续产出？**
 
-OpenAI 团队做了一个极端实验：用 Codex 构建并发布一个真实可用的内部产品，约束是“人工不直接写代码”。结果是，他们在约 5 个月内完成了百万行规模代码，并声称整体速度约为手写方式的 10 倍。
+OpenAI 团队用 Codex 做了一个极端实验：在“人工不直接写代码”的约束下构建并交付一个真实可用的内部产品。5 个月、百万行代码、约 10 倍的开发速度，这些数字本身当然醒目，但更重要的是它们揭示了工程工作的重心已经上移。
 
 ## 核心结论：人类负责系统，Agent 负责执行
 
