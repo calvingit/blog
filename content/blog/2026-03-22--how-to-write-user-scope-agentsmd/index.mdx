@@ -59,8 +59,6 @@ Avoid: tutorial-style explanations, overly verbose comments...
 
 结构完整，读起来也很像一份认真准备的工程规范。但放进用户级 system prompt 里，问题就出来了。
 
-
-
 ## 问题一：大量内容是模型的默认行为
 
 `Code must be production-ready, concise, idiomatic, maintainable`。在大多数 coding agent 场景里，就算不写这四条，模型通常也会朝这个方向输出。写上去，只是在拿有限的注意力重复已经大体成立的东西。
@@ -98,8 +96,6 @@ Avoid: tutorial-style explanations, overly verbose comments...
 
 真正有价值的，不是“更懂工程规范”，而是“回来之前多做了一轮验证”。
 
-
-
 ## 先把边界划清楚：用户级和仓库级不是一回事
 
 这里特别容易混。
@@ -124,8 +120,6 @@ Avoid: tutorial-style explanations, overly verbose comments...
 2. 某个仓库才成立的规则，被错误地带进别的项目里。
 
 所以这篇文章批评的，不是“规范文档没有价值”，而是**那些本该放在仓库级的约束，不该塞进用户级 prompt。**
-
-
 
 ## 一个更好的方向
 
@@ -155,8 +149,6 @@ hit a wall that requires my input.
 
 这三条都在改真实行为，不是在补文档体面。
 
-
-
 ## System Prompt 的本质
 
 这两份配置摆在一起看，问题其实很明显：**很多人把用户级 system prompt 当规范文档写，而不是当行为指令写。**
@@ -167,8 +159,6 @@ hit a wall that requires my input.
 
 衡量一条用户级 prompt 指令有没有价值，我现在更喜欢用一个很简单的标准：**删掉它，模型的行为会不会发生实质变化？** 如果不会，它大概率就不该存在。
 
-
-
 ## 一份更稳的用户级模板
 
 如果目标是写一份用户级 AGENTS.md，我更建议把“核心行为规则”和“个人偏好”分开。前者决定 agent 怎么干活，后者只是让它更贴近你的习惯。
@@ -176,7 +166,7 @@ hit a wall that requires my input.
 先看核心行为规则：
 
 ```markdown
-# AGENTS.md
+# Agent Instructions
 
 ## Before You Start
 Define finishing criteria before writing anything: what does "done"
@@ -218,8 +208,6 @@ Prefer the simplest solution and avoid unrelated refactors.
 - 项目局部约束继续留在仓库级 AGENTS.md，不向外泄漏
 
 反过来看，像“必须用 `pnpm`”“提交信息必须是 `type(scope): description`”“文章目录必须按某个路径组织”这种内容，就更应该写进项目自己的 AGENTS.md。它们当然有价值，只是不属于用户级这一层。
-
-
 
 ## 结语
 
