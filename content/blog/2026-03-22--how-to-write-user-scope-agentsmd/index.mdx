@@ -1,0 +1,234 @@
+---
+title: 如何写用户级 AGENTS.md
+slug: how-to-write-user-scope-agentsmd
+description: 以两份真实的全局配置为例，分析写 `~/.claude/CLAUDE.md` 或 `~/.codex/AGENTS.md` 时最常见的误区，以及什么样的内容才真正会改变 agent 的行为。
+date: 2026-03-22
+lastUpdated: 2026-03-22
+tags:
+  - Codex
+  - Agents
+  - AI
+---
+
+Claude Code、OpenAI Codex 这类 AI 编码代理，都支持一个放在用户主目录下的全局配置文件。每次对话开始前，它会作为 system prompt 自动注入。你可以把它理解成，你对这个代理永久说的第一句话。
+
+问题也在这里。很多人以为自己在写 system prompt，实际写出来的却是一份“通用工程规范”：代码要简洁、要可维护、少抽象、遵守最佳实践。每条看起来都没错，但真正会改变 agent 行为的内容，其实没多少。
+
+用户级 AGENTS.md 最值得写的通常只有三类东西：
+
+- 如何验证结果
+- 如何向你汇报
+- 什么时候继续自救，什么时候回来求助
+
+至于项目命令、目录约定、标签白名单、提交格式、环境假设，这些更适合写进仓库级 AGENTS.md，不适合塞进用户级配置。
+
+## 从一份典型的旧配置说起
+
+下面是一份我自己的真实的旧版全局配置（简化呈现）：
+
+```markdown
+## Identity
+You are an AI coding agent assisting a senior software engineer.
+
+## Communication
+- Always respond in Chinese
+- Assume the user is a Senior Full Stack Developer
+- Provide the conclusion first
+
+## Execution Philosophy
+### Simplicity First
+Prefer the simplest solution that works.
+Avoid speculative abstractions, premature generalization...
+
+### Surgical Changes
+Modify only the necessary lines.
+Do not rewrite entire files unless required.
+
+### Minimal Diff Principle
+Always prefer small, targeted patches.
+Avoid large-scale rewrites, formatting-only changes...
+
+## Engineering Standards
+Code must be: production-ready, concise, idiomatic, maintainable
+Avoid: tutorial-style explanations, overly verbose comments...
+
+## Safety Boundaries
+- Do not fabricate APIs
+- Do not generate destructive commands
+```
+
+结构完整，读起来也很像一份认真准备的工程规范。但放进用户级 system prompt 里，问题就出来了。
+
+
+
+## 问题一：大量内容是模型的默认行为
+
+`Code must be production-ready, concise, idiomatic, maintainable`。在大多数 coding agent 场景里，就算不写这四条，模型通常也会朝这个方向输出。写上去，只是在拿有限的注意力重复已经大体成立的东西。
+
+同类问题遍布整份文件：
+
+- `Prefer readable logic` → 默认行为
+- `Avoid unnecessary abstractions` → 默认行为
+- `Use standard language conventions` → 默认行为
+
+**有效的用户级 system prompt，只描述你想让模型偏离默认值的地方。** 默认行为不用反复提醒。
+
+## 问题二：同一个意思重复说了四遍
+
+“简洁”这个原则在这份配置里以四种面目出现：Simplicity First、Surgical Changes、Minimal Diff Principle、Minimal Complexity。每节都在说同一件事。
+
+重复不是强调。System prompt 里，同一个意思说四遍，只会稀释真正重要的指令，让模型更难分辨哪些约束才是你真正在意的差异点。如果一个指令需要说三遍，问题通常不在次数，而在于它还不够具体。
+
+## 问题三：语言被写死
+
+`Always respond in Chinese`。多数时候，你用中文提问，模型本来就会用中文回复。把语言写死，只会在偶尔切换工作语言时制造摩擦。语言更适合跟着对话走，不适合做成全局硬规则。
+
+## 问题四：没有要求模型验证自己的输出
+
+这是最实质的缺失。整份文件详细规定了代码风格、提交格式、依赖策略，却没提“写完之后到底要不要跑一下”。
+
+很多模型在默认设置下，并不会稳定地主动验证自己的输出。结果就是：Agent 生成了看起来正确的代码，汇报“完成”，但代码从未真的执行过。这不是模型突然变笨了，而是 prompt 根本没要求它自验证。
+
+同一个任务，差别会非常具体。
+
+假设你说：“把按钮颜色改成品牌色，顺手确认 hover 状态别坏。”
+
+- 旧配置更容易产出这样的流程：改完样式，看到代码看起来没问题，然后直接回复“已完成”
+- 新配置更容易产出这样的流程：改完样式，打开页面点一遍，发现 hover 对比度不对，再修一次，最后才回来汇报
+
+真正有价值的，不是“更懂工程规范”，而是“回来之前多做了一轮验证”。
+
+
+
+## 先把边界划清楚：用户级和仓库级不是一回事
+
+这里特别容易混。
+
+用户级 AGENTS.md 解决的是“这个 agent 平时该怎么做事”。比如：
+
+- 汇报时先说结论
+- 写完先验证
+- 遇到错误先自查两轮再回来
+- 不要用教程口吻解释给我听
+
+仓库级 AGENTS.md 解决的是“在这个项目里该遵守什么约束”。比如：
+
+- 用 `pnpm`，不要用 `npm`
+- 文章放在 `content/blog/YYYY-MM-DD--slug/index.mdx`
+- tag 必须先注册到 `FRONTMATTER_TAGS`
+- 构建前要跑哪些命令
+
+前者是长期行为偏好，后者是项目局部规则。两类东西一旦写混，最常见的后果有两个：
+
+1. 用户级配置变得很长，但真正改变行为的内容很少。
+2. 某个仓库才成立的规则，被错误地带进别的项目里。
+
+所以这篇文章批评的，不是“规范文档没有价值”，而是**那些本该放在仓库级的约束，不该塞进用户级 prompt。**
+
+
+
+## 一个更好的方向
+
+X 上的 [@mattshumer\_](https://x.com/mattshumer_/status/2033952179354996868) 分享过一份风格完全不同的配置：
+
+```markdown
+When communicating your results back to me, explain what you did and
+what happened in plain, clear English. Avoid jargon and code-speak.
+
+Before reporting back, verify your own work. Don't just write code
+and assume it's done. Actually test it using the tools available.
+
+Define finishing criteria for yourself before you start: what does
+"done" look like? Use that as your checklist.
+
+Only come back when work is confirmed done, or when you've genuinely
+hit a wall that requires my input.
+```
+
+没有工程规范，没有代码风格，也没有依赖策略。它只说了三件事：**怎么汇报、怎么验证、什么时候回来找我**。
+
+它有效，因为这三件事恰好都是很多模型**不会稳定默认做到**的：
+
+- 模型往往更容易给出技术性、细节很多的汇报，所以你需要告诉它用人话说
+- 模型往往不会主动运行代码验证，所以你需要明确要求
+- 模型经常在遇到阻碍时过早停下来，所以你需要告诉它先自己尝试修复
+
+这三条都在改真实行为，不是在补文档体面。
+
+
+
+## System Prompt 的本质
+
+这两份配置摆在一起看，问题其实很明显：**很多人把用户级 system prompt 当规范文档写，而不是当行为指令写。**
+
+规范文档的逻辑是：写得越完整越好，重要的事情多强调几遍，把所有边界情况都覆盖到。
+
+用户级 system prompt 不是这么工作的。它更像一份行为开关清单：只写模型不会稳定默认做到的事，每条指令出现一次，用最少的词说清楚。
+
+衡量一条用户级 prompt 指令有没有价值，我现在更喜欢用一个很简单的标准：**删掉它，模型的行为会不会发生实质变化？** 如果不会，它大概率就不该存在。
+
+
+
+## 一份更稳的用户级模板
+
+如果目标是写一份用户级 AGENTS.md，我更建议把“核心行为规则”和“个人偏好”分开。前者决定 agent 怎么干活，后者只是让它更贴近你的习惯。
+
+先看核心行为规则：
+
+```markdown
+# AGENTS.md
+
+## Before You Start
+Define finishing criteria before writing anything: what does "done"
+look like? Use that as your checklist.
+
+## Verification
+Don't assume code is correct because it looks right. Run it.
+Test edge cases. For visual work, click through the flows.
+
+If something fails, fix and re-test. Don't hand problems back.
+Only return when work is confirmed done, or when you've hit a genuine
+wall: two failed attempts plus a blocker only the user can resolve.
+
+## Communication
+Report results in plain language: what you did and what happened,
+not how the code works. Lead with the conclusion.
+No emojis, no filler. Use structured output for complex topics.
+
+## Safety
+Don't fabricate APIs or assume undocumented behavior.
+State uncertainty explicitly. Never generate destructive commands.
+Never make architectural, infrastructure, or schema changes without
+explicit instruction.
+```
+
+如果你确实有一些稳定的个人偏好，可以另起一小段，单独写：
+
+```markdown
+## Personal Preferences
+Reply in the same language I use unless I ask otherwise.
+Skip beginner explanations.
+Prefer the simplest solution and avoid unrelated refactors.
+```
+
+这样拆开以后，整份文件会更自洽：
+
+- 核心区只保留真正会改变 agent 行为的东西
+- 偏好区只表达你的习惯，不假装它们是普遍规则
+- 项目局部约束继续留在仓库级 AGENTS.md，不向外泄漏
+
+反过来看，像“必须用 `pnpm`”“提交信息必须是 `type(scope): description`”“文章目录必须按某个路径组织”这种内容，就更应该写进项目自己的 AGENTS.md。它们当然有价值，只是不属于用户级这一层。
+
+
+
+## 结语
+
+写用户级 system prompt，本质上就是一种减法练习。它的质量不取决于覆盖了多少场景，而取决于你有没有把“真正影响行为的规则”和“项目局部约束”“个人语气偏好”分开。
+
+一个很实用的自检方法是逐行问自己：删掉这行，模型的输出会有什么实质变化？
+
+如果答案是“几乎不会变”，删掉。
+
+如果答案是“它更可能少做验证、汇报变得更难读、或者更早停下来求助”，留下。
+
+用户级 AGENTS.md 不需要面面俱到。它只需要在少数几个关键动作上，稳定地把模型往你想要的方向推一下。
