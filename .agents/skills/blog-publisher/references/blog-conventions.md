@@ -60,7 +60,7 @@ Before committing, verify:
 1. Frontmatter has all required fields (title, slug, description, date, lastUpdated, tags)
 2. Tag values match the valid list exactly (case-sensitive)
 3. Directory name matches `YYYY-MM-DD--{slug}` where slug == frontmatter `slug`
-4. File is `index.mdx`
+4. File is `index.mdx` — **extension must be `.mdx`, not `.md`**; the content loader glob `**/*.mdx` will silently ignore `.md` files, causing the post to not appear in the blog
 5. No frontmatter fields outside the schema
 
 ## Commit Convention
