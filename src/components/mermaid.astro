@@ -1,0 +1,52 @@
+---
+interface Props {
+  chart: string
+}
+
+const { chart } = Astro.props
+---
+
+<pre class="mermaid" set:text={chart} />
+
+<script>
+  import mermaid from 'mermaid'
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default',
+  })
+
+  async function renderMermaid() {
+    const elements = document.querySelectorAll<HTMLPreElement>('pre.mermaid')
+    if (elements.length === 0) return
+
+    await mermaid.run({ nodes: elements })
+  }
+
+  renderMermaid()
+
+  // Re-render on theme change
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.attributeName === 'data-theme') {
+        const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+        mermaid.initialize({ startOnLoad: false, theme })
+        // Reset and re-render
+        document.querySelectorAll<HTMLPreElement>('pre.mermaid').forEach((el) => {
+          el.removeAttribute('data-processed')
+        })
+        renderMermaid()
+      }
+    }
+  })
+
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+</script>
+
+<style>
+  pre.mermaid {
+    background: transparent;
+    border: none;
+    text-align: center;
+  }
+</style>

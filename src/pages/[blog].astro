@@ -10,6 +10,7 @@ import Spacer from '@components/spacer.astro'
 import Aside from '@components/aside.astro'
 import TagLinks from '@components/tag-links.astro'
 import Playground from '@components/playground.astro'
+import Mermaid from '@components/mermaid.astro'
 
 export async function getStaticPaths() {
   const entries = await getCollection('blog')
@@ -46,7 +47,7 @@ const { Content } = await render(entry)
         {defaultDateFormat(post.date)} — <TagLinks tags={post.tags} />
       </div>
       <Spacer axis="vertical" size={12} />
-      <Content components={{ Aside, Playground }} />
+      <Content components={{ Aside, Playground, Mermaid }} />
     </Prose>
   </SkipNavContent>
 </Layout>
