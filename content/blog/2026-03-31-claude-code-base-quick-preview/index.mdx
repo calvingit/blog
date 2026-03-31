@@ -1,0 +1,249 @@
+#
+
+---
+title: Claude Code代码快速导览
+slug: claude-code-base-quick-preview
+description: Claude Code是Anthropic官方的CLI工具，让开发者能够直接在终端中与Claude交互，执行软件工程任务。本文将快速导览其核心架构和设计理念。
+date: 2026-03-31
+lastUpdated: 2026-03-31
+tags:
+  - Claude
+---
+
+Claude Code是Anthropic官方的CLI工具，让开发者能够直接在终端中与Claude交互，执行软件工程任务。本文将快速导览其核心架构和设计理念。
+
+## 项目概览
+
+Claude Code于2026年3月31日通过npm包的source map文件泄露，是一个大型TypeScript项目 [1](#4-0) ：
+
+```typescript
+// 技术栈
+- Runtime: Bun
+- Language: TypeScript (strict)
+- Terminal UI: React + Ink
+- Scale: ~1,900 files, 512,000+ lines of code
+```
+
+## 核心架构
+
+### 工具系统架构
+
+Claude Code的核心是**工具系统**，每个功能都实现为标准化工具 [2](#4-1) ：
+
+| 工具类型 | 功能描述 |
+|---|---|
+| BashTool | Shell命令执行 |
+| FileReadTool | 文件读取（支持图片、PDF、notebook） |
+| FileEditTool | 文件部分修改 |
+| GlobTool | 文件模式匹配搜索 |
+| AgentTool | 子代理生成 |
+| MCPTool | MCP服务器工具调用 |
+
+### 工厂模式设计
+
+所有工具都通过`buildTool`工厂创建，提供统一的默认值和类型安全 [3](#4-2) ：
+
+```typescript
+const TOOL_DEFAULTS = {
+  isEnabled: () => true,
+  isConcurrencySafe: (_input?: unknown) => false,
+  isReadOnly: (_input?: unknown) => false,
+  isDestructive: (_input?: unknown) => false,
+  checkPermissions: (
+    input: { [key: string]: unknown },
+    _ctx?: ToolUseContext,
+  ): Promise<PermissionResult> =>
+    Promise.resolve({ behavior: 'allow', updatedInput: input }),
+  toAutoClassifierInput: (_input?: unknown) => '',
+  userFacingName: (_input?: unknown) => '',
+}
+
+export function buildTool<D extends AnyToolDef>(def: D): BuiltTool<D> {
+  return {
+    ...TOOL_DEFAULTS,
+    userFacingName: () => def.name,
+    ...def,
+  } as BuiltTool<D>
+}
+```
+
+## 权限系统
+
+### 责任链模式
+
+权限系统采用责任链模式，每个处理器可以返回`'passthrough'`继续传递，或返回最终决定 [4](#4-3) ：
+
+```typescript
+export const hasPermissionsToUseTool: CanUseToolFn = async (
+  tool,
+  input,
+  context,
+  assistantMessage,
+  toolUseID,
+): Promise<PermissionDecision> => {
+  const result = await hasPermissionsToUseToolInner(tool, input, context)
+
+  // 应用dontAsk模式转换：将'ask'转换为'deny'
+  if (result.behavior === 'ask') {
+    const appState = context.getAppState()
+    if (appState.toolPermissionContext.mode === 'dontAsk') {
+      return {
+        behavior: 'deny',
+        decisionReason: {
+          type: 'mode',
+          mode: 'dontAsk',
+        },
+        message: DONT_ASK_REJECT_MESSAGE(tool.name),
+      }
+    }
+  }
+}
+```
+
+### 判别联合类型
+
+权限结果使用判别联合类型，支持多种行为状态 [5](#4-4) ：
+
+```typescript
+export type PermissionResult<
+  Input extends { [key: string]: unknown } = { [key: string]: unknown },
+> =
+  | PermissionDecision<Input>
+  | {
+      behavior: 'passthrough'
+      message: string
+      decisionReason?: PermissionDecision<Input>['decisionReason']
+      suggestions?: PermissionUpdate[]
+      blockedPath?: string
+      pendingClassifierCheck?: PendingClassifierCheck
+    }
+```
+
+## 依赖注入系统
+
+### ToolUseContext
+
+`ToolUseContext`是大型依赖注入容器，贯穿整个调用栈 [6](#4-5) ：
+
+```typescript
+export type ToolUseContext = {
+  options: {
+    commands: Command[]
+    debug: boolean
+    mainLoopModel: string
+    tools: Tools
+    verbose: boolean
+    thinkingConfig: ThinkingConfig
+    mcpClients: MCPServerConnection[]
+    // ... 更多选项
+  }
+  abortController: AbortController
+  readFileState: FileStateCache
+  getAppState(): AppState
+  setAppState(f: (prev: AppState) => AppState): void
+  // ... 更多方法
+}
+```
+
+## 状态管理
+
+### 不可变状态
+
+全局状态采用深度不可变设计，只能通过函数式更新器修改 [7](#4-6) ：
+
+```typescript
+export function createStore<T>(
+  initialState: T,
+  onChange?: OnChange<T>,
+): Store<T> {
+  let state = initialState
+  const listeners = new Set<Listener>()
+
+  return {
+    getState: () => state,
+
+    setState: (updater: (prev: T) => T) => {
+      const prev = state
+      const next = updater(prev)
+      if (Object.is(next, prev)) return
+      state = next
+      onChange?.({ newState: next, oldState: prev })
+      for (const listener of listeners) listener()
+    },
+
+    subscribe: (listener: Listener) => {
+      listeners.add(listener)
+      return () => listeners.delete(listener)
+    },
+  }
+}
+```
+
+## MCP集成
+
+### 适配器模式
+
+外部MCP工具通过适配器模式统一到工具接口 [8](#4-7) ：
+
+```typescript
+export const MCPTool = buildTool({
+  isMcp: true,
+  isOpenWorld() {
+    return false
+  },
+  name: 'mcp',
+  maxResultSizeChars: 100_000,
+  async description() {
+    return DESCRIPTION
+  },
+  async call() {
+    return {
+      data: '',
+    }
+  },
+  async checkPermissions(): Promise<PermissionResult> {
+    return {
+      behavior: 'passthrough',
+      message: 'MCPTool requires permission.',
+    }
+  },
+  userFacingName: () => 'mcp',
+} satisfies ToolDef<InputSchema, Output>)
+```
+
+## 构建时优化
+
+### 功能门控
+
+使用`feature()`函数实现构建时代码消除 [9](#4-8) ：
+
+```typescript
+import { feature } from 'bun:bundle'
+
+const proactive =
+  feature('PROACTIVE') || feature('KAIROS')
+    ? require('./commands/proactive.js').default
+    : null
+const briefCommand =
+  feature('KAIROS') || feature('KAIROS_BRIEF')
+    ? require('./commands/brief.js').default
+    : null
+const assistantCommand = feature('KAIROS')
+  ? require('./commands/assistant/index.js').default
+  : null
+```
+
+## 关键设计模式总结
+
+1. **工厂模式** - `buildTool`统一工具创建
+2. **判别联合** - 类型安全的变体状态管理
+3. **责任链** - 权限检查流水线
+4. **依赖注入** - `ToolUseContext`贯穿调用栈
+5. **适配器模式** - MCP工具集成
+6. **不可变状态** - 函数式状态更新
+7. **构建时优化** - 功能门控代码消除
+
+这些设计模式共同构成了Claude Code的模块化、可扩展和安全的架构基础，使其能够安全地执行AI驱动的开发任务。
+
+Wiki pages you might want to explore:
+- [Tool System (instructkr/claude-code)](/wiki/instructkr/claude-code#3)
