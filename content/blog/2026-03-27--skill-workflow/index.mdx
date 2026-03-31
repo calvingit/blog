@@ -1,0 +1,567 @@
+---
+title: 从 Vibe Coding 到 Skill Workflow
+slug: skill-workflow
+description: Skill Workflow 不是更强的 prompt，而是用 Orchestrator、HANDOFF 和评估把 AI 功能开发变成稳定流程。
+date: 2026-03-27
+lastUpdated: 2026-03-27
+tags:
+  - AI
+  - Skills
+  - Agents
+---
+
+## 1. 引言：会写代码，不等于能把功能稳稳交付
+
+这两年 AI Coding 工具已经证明了自己的价值。修个页面、补个接口、生成个 model，常常几分钟就能拿到一个像样的结果。
+
+但“完整功能”不是这些小任务的简单相加。
+
+真实的 Flutter 项目里，一个功能通常要同时碰 UI、状态管理、Repository、Service、路由、依赖注入和测试，有时还要兼容旧逻辑、补文档。单轮对话里那句“看起来能用了”，放到这种跨层、跨文件、强依赖的场景里，很容易翻车。常见情况是：
+
+- 分析和执行搅在一起，边界不清
+- 顺序乱了，后写的层反过来推翻前面的实现
+- 子任务同时动手，但没人负责文件所有权
+- 建议方向没问题，落地过程却不稳定
+- 这次做对了也难复用，更难评估
+
+所以问题不只是 prompt 写得够不够漂亮。更关键的是，我们有没有一套能让 AI 按顺序协作的 workflow。
+
+Claude Code 的 Skills 和 subagents 给了基础设施：能力单元可以复用，子代理可以分工、隔离上下文和权限。本文要讨论的，是在这套基础上，怎么给 Flutter 功能开发搭一条更稳的执行链。
+
+## 2. 先拿 Flutter 官方架构做参照，不把它当教条
+
+这里用 Flutter 官方 [App Architecture](https://docs.flutter.dev/app-architecture/guide) 做参照。先说清一点：官方并没有规定唯一正确的“四层模板”，它强调的是 separation of concerns，把应用拆成 UI layer 和 Data layer，再讨论 view、view model、repository、service 的职责和依赖。
+
+本文后面会反复用到这条链路：
+
+```text
+Service -> Repository -> ViewModel -> UI
+```
+
+这不是官方原文逐字照搬，而是为了表达依赖顺序做的工程抽象。
+
+### 2.1 为什么这套分层适合讲 workflow
+
+因为它天然带依赖关系。
+
+view model 管状态，view 做渲染和交互；repository 作为数据来源的聚合层，负责转换、缓存、错误处理；service 负责外部访问，比如 API、本地存储或平台能力。你会发现，下游层总在等上游接口先稳定。
+
+这意味着完整功能的实现顺序通常不是“想到哪写到哪”，而是“先把依赖钉住，再往上收敛”。
+
+### 2.2 从依赖看返工，很多问题就解释得通
+
+ViewModel 契约没定就先写 UI，后面大概率要重绑状态和命令；Repository 输入输出没定，ViewModel 只能猜数据结构；Service 的请求边界还在飘，Repository 的转换逻辑也会跟着飘。
+
+所以我并不是说“Flutter 架构天然等于 workflow”。更准确的说法是：它提供了一个很好的依赖骨架，足够拿来做 workflow 编排。
+
+---
+
+## 3. Skill 不是“高级 prompt”，而是可复用执行单元
+
+很多人第一次接触 Skills，会把它当成“可保存 prompt”。不完全错，但不够用。
+
+Skill 更像一个可调用的执行单元：有触发条件，有输入输出约束，可以自动触发，也能显式调用。和普通 prompt 比，至少有三点不同：
+
+1. 它能复用，不是一次性对话产物。
+2. 它有边界，便于和其他 Skill、subagent 分工。
+3. 它可以被测试、迭代，不靠“这次感觉还行”。
+
+放到 Flutter feature 上看，区别很直观：
+
+- prompt 像临场指挥
+- skill 像固定工种
+
+但别误会：工种齐全，不等于流程就跑得稳。你有 `generate-model`、`new-page`、`add-test`，也不代表它们会自动拼成一条可靠交付链。
+
+---
+
+## 4. 为什么需要 Orchestrator
+
+做 feature 时最常见的误解是：“Skill 多了，复杂任务自然就能做完。”
+
+现实往往是反过来的。你可能已经有：
+
+- 生成 model 的 Skill
+- 生成 Repository 的 Skill
+- 生成 ViewModel 的 Skill
+- 页面和路由接入 Skill
+- 测试 Skill
+
+这些都重要，但它们解决的是单点任务。真正难的是调度：谁先做、谁后做、哪里可以并行、哪里必须串行、哪些决策要先冻结。
+
+这就是 Orchestrator 的价值。它不是“全能写代码”的角色，而是负责：
+
+- 分析需求会落在哪些层
+- 判断任务复杂度
+- 生成执行顺序
+- 明确前置决策
+- 把任务派发给合适的 Skill 或 subagent
+- 汇总结果并把关键上下文传给下游
+
+有了这层，Skill 集合才会从“工具箱”变成“系统”。
+
+---
+
+## 5. 从维度清单到 Layer Graph
+
+很多团队一开始会列维度表：API、Model、Repository、ViewModel、Page、Test、文档。这个表对盘点范围有用，但它不直接回答执行顺序。
+
+如果目标是稳定交付，抽象应该从“维度命中”切到 **Layer Graph**。
+
+### 5.1 Layer Graph 关心什么
+
+不是“这次命中了多少项”，而是：
+
+- 涉及哪些层
+- 每层依赖什么前置
+- 哪些节点是共享风险点
+- 哪些任务能独立推进，哪些必须串行
+
+在 Flutter 语境里，常见节点包括：
+
+- Service / API 接入
+- DTO 或数据模型
+- Repository
+- ViewModel
+- UI / Page
+- Test
+- 文档变更
+
+把这些节点连成图，execution plan 才有依据。
+
+### 5.2 为什么它比“维度数量”更有判断力
+
+复杂度往往不在任务数量，而在依赖耦合。
+
+例如只改 UI 和测试，听起来很轻；但如果同时改 i18n、全局路由、ViewModel command，协作风险会陡增。反过来，改三四层但都在新文件且边界清楚，也可能很顺。
+
+所以判断重点应该是：
+
+- 是否跨层依赖
+- 是否触及共享文件或全局入口
+- 是否必须先冻结上游契约
+- 是否会改变下游实现方式
+
+---
+
+## 6. Complexity Gate：先判断协作风险
+
+仅有依赖图还不够。你还得决定：这次是直接执行，还是先出 plan。
+
+我更推荐按下面顺序做复杂度门控：
+
+1. 需求是否有歧义，或存在多种实现路线。
+2. 是否跨层、跨模块。
+3. 是否触及共享风险文件或全局入口。
+4. 上游契约是否必须先稳定。
+
+命中越多，越应该先规划后执行，而不是一把梭并行开写。
+
+### 6.1 这比“轻任务/重任务”二分更实用
+
+AI Coding 返工经常不是“写太多代码”，而是：
+
+- 多处同时改共享文件
+- 下游先生成后被上游推翻
+- 局部改动意外牵动全局入口
+- 关键决策没被显式固定
+
+所以复杂度的核心不是代码行数，而是协作风险。
+
+---
+
+## 7. 编排核心：依赖优先，不是并行优先
+
+一句话概括：并行不是默认优化，依赖清晰才是。
+
+### 7.1 一个常用的执行链
+
+```text
+Batch 0: 需求澄清 / 契约确认 / 兼容性分析
+Batch 1: Service / Model / Repository
+Batch 2: ViewModel
+Batch 3: UI / Page / 路由接入
+Batch 4: 测试 / 文档 / 收尾
+```
+
+这套顺序不神圣，但它符合依赖事实：UI 依赖 ViewModel，ViewModel 依赖 Repository，Repository 依赖 Service 约束。
+
+### 7.2 为什么测试通常放在后段
+
+测试可以早参与设计，但在自动生成场景里，上游接口若还在变化，测试会变成“跟着返工的产物”，很难提供有效验证。
+
+例如：
+
+- Repository 返回类型没定
+- ViewModel command 还在改名
+- UI 状态字段在漂移
+
+这时先大量生成测试，往往只是提前制造维护成本。
+
+### 7.3 并行可以做，但要先过条件
+
+可以并行的前提很朴素：
+
+- 没有共享的未定依赖
+- 不写同一个文件
+- 不会生成互相不兼容的接口
+
+满足这些，再并行。否则就先串行把关键约束钉住。
+
+---
+
+## 8. Sub-Skill 与 subagent：任务必须可派发
+
+很多系统不是败在模型能力，而是败在派发质量。
+
+Claude Code 的 subagent 支持独立上下文、系统提示、工具权限，这是好事。但它也要求你把任务定义清楚，否则子任务只能猜。
+
+### 8.1 一个可派发任务，至少要交代四件事
+
+1. 用哪个能力单元执行。
+2. 上游给了哪些稳定上下文。
+3. 可改文件和禁改文件。
+4. 返回格式是什么。
+
+少一项，主调度层都要花额外成本补洞。
+
+### 8.2 子任务目标是稳定，不是“自由发挥”
+
+“写得很像人”不是这里的关键指标。输入、边界、输出定义完整，才是多 Skill 协作能跑稳的前提。
+
+---
+
+## 9. HANDOFF：把关键上下文结构化传下去
+
+先界定术语：本文里的 HANDOFF 不是 Claude Code 官方术语，是我用来描述跨 Skill/subagent 协作的上下文协议。
+
+很多失败看起来像“模型理解错了”，本质上是上游没把关键约束交给下游。
+
+### 9.1 为什么它比自然语言总结更可靠
+
+一句“请基于登录接口继续实现”几乎没有约束力。
+
+如果改成结构化交付：
+
+- 已确认模型字段
+- Repository 方法签名
+- ViewModel 命令清单
+- 页面类型与目标路径
+- 允许/禁止修改的文件
+- 已冻结的技术决策
+
+下游就能少猜很多，兼容性问题也会明显下降。
+
+### 9.2 一个实用最小结构
+
+```yaml
+upstream_outputs:
+  models: ...
+  repository_contracts: ...
+  viewmodel_contracts: ...
+
+constraints:
+  allowed_files: [...]
+  forbidden_files: [...]
+
+decisions:
+  page_type: route
+  state_pattern: command_based
+  network_client: dio
+
+expected_output:
+  changed_files: [...]
+  blockers: [...]
+```
+
+字段名可以改，但原则别丢：上游已定的事不重复决策，影响实现方式的选择要显式传递，文件边界要落到路径，缺关键输入就返回 BLOCKER。
+
+---
+
+## 10. `SKILL.md` 的定位：写契约，不写百科
+
+方法论文章里塞太多模板细节，阅读节奏会被打断。所以这里保留一个核心判断：
+
+> 在 workflow 语境下，`SKILL.md` 的首要职责是写清执行契约。
+
+一个可维护的 `SKILL.md`，至少回答：
+
+- 什么情况下触发
+- 它负责什么，不负责什么
+- 依赖哪些输入
+- 如何划分顺序和依赖
+- 输出格式是什么
+
+说白了，它更像接口说明，不像教程长文。
+
+---
+
+## 11. 在 Claude Code 里怎么落地
+
+把平台能力和方法抽象对应起来看，会更清晰。
+
+### 11.1 平台已经给到的能力
+
+- Skills 可通过 `SKILL.md` 定义和加载
+- 支持自动触发和显式调用
+- 支持 subagent 独立执行
+- subagent 可配置独立上下文、工具权限、系统提示
+
+### 11.2 本文额外补上的工程层
+
+- 用分层关系生成 Layer Graph
+- 用 Complexity Gate 决定先 plan 还是直跑
+- 用 Batch 固化执行顺序
+- 用 HANDOFF 传结构化上下文
+- 用文件边界约束冲突
+- 用 Evaluation 做回测
+
+### 11.3 一个可执行的团队形态
+
+- 一个 Orchestrator Skill：分析需求、分批次、发 HANDOFF
+- 多个实现型 Skill/subagent：分别负责 Service、Repository、ViewModel、UI、Test
+- 一套文件所有权规则：避免关键文件并发写
+- 一组评估用例：检查顺序、接口一致性、边界和失败模式
+
+这比“全能大 Skill 一把写完”更可维护，也比“全靠临场 prompt”更稳定。
+
+---
+
+## 12. 常见失败模式：问题多半出在协作约束
+
+### 12.1 顺序错位
+
+UI 先落地，ViewModel 和 Repository 契约后补，返工几乎必然发生。
+
+### 12.2 输入不足
+
+子任务拿不到稳定上下文，只能自行补设定，最后方法签名、字段命名、状态模型各写各的。
+
+### 12.3 共享文件无人负责
+
+路由注册、全局 DI、基础模型被多个子任务同时修改，冲突不是偶发，是机制问题。
+
+### 12.4 并行滥用
+
+上游契约未稳就全面并行，速度没提上来，集成成本先爆炸。
+
+### 12.5 评估只看措辞
+
+“提到了 Repository”“说了先做 ViewModel”不代表执行真的遵守顺序。更有效的检查是：
+
+- 下游是否复用了上游契约
+- Batch 顺序是否被遵守
+- 文件边界是否被突破
+- 关键信息缺失时是否返回 BLOCKER
+
+---
+
+## 13. Evaluation：终点不是触发成功，而是行为可验证
+
+Skill 很容易陷入“这次看起来不错”的幻觉。workflow 场景里，真正该验证的是稳定性。
+
+### 13.1 为什么要做 with-skill / without-skill 对照
+
+没有 baseline，很难判断是 workflow 真有收益，还是样本本来就简单。
+
+### 13.2 评估重点应该放在结构信号
+
+- 复杂任务是否先出 plan
+- 是否识别了受影响层
+- 是否按依赖排序
+- 是否单列共享风险文件
+- 是否把上游决策传给下游
+- 测试是否在契约稳定后收敛
+- 缺关键输入时是否返回 BLOCKER
+
+### 13.3 为什么关键词打分不够
+
+系统最常见的伪成功是“话说对了，动作没做对”。
+
+你可以在文本里写“先 Repository 再 ViewModel”，执行时却让 UI 和 Repository 并行，或者漏掉契约传递。真正的评估要盯执行结构，不盯漂亮表述。
+
+---
+
+## 14. 总结：把架构思维翻译成可执行流程
+
+回到起点：为什么会写代码，不等于能稳定交付功能？
+
+因为难点不只在代码生成，而在协作顺序和约束管理：
+
+- 谁先做
+- 谁后做
+- 哪些决策先冻结
+- 哪些信息必须下传
+- 哪些文件要限制并发改动
+- 完成标准怎么定义
+
+Flutter 官方架构给了依赖骨架，Claude Code 给了 Skills 和 subagents 这套基础设施。把两者接起来，再补上 Orchestrator、HANDOFF、Evaluation，你就能把“这次碰巧做对”变成“下次也大概率做对”。
+
+这就是 Skill Workflow 相比 Vibe Coding 更值钱的地方：它沉淀的是可复用的系统能力。
+
+---
+
+## 参考文档
+
+1. [Claude Code Docs](https://code.claude.com/docs/en/common-workflows)
+
+2. [MindStudio, _How to Build a Claude Code Skill Chain for Business Workflow_.](https://www.mindstudio.ai/blog/how-to-build-claude-code-skill-chain-business-workflow)
+
+3. [How to use Claude skills](https://zapier.com/blog/claude-skills/)
+
+## 附录一：Orchestrator SKILL.md 模板
+
+````markdown
+---
+name: flutter-feature-orchestrator
+description: >
+  Orchestrates the implementation of a complete Flutter feature following
+  App Architecture. Analyzes layer dependencies, divides work into
+  dependency-ordered batches, and dispatches sub-skills with structured
+  HANDOFF context.
+allowed-tools:
+  - Read
+  - Write
+  - Bash
+  - mcp__filesystem
+---
+
+# Flutter Feature Orchestrator
+
+## Trigger
+
+Use this skill when asked to implement a complete feature that touches
+multiple architectural layers (Service / Repository / ViewModel / UI).
+
+## Input Schema
+
+```yaml
+feature_name: string          # 功能名称，用于文件命名
+feature_description: string   # 功能需求描述
+affected_layers:              # 涉及的层（可省略，Orchestrator 自动识别）
+  - service
+  - repository
+  - viewmodel
+  - ui
+existing_files: []            # 已有相关文件路径（避免重复创建）
+```
+
+## Execution Steps
+
+### Step 1: Layer Analysis
+
+识别本次功能涉及的所有层和文件：
+
+- 扫描现有文件结构
+- 标注每个文件所属的架构层
+- 识别现有接口和数据模型
+
+### Step 2: Dependency Graph
+
+构建有向无环图：
+
+- 节点 = 需要创建/修改的文件
+- 边 = 依赖关系（A → B 表示 A 的完成是 B 的前置条件）
+
+### Step 3: Complexity Gate
+
+评估任务规模：
+
+- Simple（1-2层，单一职责）→ 直接执行，无需分 Batch
+- Medium（3层，标准功能）→ 3个串行 Batch
+- Complex（4层，多模块）→ 4个串行 Batch，层内并行
+
+### Step 4: Batch Division
+
+按依赖图划分 Batch：
+
+- Batch 内任务必须相互独立（无文件交叉、无接口依赖）
+- 串行顺序严格遵循 Service → Repository → ViewModel → UI
+
+### Step 5: Sub-Skill Dispatch
+
+为每个 Sub-Skill 构建 HANDOFF，包含：
+
+- 来自上游 Batch 的接口定义
+- 文件所有权声明
+- 可执行的任务定义（非描述性）
+- 预期输出格式
+
+### Step 6: Batch Completion Verification
+
+每个 Batch 完成后验证：
+
+- 所有声明的文件是否已创建
+- 接口签名是否与 HANDOFF 预期一致
+- 是否有未解决的依赖
+
+### Step 7: Risk Detection
+
+执行前识别以下风险：
+
+- 循环依赖（Dependency Graph 中存在环）
+- 接口冲突（同一接口被多个 Sub-Skill 重复定义）
+- 文件所有权冲突（同一文件被多个 Sub-Skill 声明 own）
+
+## Output
+
+- 完整功能实现（所有层）
+- 执行报告（每个 Batch 的产物清单）
+- 架构决策记录（HANDOFF decisions 字段的汇总）
+````
+
+## 附录二：Sub-Skill SKILL.md 模板
+
+````markdown
+---
+name: implement-repository-layer
+description: >
+  Implements the Repository layer for a Flutter feature. Requires
+  completed Service layer interfaces via HANDOFF. Outputs Repository
+  abstract interface and implementation.
+allowed-tools:
+  - Read
+  - Write
+---
+
+# Repository Layer Implementation
+
+## Input（来自 HANDOFF）
+
+```yaml
+service_interfaces: []     # Service 层暴露的方法签名列表
+data_models: []            # 数据模型定义
+decisions: []              # 上游架构决策
+```
+
+## Constraints
+
+```yaml
+owns:
+  - "lib/data/repositories/{feature}_repository.dart"
+  - "lib/data/repositories/{feature}_repository_impl.dart"
+reads:
+  - "lib/data/services/"
+must_not_modify:
+  - "lib/domain/"
+  - "lib/ui/"
+  - "lib/presentation/"
+```
+
+## Execution
+
+1. 根据 Service 接口定义抽象 Repository 接口
+2. 实现 RepositoryImpl，调用对应 Service 方法
+3. 统一错误处理（映射 Service 异常 → Domain 异常）
+4. 输出完成报告
+
+## Output Format
+
+```yaml
+produced_files:
+  - path: string
+    interfaces: []
+decisions: []
+pending: []
+```
+````
