@@ -1,4 +1,4 @@
-import type { Root } from 'mdast'
+import type { Code, Root } from 'mdast'
 import type { MdxJsxFlowElement } from 'mdast-util-mdx-jsx'
 import type { AsideType } from './constants'
 import { toString } from 'mdast-util-to-string'
@@ -55,6 +55,30 @@ export function remarkAsides() {
         name: 'Aside',
         attributes,
         children: node.children,
+      })
+    })
+  }
+}
+
+export function remarkMermaid() {
+  return (tree: Root) => {
+    visit(tree, (node, nodeIndex, parent) => {
+      if (!parent || nodeIndex === undefined || node.type !== 'code' || node.lang !== 'mermaid')
+        return
+
+      const codeNode = node as Code
+
+      parent.children.splice(nodeIndex, 1, {
+        type: 'mdxJsxFlowElement',
+        name: 'Mermaid',
+        attributes: [
+          {
+            type: 'mdxJsxAttribute',
+            name: 'chart',
+            value: codeNode.value,
+          },
+        ] satisfies MdxJsxFlowElement['attributes'],
+        children: [],
       })
     })
   }

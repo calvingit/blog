@@ -6,21 +6,50 @@ interface Props {
 const { chart } = Astro.props
 ---
 
-<pre class="mermaid" set:text={chart} />
+<div class="mermaid" set:text={chart} />
 
 <script>
   import mermaid from 'mermaid'
 
-  mermaid.initialize({
-    startOnLoad: false,
-    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default',
-  })
+  let nextId = 0
+
+  function getTheme() {
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+  }
+
+  function initializeMermaid() {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: getTheme(),
+    })
+  }
+
+  initializeMermaid()
+
+  async function renderElement(element) {
+    const container = element
+    const chart = container.__chart ?? container.textContent ?? ''
+
+    if (!chart.trim()) {
+      return
+    }
+
+    container.__chart = chart
+
+    const { svg, bindFunctions } = await mermaid.render(`mermaid-${nextId++}`, chart)
+    container.innerHTML = svg
+    bindFunctions?.(container)
+  }
 
   async function renderMermaid() {
-    const elements = document.querySelectorAll<HTMLPreElement>('pre.mermaid')
-    if (elements.length === 0) return
+    const elements = document.querySelectorAll('.mermaid')
+    if (elements.length === 0) {
+      return
+    }
 
-    await mermaid.run({ nodes: elements })
+    for (const element of elements) {
+      await renderElement(element)
+    }
   }
 
   renderMermaid()
@@ -29,12 +58,7 @@ const { chart } = Astro.props
   const observer = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       if (mutation.attributeName === 'data-theme') {
-        const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
-        mermaid.initialize({ startOnLoad: false, theme })
-        // Reset and re-render
-        document.querySelectorAll<HTMLPreElement>('pre.mermaid').forEach((el) => {
-          el.removeAttribute('data-processed')
-        })
+        initializeMermaid()
         renderMermaid()
       }
     }
@@ -44,7 +68,7 @@ const { chart } = Astro.props
 </script>
 
 <style>
-  pre.mermaid {
+  .mermaid {
     background: transparent;
     border: none;
     text-align: center;

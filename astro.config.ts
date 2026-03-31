@@ -16,7 +16,7 @@ import rehypeSlug from 'rehype-slug'
 import remarkDirective from 'remark-directive'
 import remarkSmartypants from 'remark-smartypants'
 import { SITE } from './src/constants'
-import { remarkAsides } from './src/remark'
+import { remarkAsides, remarkMermaid } from './src/remark'
 import { pagefindIntegration } from './src/utils'
 
 export default defineConfig({
@@ -35,7 +35,7 @@ export default defineConfig({
   },
   markdown: {
     // @ts-expect-error: Astro types don't match remark plugin
-    remarkPlugins: [[remarkSmartypants, { backticks: false }], remarkDirective, remarkAsides, [remarkSandpack, { componentName: ['Playground'] }]],
+    remarkPlugins: [[remarkSmartypants, { backticks: false }], remarkDirective, remarkAsides, remarkMermaid, [remarkSandpack, { componentName: ['Playground'] }]],
     rehypePlugins: [
       rehypeSlug,
       [
