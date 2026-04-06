@@ -2,7 +2,6 @@
 
 ## Repository
 
-Path: `/Users/zhangwen/Workspace/mini-blog`
 Package manager: `pnpm`
 Remote: `origin` (GitHub)
 
