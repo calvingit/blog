@@ -17,42 +17,103 @@ tags:
 
 **系统设计的核心不在于 Agent 的数量，而在于任务所需的协作模式。** 与其去数你需要多少个 Agent，不如先问一个更本质的问题：这个任务到底需要什么样的协调？是需要完全隔离执行的 **Sub-Agents**，还是需要实时通信的 **Agent Teams**？强行引入多智能体架构，往往只是徒增系统协调开销，甚至导致崩溃。
 
+Claude 风格的系统为我们提供了两种截然不同的架构路径：Sub-Agents 和 Agent Teams。它们看似相似，但解决的是完全不同的问题。
+
 ## 两种截然不同的协作范式
 
-### Sub-Agents：高度隔离的“函数调用”
+### Sub-Agents：高度隔离的并行执行
 
-Sub-Agents 的本质是**隔离与并行**。你可以把它看作是一个高级的函数调用。
+Sub-Agents 的本质是**隔离与并行**。你可以把它看作是一种高级的委托机制。
 
-它是一个被高度隔离的实例，拥有自己独立的系统提示词、工具集和上下文。它的职责非常明确：接收输入，把混乱的探索过程在内部消化，最后向父级返回一个干净的信号或结果。
+它是一个被高度隔离的实例，拥有自己独立的系统提示词、受限的工具集和完全隔离的上下文。它的职责非常明确：接收单次、明确限定范围的任务输入，把混乱的探索过程在内部消化，最后向父级返回一个干净的最终结果（不包含中间推理步骤）。
 
-在 Sub-Agents 模式下，Agent 之间无法直接对话，也不能互相创建新实例。这就像是把任务分发给不同的专业外包团队——你只关心最终交付的结果，至于他们内部是如何运作的，父级 Agent 并不关心。
+**Sub-Agents 的核心特征是执行导向：**
+- **孤立的（Isolated）**
+- **无状态的（Stateless）**
+- **一次性的（One-shot）**
+- **由父级控制的（Parent-controlled）**
 
-### Agent Teams：动态交互的“操作系统”
+在 Sub-Agents 模式下，Agent 之间无法直接对话，也不能互相创建新实例。所有的信息都必须流经父级节点。这保证了系统的可预测性和整洁度。
 
-与 Sub-Agents 的孤立性不同，Agent Teams 更像是一个**动态运行的操作系统**。
+以下是一个使用伪代码（参考 `claude_agent_sdk`）实现 Sub-Agents 路由的典型例子：
 
-它们的核心在于**协作**，通过共享任务层和实时通信来同步状态。比如，在一个由 Agent Teams 组成的开发环境中，前端 Agent 发现了一个接口变动，它可以立刻通知后端 Agent 进行调整。这种模式是持久的，且具有极强的交互性，适合需要高频状态同步的复杂任务。
+```python
+from claude_agent_sdk import query, ClaudeAgentOptions, AgentDefinition
+
+async def main():
+    async for message in query(
+        prompt="Review the authentication module for issues",
+        options=ClaudeAgentOptions(
+            allowed_tools=["Read", "Grep", "Glob", "Agent"],
+            agents={
+                "security-reviewer": AgentDefinition(
+                    description="Find vulnerabilities and security risks",
+                    prompt="You are a security expert.",
+                    tools=["Read", "Grep", "Glob"],
+                    model="sonnet",
+                ),
+                "performance-optimizer": AgentDefinition(
+                    description="Identify performance bottlenecks",
+                    prompt="You are a performance engineer.",
+                    tools=["Read", "Grep", "Glob"],
+                    model="sonnet",
+                ),
+            },
+        ),
+    ):
+        print(message)
+```
+
+> **核心细节**：在上述配置中，`description` 字段扮演着至关重要的“路由信号（Routing Signal）”角色。父级 Agent 通过它来决定将任务分发给哪个专职 Sub-Agent。
+
+### Agent Teams：通过通信实现协调
+
+与 Sub-Agents 的孤立性不同，Agent Teams 专为**协作**而生。
+
+它们包含负责分配和综合的“领导者（Lead agent）”、负责执行的“团队成员（Teammates）”，以及一个用于追踪进度和依赖的“共享任务层”。通过这种机制，一个前端 Agent 发现的变动可以立刻通知后端 Agent 并实时同步状态。
+
+**Agent Teams 的核心特征是协作导向：**
+- **持久的（Persistent）**
+- **交互式的（Interactive）**
+- **共享上下文的（Context-sharing）**
+- **点对点的（Peer-to-peer）**
+
+**核心原则：** 当任务是独立的时候使用 Sub-Agents；当任务彼此强依赖时使用 Agent Teams。
 
 ## 任务拆分的致命误区：按角色划分
 
-很多人在设计 Agent 架构时，习惯性地照搬人类的组织架构，按“角色”进行拆分：规划者（Planner）、开发者（Coder）、测试者（Tester）。
+很多人在设计多智能体架构时，习惯性地照搬人类的组织架构，按“角色”进行拆分：规划者（Planner）、开发者（Coder）、测试者（Tester）。
 
 **这种做法会导致严重的上下文丢失。**
 
-当任务在不同角色的 Agent 之间流转时，每一次交接都是一次信息熵增。执行者不清楚规划者的初衷，测试者也不了解执行者在写代码时面临的决策细节。这种断层会让整个系统变得极其脆弱。
+当任务在不同角色间流转时，每一次交接都是一次信息熵增。执行者不清楚规划者的初衷，测试者也不了解执行者在写代码时面临的决策细节。质量在每一次边界交接中不断下降。
 
 ## 正确的拆分逻辑：基于上下文边界
 
-真正有效的任务拆分，不是看“谁负责干什么”，而是看“**上下文的边界在哪里**”。
+真正有效的任务拆分，不是看“谁负责干什么”，而是基于**上下文边界**的解耦。
 
-如果两个任务共享着深层的背景信息和业务逻辑，就把它们留在同一个 Agent 里。**只有当上下文可以被干净地剥离、且不需要频繁的状态同步时，才应该进行拆分。**
+你需要问自己：**这个任务到底需要哪些深层信息？**
+如果两个任务共享着深层的背景信息，就把它们留在同一个 Agent 里。**只有当上下文可以被干净地剥离时，才应该进行拆分。**
 
 在具体设计时，可以参考业界常用的五种架构模式：
+1. **提示词链（Prompt Chaining）** —— 顺序执行的流水线
+2. **路由（Routing）** —— 将特定任务分发给最合适的 Agent
+3. **并行化（Parallelization）** —— 同时运行相互独立的工作
+4. **编排者-执行者（Orchestrator-Worker）** —— 由单一中心 Agent 进行任务委派
+5. **评估者-优化者（Evaluator-Optimizer）** —— 持续的生成与迭代优化
 
-- **提示词链（Prompt Chaining）**
-- **路由（Routing）**
-- **并行化（Parallelization）**
-- **编排者-执行者（Orchestrator-Worker）**
-- **评估者-优化者（Evaluator-Optimizer）**
+## 什么时候不该使用多智能体？
 
-如果任务本身很简单，或者不同步骤之间存在极强的依赖关系，单体大模型（单一 Agent）往往是最好的选择。盲目追求多智能体，反而会让系统在无尽的协调和通信中走向崩溃。
+很多时候，一个强大的单体大模型（Single Agent）就已经足够了。与其盲目增加复杂度，不如遵循以下判断标准：
+
+**✅ 适合引入多智能体系统的场景：**
+- 你需要严格的上下文隔离
+- 存在可以并行处理的任务
+- 任务需要极度专门化（Specialization）的工具或提示词
+
+**❌ 应避免引入多智能体系统的场景：**
+- 任务之间存在极强的相互依赖
+- 协调和通信的开销过大
+- 任务本身非常简单
+
+**最终原则：** 围绕“上下文边界”进行设计，而不是“角色”。从最简单的架构开始，只在真正需要时才引入复杂性。
