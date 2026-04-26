@@ -1,69 +1,208 @@
 ---
 title: "拆解 AI 协作逻辑：Sub-Agents 与 Agent Teams 的核心差异"
 slug: "agent-teams-vs-sub-agents"
-description: "构建 AI 系统时，多数人会陷入盲目堆砌多智能体的误区。本文解析 Sub-Agents 与 Agent Teams 的本质区别，并探讨如何基于上下文边界进行有效的任务拆分。"
+description: "构建 AI 系统时，多 Agent 架构并不是默认答案。本文从上下文边界、通信拓扑、控制权和工程成本出发，拆解 Sub-Agents、Agent Teams 与 Single Agent 的适用边界。"
 date: 2026-04-26
 lastUpdated: 2026-04-26
 tags:
   - "AI"
   - "Agents"
+  - "Claude Code"
+  - "Multi-Agent"
 ---
 
-:::note[引用说明]
-本文基于 Suryanshti777 的观点学习与整理：[拆解 AI 协作逻辑：Sub-Agents 与 Agent Teams 核心差异](https://x.com/Suryanshti777/status/2047694444787577236)。
-:::
+遇到复杂 AI 任务，很多人的第一反应是：“多开几个 Agent。”
 
-面对复杂的 AI 任务，很多开发者的第一反应是“多加几个 Agent”。这往往是一个昂贵的误区。
+这个反应通常很贵，而且多半不对。
 
-**系统设计的核心不在于 Agent 的数量，而在于任务所需的协作模式。** 与其去数你需要多少个 Agent，不如先问一个更本质的问题：这个任务到底需要什么样的协调？
+多 Agent 架构的关键不是 Agent 的数量，而是它们怎么协作。影响系统质量的就那么几个变量：任务之间能不能共享深层上下文、要不要持续通信、谁做最终决定、多个 Agent 的输出能不能稳定合到一起。
 
-答案将决定你整个架构的走向。
+Claude Code 体系里有两个容易搞混的概念：**Sub-Agents** 和 **Agent Teams**。它们都能把任务拆出去并行跑，但解决的是完全不同的问题。
 
-Claude 风格的系统为我们提供了两种截然不同的架构路径：Sub-Agents（子智能体）和 Agent Teams（智能体团队）。它们看似相似，但解决的是完全不同的问题。
+Sub-Agents 更像是“一次受控委托”。父级 Agent 把一个边界清晰的任务交给子 Agent，子 Agent 在自己的隔离上下文里干活，然后把摘要结果返回主会话。Claude Code 官方文档写得明白：Subagent 跑在自己的 context window 里，有自定义的 system prompt、特定工具权限和独立权限，最适合处理那些会污染主会话的搜索结果、日志或文件内容。([Claude][1])
 
-![Sub-Agents vs Agent Teams 架构对比](https://pbs.twimg.com/media/HGreTwvaMAA2pxv?format=jpg&name=900x900)
+Agent Teams 是另一种玩法：多个 Claude Code session 组成一个团队，由一个 lead 协调，每个 teammate 有独立上下文，通过 shared task list 和 mailbox 来协作。Claude Code 官方文档也明确说了：Agent Teams 还是实验性能力，默认关闭，有 session resumption、task coordination、shutdown behavior 等一系列限制。([Claude][2])
 
-## 两种截然不同的协作范式
+判断该用哪个，先别问“我要几个 Agent”。问这四个问题：
 
-### Sub-Agents：高度隔离的并行执行
+> 这个任务的上下文能不能干净切开？
+> 结果是不是汇总一下就够了？
+> Agent 之间需不需要互相说话？
+> 协调成本比单体执行低吗？
 
-Sub-Agents 的本质是**隔离与并行**。你可以把它看作是一种高级的委托机制：你分配专注的工作，它返回一个干净的结果。
+这四个问题，比什么“Planner / Coder / Tester”的角色划分实在多了。
 
-每个 Sub-Agent 拥有：
-- 定义其角色的系统提示词
-- 受限的工具集
-- 完全隔离的上下文
-- 单一且明确的任务目标
+## 多 Agent 不是默认答案
 
-![Sub-Agents 工作流](https://pbs.twimg.com/media/HGret2raIAA_l3D?format=jpg&name=900x900)
+Anthropic 在《Building effective agents》里把 agentic systems 分成两类：workflows——LLM 和工具沿着写死的代码路径跑；agents——LLM 动态决定流程和工具怎么用。文档还强调：先简单，确实需要复杂了再加码。([Anthropic][3])
 
-当它完成任务时，它**只返回最终输出，不包含推理过程或中间步骤**。这一点非常关键：Sub-Agents 的核心价值在于**信息压缩**，而不仅仅是速度。它们负责把混乱的探索过程提纯为一个干净的信号。
+这条原则对多 Agent 设计尤其重要。
 
-**为了保持系统的可预测性，Sub-Agents 有着严格的约束：**
-- 不能互相直接对话
-- 不能生成新的 Agent
-- 所有的信息交互必须流经父级节点
+多 Agent 有收益，也有成本：
 
-以下是一个使用伪代码（参考 `claude_agent_sdk`）实现 Sub-Agents 路由的典型例子：
+- 每个 Agent 都可能占一个上下文窗口
+- 每个 Agent 都需要指令、工具、权限和输出格式
+- 多个 Agent 的结果要合并、去重、处理冲突
+- 多个 Agent 同时改代码可能互相覆盖
+- 系统要追踪谁做了什么、为什么做、能不能信
+
+所以多 Agent 不是更高级的默认选项。它只是一种架构选择，只有当上下文隔离、并行探索、专业工具权限、互相审查这些收益，能盖过协调成本的时候，才值得引入。
+
+## 三种基本协作形态
+
+在聊 Sub-Agents 和 Agent Teams 之前，先把 Single Agent 放回图里。
+
+很多复杂任务其实一个强 Agent 就能搞定——尤其是那些需要连续判断、共享大量隐含上下文、频繁改同一批文件的任务。拆分只会制造交接损耗。
+
+用三种形态搭个判断框架：
+
+| 模式         | 通信方式                             | 上下文形态                           | 控制权                | 适合场景                                                |
+| ------------ | ------------------------------------ | ------------------------------------ | --------------------- | ------------------------------------------------------- |
+| Single Agent | 单会话内部完成                       | 一个连续上下文                       | 主 Agent 完全控制     | 深度设计、复杂重构、强依赖修改                          |
+| Sub-Agents   | Parent → Sub-Agent → Parent          | 子 Agent 隔离执行，只返回结果        | 父级 Agent 控制       | 搜索、审查、分类、独立调研、并行分析                    |
+| Agent Teams  | Lead + Teammates + Shared Task Layer | 每个 teammate 独立上下文，可互相通信 | Lead 协调，成员可协作 | 跨模块协作、竞争性假设排查、并行 review、新功能分块开发 |
+
+这三类没有绝对的高下。差别在于：**上下文在谁手里、谁有最终输出权、Agent 之间能不能直接通信、任务状态存在哪里。**
+
+## Sub-Agents：隔离执行与信息压缩
+
+Sub-Agents 的价值就两点：**隔离执行**和**信息压缩**。
+
+主 Agent 要读大量文件、搜日志、扫代码、审 PR、做专项分析——这些中间信息如果全塞进主会话，上下文就爆了。Sub-Agent 的作用就是把这类“高噪声探索”扔进独立上下文，只把干净的结论还给主 Agent。
+
+Claude Agent SDK 文档说得更直接：Subagents 是主 Agent 可以 spawn 的独立 Agent 实例，用来隔离上下文、并行执行分析、应用专门指令，同时避免主 Agent 的 prompt 膨胀；每个 Subagent 的中间工具调用和结果都留在子上下文里，父级只收最终消息。([Claude][4])
+
+一个典型的 Sub-Agent 长这样：
+
+- 有明确的角色描述
+- 有独立的 system prompt
+- 有受限的工具集
+- 有独立的上下文窗口
+- 只有一个任务目标
+- 输出返回给父级 Agent
+- 不和其他 Sub-Agent 直接通信
+
+这更像受控的工具调用，不是团队协作。
+
+### Sub-Agent 的典型场景
+
+Sub-Agent 适合边界清晰、可以独立完成、只需要返回结果的任务。
+
+比如：
+
+- 让 `security-reviewer` 检查鉴权、权限、输入校验
+- 让 `performance-reviewer` 查 N+1 查询、缓存缺失、复杂度
+- 让 `test-reviewer` 查测试覆盖、边界条件、mock 是否合理
+- 让 `doc-researcher` 读一批文档，只返回摘要和引用
+- 让 `codebase-explorer` 扫一遍项目结构，返回关键模块关系
+
+这些任务的共同点：主 Agent 不需要看中间搜索过程，只要拿到结构化结论就行。
+
+### Sub-Agent 的路由信号
+
+Sub-Agent 能不能被正确调用，看 `description`。
+
+在 Claude Code 和 Claude Agent SDK 的设计里，父级 Agent 根据 Sub-Agent 的 description 来决定要不要委派任务。官方文档也说了：把 description 写清楚，Claude 靠它判断要不要 delegation。([Claude][1])
+
+可以把 `description` 理解为“路由信号”。
+
+差的 description：
+
+```text
+Help with code review.
+```
+
+好一点的：
+
+```text
+Use this agent when you need a read-only security review of authentication, authorization, input validation, secrets handling, or dependency risk. It should report findings with file paths, evidence, severity, and suggested verification steps.
+```
+
+第二种写法更稳，因为它限定了：
+
+- 什么时候用
+- 检查什么
+- 不检查什么
+- 输出里要有什么
+- 工具权限边界在哪
+
+### Sub-Agent 输出契约
+
+Sub-Agent 的价值不只是“帮忙干活”——是把复杂探索压缩成可合并的信号。
+
+一个合格的 Sub-Agent 输出，不应该是：
+
+```text
+我检查完了，看起来还可以，但有几个地方可能需要注意。
+```
+
+更适合工程使用的输出结构是：
+
+```markdown
+## Scope
+
+- Reviewed files:
+  - `src/auth/session.ts`
+  - `src/auth/permissions.ts`
+  - `src/api/login.ts`
+
+## Findings
+
+### 1. Missing permission check before reading tenant-level data
+
+- Severity: High
+- Confidence: High
+- Evidence: `src/api/login.ts:82`
+- Risk: User may access tenant data without verifying tenant membership.
+- Suggested fix: Check `tenantId` against authenticated user's tenant memberships before querying.
+- Verification: Add an integration test for cross-tenant access denial.
+
+## Unknowns
+
+- Did not inspect production gateway middleware.
+- Did not inspect database row-level security policy.
+```
+
+这种输出可以被父级 Agent 稳定合并、排序、去重，也能进入后续修复流程。
+
+### Sub-Agent 示例
+
+下面用伪代码示意 Sub-Agent 路由的思路（接近 Claude Agent SDK 的 programmatic definition 风格）：
 
 ```python
 from claude_agent_sdk import query, ClaudeAgentOptions, AgentDefinition
 
 async def main():
     async for message in query(
-        prompt="Review the authentication module for issues",
+        prompt="Review the authentication module for security and performance issues",
         options=ClaudeAgentOptions(
             allowed_tools=["Read", "Grep", "Glob", "Agent"],
             agents={
                 "security-reviewer": AgentDefinition(
-                    description="Find vulnerabilities and security risks",
-                    prompt="You are a security expert.",
+                    description=(
+                        "Use this agent for read-only security review of "
+                        "authentication, authorization, input validation, "
+                        "secrets handling, and dependency risk."
+                    ),
+                    prompt=(
+                        "You are a senior application security reviewer. "
+                        "Return findings with scope, evidence, severity, "
+                        "confidence, suggested fix, and verification steps."
+                    ),
                     tools=["Read", "Grep", "Glob"],
                     model="sonnet",
                 ),
-                "performance-optimizer": AgentDefinition(
-                    description="Identify performance bottlenecks",
-                    prompt="You are a performance engineer.",
+                "performance-reviewer": AgentDefinition(
+                    description=(
+                        "Use this agent for read-only performance review, "
+                        "including N+1 queries, inefficient loops, caching gaps, "
+                        "and avoidable network or database calls."
+                    ),
+                    prompt=(
+                        "You are a senior performance engineer. "
+                        "Return findings with scope, evidence, impact, "
+                        "suggested fix, and benchmark or test strategy."
+                    ),
                     tools=["Read", "Grep", "Glob"],
                     model="sonnet",
                 ),
@@ -73,70 +212,679 @@ async def main():
         print(message)
 ```
 
-> **核心细节**：在上述配置中，`description` 字段扮演着至关重要的“路由信号”角色。父级 Agent 通过它来决定将任务分发给哪个专职 Sub-Agent。
+这个例子的重点不在 API 本身，而在三个设计点：
 
-### Agent Teams：通过通信实现协作
+- 每个 Sub-Agent 只负责一件事
+- 每个 Sub-Agent 只有必要的工具
+- 每个 Sub-Agent 返回结构化结果，而不是自由散文
 
-与 Sub-Agents 的孤立性不同，Agent Teams 专为**协作**而生。
+## Agent Teams：共享任务层与协作协议
 
-在这个模式下，你面对的不再是孤立的打工人，而是能够维持上下文、实时通信并动态适应的 Agent 集合。
+Agent Teams 要解决的是**协作**问题。
 
-一个典型的 Agent Team 包含：
-- 一个负责分配任务和综合结果的**领导者（Lead agent）**
-- 负责具体执行的**团队成员（Teammates）**
-- 一个用于追踪进度和依赖关系的**共享任务层（Shared task layer）**
+Sub-Agent 的信息路径是单向的：父级派任务，子级做完了，结果回到父级。Agent Teams 允许 teammates 之间直接通信，通过共享任务层来协调。Claude Code 文档明确对比了两者：Subagents 只把结果报告回主 Agent；Agent Teams 通过 shared task list 协调，teammates 可以直接互相通信。([Claude][2])
 
-![Agent Teams 协作机制](https://pbs.twimg.com/media/HGrez0UaEAAX9P2?format=jpg&name=900x900)
+一个 Agent Team 通常包含：
 
-这种机制允许真正的协调。比如，前端 Agent 发现了一个接口变动，它可以立刻通知后端 Agent 进行调整，实现状态的实时同步。
+- Team Lead：建团队、分任务、协调、综合结果
+- Teammates：独立的 Claude Code 实例，各自处理分到的任务
+- Task List：共享任务列表，记录 pending、in progress、completed 等状态
+- Mailbox：Agent 之间的消息系统
 
-### 核心差异总结
+官方文档里，Agent Team 的架构组件包括 Team lead、Teammates、Task list、Mailbox；任务列表可以带依赖关系，teammate 可以认领可执行任务，系统也处理部分状态同步。([Claude][2])
 
-- **Sub-Agents 侧重于执行（Execution-focused）**：孤立（Isolated）、无状态（Stateless）、一次性（One-shot）、由父级控制（Parent-controlled）。
-- **Agent Teams 侧重于协作（Collaboration-focused）**：持久（Persistent）、交互式（Interactive）、共享上下文（Context-sharing）、点对点（Peer-to-peer）。
+### Agent Teams 的典型场景
 
-**一句话原则：** 任务独立时用 Sub-Agents；任务相互依赖时用 Agent Teams。
+Agent Teams 适合需要并行探索、互相挑战、跨模块协调的任务。
 
-## 任务拆分的致命误区：按角色划分
+官方给出的强适用场景包括：research and review、new modules or features、debugging with competing hypotheses、cross-layer coordination。文档也明确提醒：Agent Teams 会增加协调开销并显著增加 token 使用；对于顺序任务、同文件编辑、依赖关系很多的工作，single session 或 Subagents 更有效。([Claude][2])
 
-很多人在设计多智能体架构时，习惯性地照搬人类的组织架构，按“角色”进行拆分：规划者（Planner）、开发者（Coder）、测试者（Tester）。
+典型场景：
 
-**这种做法会导致严重的上下文丢失。**
+- 多视角 PR review：安全、性能、测试覆盖并行审
+- 复杂 bug 定位：多个 teammate 分别验证不同假设
+- 新模块开发：不同 teammate 负责互不冲突的模块边界
+- 跨层功能开发：前端、后端、测试各自处理清晰边界
+- 技术方案评审：架构、兼容性、风险、成本多角度挑战
 
-执行者不清楚规划者的初衷，测试者也不了解执行者在写代码时面临的决策细节。质量在每一次边界交接中不断下降。
+这些任务的共同点：Agent 之间的发现会影响其他 Agent 的判断。
 
-## 正确的拆分逻辑：基于上下文边界
+比如前端 Agent 发现接口字段不稳定，它需要通知后端 Agent 修正 API 契约；测试 Agent 发现边界条件缺失，也需要反馈给实现 Agent 补齐逻辑。这类任务不能只靠“各做各的，然后汇总”。
 
-真正有效的任务拆分，是基于**上下文边界**的解耦。
+### Agent Team 的协作协议
 
-你需要问自己：**这个任务到底需要哪些深层信息？**
+Agent Teams 要想稳定工作，不能只靠“多开几个 Claude”。它需要协作协议。
 
-![基于上下文边界的任务拆分](https://pbs.twimg.com/media/HGre4EaawAECVXq?format=jpg&name=900x900)
+至少要定义：
 
-如果两个任务共享着深层的背景信息，就把它们留在同一个 Agent 里。**只有当上下文可以被干净地剥离时，才应该进行拆分。**
+```markdown
+## Team Protocol
 
-在具体设计时，可以参考业界常用的五种架构模式：
+### Lead Responsibilities
 
-![五种核心架构模式](https://pbs.twimg.com/media/HGre8HpbkAAkYSx?format=jpg&name=900x900)
+- Break down work into isolated tasks
+- Assign owners
+- Track dependencies
+- Resolve conflicts
+- Synthesize final output
+- Approve implementation plans before risky changes
 
-1. **提示词链（Prompt Chaining）** —— 顺序执行的流水线
-2. **路由（Routing）** —— 将特定任务分发给最合适的 Agent
-3. **并行化（Parallelization）** —— 同时运行相互独立的工作
-4. **编排者-执行者（Orchestrator-Worker）** —— 由单一中心 Agent 进行任务委派
-5. **评估者-优化者（Evaluator-Optimizer）** —— 持续的生成与迭代优化
+### Teammate Responsibilities
 
-## 什么时候不该使用多智能体？
+- Work only within assigned scope
+- Report blockers early
+- Avoid editing files outside ownership boundary
+- Share findings that affect other teammates
+- Provide verification evidence before marking task complete
 
-很多时候，一个强大的单体大模型（Single Agent）就已经足够了。与其盲目增加复杂度，不如遵循以下判断标准：
+### Shared Task Rules
 
-**✅ 适合引入多智能体系统的场景：**
-- 你需要严格的上下文隔离
-- 存在可以并行处理的任务
-- 任务需要极度专门化（Specialization）的工具或提示词
+- Every task must have an owner
+- Every task must have an acceptance condition
+- Tasks with unresolved dependencies cannot be claimed
+- Completed tasks must include verification evidence
 
-**❌ 应避免引入多智能体系统的场景：**
-- 任务之间存在极强的相互依赖
-- 协调和通信的开销过大
-- 任务本身非常简单
+### Conflict Policy
 
-**最终原则：围绕“上下文边界”进行设计，而不是“角色”。从最简单的架构开始，只在真正需要时才引入复杂性。**
+- Same-file edits require lead approval
+- API contract changes must be broadcast to affected teammates
+- Failed tests block task completion
+- Unresolved design disagreement returns to lead
+```
+
+没有这类协议，Agent Teams 很容易退化成“多个 Agent 同时产生噪声”。
+
+### Agent Teams 的成本
+
+Agent Teams 的成本比 Sub-Agents 高。
+
+Claude Code 文档明确说：Agent Teams 用的 token 显著多于单 session；每个 teammate 都有自己的 context window，token 用量随活跃 teammate 数量增长。官方也建议 routine tasks 用 single session 更省钱。([Claude][2])
+
+成本主要来自五个方面：
+
+| 成本类型   | 说明                                   |
+| ---------- | -------------------------------------- |
+| Token 成本 | 每个 teammate 有独立上下文窗口         |
+| 协调成本   | Lead 需要拆任务、分配、跟踪状态        |
+| 通信成本   | Teammates 之间同步接口、发现、阻塞     |
+| 冲突成本   | 多个 Agent 同时改文件可能互相覆盖      |
+| 验证成本   | Lead 需要审查多个结果并统一验收        |
+
+官方还有一个明确警告：两个 teammates 编辑同一文件会导致覆盖，应该把工作拆到不同的文件集合里。([Claude][2])
+
+所以 Agent Teams 适合边界清晰、并行收益明显、文件所有权可拆开的任务。
+
+## Sub-Agents 与 Agent Teams 的核心差异
+
+用四个维度理解两者的差异：上下文、通信、控制权、输出形态。
+
+| 维度     | Sub-Agents                                    | Agent Teams                              |
+| -------- | --------------------------------------------- | ---------------------------------------- |
+| 上下文   | 每个 Sub-Agent 有独立上下文，最终结果回到父级 | 每个 teammate 有独立上下文，并可持续工作 |
+| 通信方式 | 只能向父级汇报                                | Teammates 可直接通信                     |
+| 协调方式 | 父级 Agent 统一调度                           | Lead + shared task list + mailbox        |
+| 任务状态 | 通常是一次性委托                              | 可持续追踪任务状态和依赖                 |
+| 输出形态 | 压缩后的摘要或结构化结果                      | 多方协作后的合并产物                     |
+| 适合任务 | 独立、短周期、结果导向                        | 并行、交互式、依赖协调                   |
+| 成本     | 相对低                                        | 相对高                                   |
+| 风险     | 输出质量依赖契约                              | 协调、冲突、token、收敛风险更高          |
+
+简单判断：
+
+> 独立探索、只需要结论 → Sub-Agents。
+> 需要通信、需要共享任务层 → Agent Teams。
+> 深度共享同一组上下文 → 留在 Single Agent。
+
+## 错误拆分方式：按角色拆分
+
+很多人在设计多 Agent 系统时，习惯按人类团队角色拆：
+
+- Planner
+- Architect
+- Coder
+- Tester
+- Reviewer
+
+这种拆分看起来合理，但经常制造上下文损耗。
+
+Planner 做了某个隐含决策，Coder 只拿到压缩后的计划；Coder 实现时遇到约束临时调整，Tester 并不知道调整原因；Reviewer 只能根据表面 diff 提意见，无法还原决策路径。
+
+边界交接越多，隐含信息丢得越多。
+
+这个问题在代码任务里尤其明显。软件开发不是简单流水线。规划、实现、测试、修复往往共享同一组设计判断。如果机械地拆成多个角色，就会把一个需要连续判断的问题，拆成多个互相猜测的环节。
+
+更稳的拆法：按上下文边界和接口稳定性拆。
+
+## 正确拆分方式：按上下文边界拆分
+
+上下文边界指的是：一个任务完成所需的关键信息集合，能不能从主任务中干净地分离出来。
+
+判断时可以问这组问题：
+
+| 判断问题                  | 倾向 Single Agent | 倾向 Sub-Agent | 倾向 Agent Team |
+| ------------------------- | ----------------- | -------------- | --------------- |
+| 是否需要完整历史上下文？  | 是                | 否             | 部分需要        |
+| 是否只需要最终结论？      | 否                | 是             | 否              |
+| 是否需要 Agent 之间通信？ | 否                | 否             | 是              |
+| 是否存在可并行任务？      | 弱                | 强             | 强              |
+| 是否有清晰文件边界？      | 不一定            | 通常有         | 必须有          |
+| 是否需要互相挑战假设？    | 中                | 弱             | 强              |
+| 是否会污染主上下文？      | 否                | 是             | 部分会          |
+| 是否需要共享任务状态？    | 否                | 否             | 是              |
+| 是否有明确验收条件？      | 必须有            | 必须有         | 必须有          |
+
+把任务分成三类：
+
+### 一类任务：上下文高度耦合
+
+适合 Single Agent。
+
+比如：
+
+- 设计一个核心模块的整体架构
+- 修改同一个复杂文件里的多个相关逻辑
+- 调整状态管理、错误处理和 UI 行为之间的联动
+- 处理一个需要连续推理的线上 bug
+- 重构一个边界还没稳定的领域模型
+
+这类任务不能轻易拆，因为关键判断散落在多个地方。拆分会让每个 Agent 只看到局部，然后用局部视角做全局决策。
+
+### 二类任务：上下文可隔离，结果可合并
+
+适合 Sub-Agents。
+
+比如：
+
+- 检查某个模块的安全风险
+- 扫描代码库里的 deprecated API
+- 读一批文档并总结差异
+- 并行 review PR 的不同维度
+- 查找某个错误日志的相关调用链
+
+这类任务可以独立探索，中间过程对主 Agent 没有长期价值，最终只需要结构化结论。
+
+### 三类任务：上下文可分块，但需要协作
+
+适合 Agent Teams。
+
+比如：
+
+- 前端、后端、测试围绕稳定 API 契约并行开发
+- 多个 teammate 分别验证 bug 的不同根因假设
+- 多视角方案评审，需要互相挑战
+- 大型迁移中每个 teammate 负责不同模块，Lead 统一验收
+- 新功能涉及多个文件集合，每个集合所有权清晰
+
+这类任务有并行收益，也需要通信协议。Agent 之间的发现会改变其他 Agent 的行动。
+
+## 五种 Workflow Pattern 与多 Agent 架构
+
+Anthropic 在《Building effective agents》里总结了常见的 agentic workflow patterns：Prompt Chaining、Routing、Parallelization、Orchestrator-Workers、Evaluator-Optimizer，同时强调这些模式是可组合的，不要在没有收益证明的时候引入复杂系统。([Anthropic][3])
+
+这些 pattern 可以映射到 Sub-Agents 和 Agent Teams 的设计里。
+
+### Prompt Chaining：顺序流水线
+
+Prompt Chaining 把任务拆成固定步骤，前一步的输出成为后一步的输入。
+
+适合：
+
+- 先生成 outline，再生成正文
+- 先提取结构化信息，再做总结
+- 先翻译，再润色
+- 先生成测试计划，再生成测试代码
+
+通常不需要 Agent Teams。多数情况单 Agent 加结构化步骤就够了。
+
+如果某一步会产生大量上下文污染，可以把这一步交给 Sub-Agent。
+
+### Routing：按任务类型分发
+
+Routing 先判断任务类型，再分配给合适的处理路径。
+
+适合：
+
+- 问题分类
+- 客服意图识别
+- 代码审查维度分发
+- 简单任务走小模型，复杂任务走强模型
+- 文档任务、代码任务、测试任务分别进不同工具链
+
+Sub-Agents 很适合 routing。父级 Agent 根据 description 把任务分给专门的 Sub-Agent，保留最终合并权。
+
+OpenAI Agents SDK 的 orchestration 文档也指出：在多 Agent workflows 中，第一个设计选择是决定谁拥有最终面向用户的答案；如果 specialist 只是作为受限能力被调用，manager 应该保持最终回复的所有权。([OpenAI 开发者][5])
+
+### Parallelization：并行分析
+
+Parallelization 适合互不依赖的任务。
+
+比如：
+
+- 同一个 PR 同时做安全、性能、测试覆盖审查
+- 同一份方案由多个视角并行评估
+- 同一个问题用多个假设并行验证
+- 同一批文件按模块并行扫描
+
+如果各个分支互不沟通，只需要结果汇总 → Sub-Agents。
+
+如果分支之间需要互相挑战、共享发现、调整方向 → Agent Teams。
+
+### Orchestrator-Workers：编排者与执行者
+
+Orchestrator-Workers 模式里，中心 Agent 动态拆分任务、委派 worker，并综合结果。Anthropic 把它描述为适合复杂任务的模式，尤其是事先无法预测子任务数量和性质的场景——比如 coding 时需要改哪些文件取决于具体任务。([Anthropic][3])
+
+这类模式可以落到两种实现：
+
+- 父级 Agent + Sub-Agents：适合一次性委托和结果汇总
+- Lead + Agent Team：适合持续协作和任务状态管理
+
+选择点仍然是通信需求。
+
+### Evaluator-Optimizer：评估者与优化者
+
+Evaluator-Optimizer 是生成与评估之间的反馈循环。
+
+适合：
+
+- 文案润色
+- 代码修复
+- 测试失败后迭代
+- 翻译质量优化
+- 技术方案反复审查
+
+这类模式可以用单 Agent 完成，也可以用 Sub-Agent 扮演 evaluator。
+
+只有当 evaluator、implementer、tester 之间需要持续沟通时，才需要 Agent Team。
+
+## OpenAI Agents SDK 视角：Handoffs 与 Agents as Tools
+
+Claude 的 Sub-Agents / Agent Teams 不是多 Agent 的唯一表达方式。OpenAI Agents SDK 用另一组概念表达类似问题：**Handoffs** 和 **Agents as Tools**。
+
+官方文档里，Handoffs 适合 specialist 接管某个分支的对话；Agents as Tools 适合 manager 继续掌控最终答案，把 specialist 当作受限能力调用。文档也建议：只有当不同分支确实需要不同的 instructions、tools 或 policy 时，才应该拆分 specialist。([OpenAI 开发者][5])
+
+这给我们一个更通用的判断框架：
+
+| 设计问题                       | 对应选择                     |
+| ------------------------------ | ---------------------------- |
+| 主 Agent 是否保留最终答复权？  | Agents as Tools / Sub-Agents |
+| Specialist 是否接管后续对话？  | Handoffs                     |
+| 多个 Agent 是否需要直接通信？  | Agent Teams                  |
+| 任务是否只是局部专家能力？     | Sub-Agents                   |
+| 任务是否是流程分支所有权转移？ | Handoffs                     |
+| 任务是否需要共享状态和协作？   | Agent Teams                  |
+
+所以多 Agent 架构的本质不是“把一个大任务拆给多个角色”，而是设计控制权、上下文边界和通信拓扑。
+
+## 工程案例一：PR Review
+
+PR Review 是 Sub-Agents 的典型场景。
+
+假设要 review 一个认证模块，可以拆成三个 Sub-Agent：
+
+```markdown
+## security-reviewer
+
+Scope:
+- Authentication
+- Authorization
+- Input validation
+- Secrets handling
+
+Output:
+- Findings
+- Evidence
+- Severity
+- Suggested fix
+- Verification
+```
+
+```markdown
+## performance-reviewer
+
+Scope:
+- N+1 queries
+- Inefficient loops
+- Cache misses
+- Duplicate network/database calls
+
+Output:
+- Findings
+- Impact
+- Evidence
+- Suggested benchmark
+```
+
+```markdown
+## test-reviewer
+
+Scope:
+- Unit test coverage
+- Integration test coverage
+- Edge cases
+- Regression risk
+
+Output:
+- Missing tests
+- Risk level
+- Suggested test cases
+```
+
+父级 Agent 负责：
+
+- 收集三个审查结果
+- 合并重复问题
+- 按严重程度排序
+- 判断哪些必须修，哪些可以后续优化
+- 给出最终 review comment
+
+这个场景里，三个 reviewer 不一定需要互相沟通。它们只需要从各自视角给出结论，主 Agent 统一合并即可。
+
+如果 review 变成安全 reviewer 和 backend reviewer 需要互相确认“这个风险是否真实可达”，test reviewer 需要根据实现细节补充验证路径——那就可以升级为 Agent Team。
+
+## 工程案例二：复杂 Bug 定位
+
+假设线上出现一个偶发性登录失败：
+
+- 假设 A：token refresh 竞态
+- 假设 B：缓存失效时间不一致
+- 假设 C：移动端重复提交
+- 假设 D：网关重试导致 session 状态覆盖
+
+如果让一个 Agent 排查，它可能先找到一个看似合理的解释，然后就不往下看了。
+
+Agent Team 更适合这个场景：
+
+```markdown
+## Team Setup
+
+Lead:
+- Owns final root cause analysis
+- Assigns competing hypotheses
+- Requires evidence before accepting conclusions
+
+Teammate A:
+- Investigates token refresh race condition
+
+Teammate B:
+- Investigates cache TTL mismatch
+
+Teammate C:
+- Investigates mobile duplicate submission
+
+Teammate D:
+- Investigates gateway retry behavior
+```
+
+协作协议可以要求：
+
+- 每个 teammate 必须提供证据
+- 每个 teammate 必须说明如何排除其他假设
+- Lead 只接受有复现或日志支持的结论
+- 如果多个假设都成立，Lead 负责判断主因和触发链路
+
+这类任务的重点不是并行速度，而是减少“单一路径早停”的风险。
+
+## 工程案例三：跨层功能开发
+
+假设要实现一个 Flutter 应用中的退款入口，采用接近 clean architecture 的分层：
+
+- Presentation：页面、状态展示、交互反馈
+- Application：use case、状态流、错误处理
+- Domain：业务规则、实体、值对象
+- Data：repository、DTO、API、缓存
+- Test：widget test、use case test、repository mock
+
+如果 API 契约、领域规则、状态流都还不稳定，不应该直接开 Agent Team。更稳妥的方式是先由 Single Agent 完成设计：
+
+```markdown
+## Single Agent Design Phase
+
+- Define refund domain model
+- Define API contract
+- Define use case input/output
+- Define UI state machine
+- Define error mapping
+- Define test strategy
+```
+
+当接口边界稳定后，再考虑 Agent Team：
+
+```markdown
+## Agent Team Implementation Phase
+
+Lead:
+- Owns architecture consistency and final integration
+
+Presentation teammate:
+- Implements screen, state rendering, user interactions
+
+Application teammate:
+- Implements refund use case and state transition
+
+Data teammate:
+- Implements repository, DTO mapping, API integration
+
+Test teammate:
+- Implements widget tests, use case tests, repository tests
+```
+
+这个案例的原则：
+
+> 先稳定接口，再并行实现。
+
+如果接口还在剧烈变化，多 Agent 只会把变化同步成本放大。
+
+## 多 Agent 反模式
+
+### 1. 角色崇拜
+
+把 Planner、Coder、Tester 当成固定模板，容易制造无意义的交接。
+
+更好的拆法：
+
+- 按上下文边界拆
+- 按文件所有权拆
+- 按工具权限拆
+- 按验证维度拆
+- 按可独立交付的接口拆
+
+### 2. 假并行
+
+有些任务表面可以并行，实际都依赖同一个核心决策。
+
+比如数据库 schema 没定，就让前端、后端、测试同时开工。最后每个 Agent 都基于不同的假设干活，合并时全要返工。
+
+### 3. 无契约输出
+
+Sub-Agent 返回大段自然语言，父级 Agent 难以解析、去重、排序、合并。
+
+解决方式：要求结构化输出——Scope、Findings、Evidence、Severity、Confidence、Suggested Fix、Verification、Unknowns。
+
+### 4. Orchestrator 瓶颈
+
+所有 Sub-Agent 都把大量结果回传给父级 Agent，父级上下文被摘要、日志、发现、冲突结论污染。
+
+解决方式：
+
+- 限制返回格式
+- 限制 finding 数量
+- 要求证据引用
+- 只返回结论和必要上下文
+- 低置信度发现单独分组
+
+### 5. 多 Agent 同文件写入
+
+Agent Teams 最容易翻车的地方：多个 teammate 同时编辑同一个文件。
+
+解决方式：
+
+- 按文件集合分配 owner
+- 同文件修改必须由 Lead 合并
+- 大型重构先设计 patch plan
+- 要求 teammate 先 plan，Lead approve 后再改
+- 所有修改后必须运行测试
+
+### 6. 没有停止条件
+
+Agent Team 如果没有明确停止条件，会持续讨论、反复修改、不断扩大范围。
+
+解决方式：
+
+```markdown
+## Stop Conditions
+
+- All assigned tasks completed
+- All required tests pass
+- No open high-severity findings
+- Lead has produced final integration report
+- No teammate has unresolved blocker
+```
+
+## 质量门禁：多 Agent 系统的安全阀
+
+多 Agent 架构必须配质量门禁。
+
+没有质量门禁，多 Agent 只是更快地产生更多不确定输出。
+
+可以设计以下门禁：
+
+```markdown
+## Quality Gates
+
+### Before Implementation
+
+- Task scope is explicit
+- File ownership is assigned
+- Acceptance criteria are defined
+- Risky changes require plan approval
+
+### During Implementation
+
+- Teammates must report blockers
+- API contract changes must be broadcast
+- Same-file edits require lead approval
+- Failed assumptions must be documented
+
+### Before Completion
+
+- Tests have been run
+- Lint/type-check has been run
+- Findings include evidence
+- Lead synthesizes and verifies final output
+
+### After Completion
+
+- Remaining risks are listed
+- Unknowns are listed
+- Follow-up tasks are separated from completed work
+```
+
+Claude Code Agent Teams 支持 hooks，可以在 teammate idle、task created、task completed 等节点执行规则，用来阻止不合格任务完成或要求继续工作。([Claude][2])
+
+这类机制很重要。Agent Team 一旦进入真实代码修改，就必须有自动化门禁。只靠自然语言约定，很难稳定约束多 Agent 行为。
+
+## 决策框架：从 Single Agent 到 Agent Team
+
+推荐的决策顺序：
+
+```markdown
+## Step 1: Can a single agent solve it reliably?
+
+Use Single Agent if:
+- The task needs deep shared context
+- The files are tightly coupled
+- The design is still unstable
+- The work is mostly sequential
+- The cost of coordination is higher than execution
+
+## Step 2: Can a subtask be isolated?
+
+Use Sub-Agents if:
+- The task can be independently explored
+- The result can be summarized cleanly
+- Intermediate context would pollute the main session
+- Tool permissions should be restricted
+- Multiple perspectives can be merged by the parent
+
+## Step 3: Do workers need to communicate?
+
+Use Agent Teams if:
+- Teammates must share findings
+- Work has clear ownership boundaries
+- Parallel exploration adds real value
+- A shared task layer helps coordination
+- Conflicting hypotheses need to be tested
+- The cost of communication is justified
+```
+
+更简短的判断表：
+
+| 场景                    | 推荐                           |
+| ----------------------- | ------------------------------ |
+| 简单问答、局部修改      | Single Agent                   |
+| 深度架构设计            | Single Agent                   |
+| 同文件复杂重构          | Single Agent                   |
+| 搜索、扫描、审查、总结  | Sub-Agent                      |
+| 多维 PR Review          | Sub-Agents 或 Agent Team       |
+| 竞争性 bug 假设排查     | Agent Team                     |
+| 跨模块并行开发          | Agent Team                     |
+| 接口尚未稳定的新功能    | 先 Single Agent，后 Agent Team |
+| 多 Agent 会频繁等待彼此 | Single Agent 或 Sub-Agents     |
+| 只想加快一个很小的任务  | Single Agent                   |
+
+## 最小可用原则
+
+多 Agent 架构的设计顺序：
+
+```markdown
+Single Agent
+  ↓
+Single Agent + structured workflow
+  ↓
+Single Agent + Sub-Agents
+  ↓
+Agent Team
+  ↓
+Agent Team + quality gates + observability
+```
+
+不要一上来就设计庞大的 Agent 组织结构。
+
+更稳的方式：
+
+- 先用单 Agent 跑通任务
+- 找出上下文污染点
+- 把可隔离的任务抽成 Sub-Agent
+- 找出需要协作的任务
+- 再引入 Agent Team
+- 最后补齐质量门禁和可观测性
+
+这个顺序能避免过早复杂化。
+
+## 结语
+
+Sub-Agents 和 Agent Teams 解决的不是同一个问题。
+
+Sub-Agents 让你把高噪声的独立任务从主上下文里拆出去，拿回结构化结论。Agent Teams 让你在需要 Agent 之间互相通信、共享任务状态的时候，有一个可控的协作框架。
+
+选哪个，不看 Agent 数量，看五件事：
+
+> 上下文能不能切开？
+> 需不需要通信？
+> 谁说了算？
+> 结果能不能稳定合并？
+> 协调成本值不值？
+
+记住这三句话就够了：
+
+- 任务独立，只退回结论 → Sub-Agents
+- 需要通信、需要共享任务层 → Agent Teams
+- 深度依赖同一组上下文 → 留在 Single Agent
+
+多 Agent 设计不是模仿人类团队结构就够了——得把上下文边界、通信方式和验证机制想清楚。
+
+[1]: https://code.claude.com/docs/en/sub-agents 'Create custom subagents - Claude Code Docs'
+[2]: https://code.claude.com/docs/en/agent-teams 'Orchestrate teams of Claude Code sessions - Claude Code Docs'
+[3]: https://www.anthropic.com/research/building-effective-agents?utm_source=chatgpt.com 'Building Effective AI Agents'
+[4]: https://code.claude.com/docs/en/agent-sdk/subagents 'Subagents in the SDK - Claude Code Docs'
+[5]: https://developers.openai.com/api/docs/guides/agents/orchestration 'Orchestration and handoffs | OpenAI API'

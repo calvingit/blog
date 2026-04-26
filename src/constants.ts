@@ -104,6 +104,7 @@ export const FRONTMATTER_TAGS = new Map([
   ['Android', 'android'] as const,
   ['Tutorial', 'tutorial'] as const,
   ['Tool', 'tool'] as const,
+  ['Multi-Agent', 'multi-agent'] as const,
 ])
 
 export type FrontmatterTag = MapKey<typeof FRONTMATTER_TAGS>
