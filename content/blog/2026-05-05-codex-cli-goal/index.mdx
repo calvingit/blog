@@ -1,0 +1,215 @@
+---
+title: "效率起飞！Codex CLI /goal 最佳实践"
+slug: "codex-cli-goal"
+description: "从 Codex CLI /goal 的工作流定位、Goal Forge 规格锻造、实战写法、安全边界，到 Claude Code Ralph Loop 对比，整理一套可落地的长程 AI 编程方法。"
+date: 2026-05-05
+lastUpdated: 2026-05-05
+tags:
+  - "AI"
+  - "Agents"
+  - "Codex"
+---
+
+## 1. 引言
+
+你大概经历过这种场景：丢给 AI 一个报错，它写出修复，你跑测试，3 个用例挂了。你说“修一下失败用例”，它改了 A，B 又崩了。你再说“B 也修一下”，它修完 B，C 的类型推导也飘红了。来回催了 6 轮，最后发现它悄悄把不相关的模块也重构了一遍。盯着 git diff，你心里只想说一句话：我让你修一个 Bug，没让你重写整个项目。
+
+这不是模型不够聪明，是工作模式出了问题。
+
+传统 AI 编程工具的交互模型是一问一答：发 prompt，出结果，交互结束。下一步做什么依然由你决定。你是项目经理，它是执行层。这种模式下，模型倾向于尽快结束对话，因为它不知道下一轮还要继续。代码跑通了？它觉得已修复。测试没跑？它根本没考虑。
+
+2026 年 4 月 30 日，OpenAI 在 Codex CLI v0.128.0 里上线了 `/goal` 命令。它把“继续做”和“怎么才算做完”绑到了一起。
+
+## 2. 功能拆解
+
+### 2.1 基本用法
+
+用起来不复杂。在 Codex CLI 的 TUI 里输入：
+
+```bash
+/goal 修复 CI 中的 3 个失败测试用例，保持 diff 尽量小，最后跑完 npm test 全部通过
+```
+
+Codex 收到目标后，会进入自主循环：
+- 执行操作（读文件、写代码、跑测试）
+- 评估目标是否达成
+- 没达成继续；达成或 Token 耗尽则停止
+
+以前是你持有任务，Codex 帮忙执行步骤。现在 Codex 持有任务，负责推进，你退到审核位置。
+
+### 2.2 状态持久化
+
+用早期 AI 编程工具经常遇到这个时刻：任务跑到一半终端崩了，或者下班关机。第二天打开，Agent 已经把昨天的上下文忘得一干二净，你得从头解释任务进度。
+
+目前大部分 AI Agent 工具（如 Claude Code、Codex）都支持 `resume` 命令，用来从上一个中断的会话里恢复上下文。在“一个会话只跑一个目标”的理想用法下，恢复会话通常会把你带回这个目标现场。但这和“恢复目标”并不是一回事。
+
+两者的核心差异在于**“恢复上下文”**和**“恢复执行状态”**：
+
+| 操作 | 恢复什么 | 是否继续跑目标 |
+| --- | --- | --- |
+| `codex resume <SESSION_ID>` | 恢复会话：聊天记录、计划历史、审批状态、上下文 | 不一定 |
+| `/goal resume` | 恢复被暂停的 goal 状态 | 是，语义上就是让暂停的目标继续 |
+
+简单来说，`codex resume` 是让你回到之前的**工作现场**；而 `/goal resume` 则是把目标从暂停状态**切回执行状态**。
+
+举个例子：
+如果你关掉终端前，目标还在执行中，那么运行 `codex resume` 回到会话后，目标通常已经在继续执行，不需要额外操作。
+但如果你之前明确执行了 `/goal pause`，那么 `codex resume` 只是把你带回了会话，目标依然是暂停状态，这时你必须敲下 `/goal resume` 才能让它继续干活。
+
+`/goal` 直接把目标状态存进 SQLite。虽然不是什么黑科技，但很管用：
+
+```bash
+/goal create "提升 src/auth/ 的测试覆盖率从 62% 到 90%"
+/goal pause     # 去开个会，进度存 SQLite
+/goal resume    # 回来继续，上下文原封不动恢复
+/goal clear     # 完成或放弃
+```
+
+`resume` 恢复的不只是目标文本，还有完整的执行上下文：当前进展、已完成的修改、待验证的测试结果。v0.128.0 的 6 个核心 PR 覆盖了持久层、app-server API、model tools、runtime 恢复和 TUI 交互，实现了一套完整的状态机。
+
+开发者 Simon Willison 发现，`/goal` 依赖两个关键 prompt 模板：`goals/continuation.md`（指导模型每轮结束时如何继续）和 `goals/budget_limit.md`（Token 耗尽时注入）。`continuation` 模板让模型意识到自己是在推进持久目标，而不是应付单回合对话。
+
+### 2.3 AGENTS.md
+
+`/goal` 让 Agent 自主循环，跑偏的风险也随之增大。AGENTS.md 就是用来管住这点的。
+
+Codex CLI 会自动读取全局 `~/.codex/AGENTS.md` 和项目根目录下的 `AGENTS.md`。它就是一份项目约定，写明了技术栈、编码规范、权限边界和安全约束。
+
+举个例子：
+
+```markdown
+# ~/.codex/AGENTS.md
+
+## 技术栈
+Next.js 15 + TypeScript + Tailwind + Supabase
+
+## 编码规范
+- 使用 ESLint + Prettier
+- 函数式组件优先，避免 class component
+- 类型定义放 types/ 目录
+
+## 权限规则
+- Codex 可以自行修改 src/ 目录
+- 修改 package.json / CI 配置前必须获得人工批准
+- 严禁修改 .env 文件
+
+## 测试命令
+- 单元测试：npm test
+- E2E 测试：npm run test:e2e
+- 通过标准：所有测试必须 green，不允许 skip
+```
+
+写好 AGENTS.md 能让 Codex 变成懂你项目的人，节省大量解释时间。这在开 `/goal` 循环时尤其重要，Agent 跑 20 轮，每一轮都需要知道边界。
+
+另外，`/goal` 刻意做了权限分离：模型侧只暴露 view goal、create goal 和 mark as complete 三个工具。暂停、预算调整和清空必须由用户操作。`create_goal` 的 prompt 被收紧，防止模型在常规对话中自作主张创建目标。
+
+## 3. Ralph Loop 对比分析
+
+如果不理解两者的架构差异，很容易把 `/goal` 当成内置版的 Ralph Loop。
+
+### 3.1 Ralph Loop
+
+Ralph Loop 由开发者 Geoffrey Huntley 提出，名字致敬《辛普森一家》里天真且经常搞不清状况的 Ralph Wiggum。
+
+最简单的 Ralph Loop 只有一行：
+
+```bash
+while :; do cat PROMPT.md | claude-code; done
+```
+
+每轮跑完，重新启动 Claude Code，把相同 prompt 喂进去。修改留在 git 里，下一轮 Claude 通过读取文件系统感知上轮进展。这种做法是用暴力重启替代上下文记忆，拿文件系统当持久层。
+
+在一次黑客松中，一个小团队用 Ralph Loop 一晚跑出 1100+ commits，完成 6 个仓库的迁移，成本约 800 美元。Ralph Loop 确实猛，但也粗暴。
+
+### 3.2 架构差异
+
+两者的差异可以用一张表概括：
+
+| 维度 | `/goal`（Codex CLI 原生） | Ralph Loop（Claude Code 插件） |
+|------|---------------------------|-------------------------------|
+| 状态管理 | SQLite 数据库，Agent 自己维护 | 文件系统 + Git commits，外部脚本维护 |
+| 循环控制 | Agent 内部评估目标是否达成 | 外部 Bash 脚本强制重启 Claude Code |
+| 上下文恢复 | `/goal resume` 恢复完整执行上下文 | 每次重启，靠文件 diff 重新理解进展 |
+| Token 消耗 | 低（状态在 SQLite 里，不在上下文窗口） | 高（每轮把整个 prompt 重喂一遍） |
+| 成功判定 | Agent 自主评估的多维度判定 | 外部规则匹配（completion-promise 匹配） |
+| 失败保护 | Token 预算耗尽自动停机 | 需要额外配置熔断机制 |
+| 安全控制 | Permission Profiles 限制模型工具 | 依赖插件配置，容易配置不当 |
+
+#### 状态存哪？
+Ralph Loop 每轮都是全新开始。上一轮的上下文被清空，下一轮只能靠读取 git diff 推断之前干了什么。这就像每隔 20 分钟清空工程师的记忆，让他自己看日志接着干。
+`/goal` 的状态在 SQLite 里。每轮 Agent 看到的不只是文件状态，还有目标描述、已完成步骤和待验证项。
+
+#### 谁在控制循环？
+Ralph Loop 中，Bash 脚本是外层控制者，随时终止并重启 Agent。真理源是文件系统。
+`/goal` 的循环控制在 Agent 手里，但状态在 Agent 外部。Agent 评估目标，SQLite 记录结果。即使 Agent 崩溃，状态依然保留。
+
+#### Token 消耗
+Ralph Loop 每轮重启都要把完整 PRD 和进度描述塞进上下文，Token 消耗随轮次线性增长。
+`/goal` 通过 `continuation.md` 和 `budget_limit.md` 压缩状态：Agent 只在需要时回顾进展。同样复杂度的任务，`/goal` 的 Token 消耗通常远低于 Ralph Loop。
+
+#### 成功判定
+Ralph Loop 的 completion-promise 是字符串匹配。只要最后一句输出和预设词一样就算完成。
+`/goal` 在每轮结束时自主对比目标描述和当前状态。加上 Token 预算上限做硬约束，它倾向于提前报“未完成”，而不是硬着头皮假装做完。
+
+## 4. 最佳实践
+
+让 Agent 跑循环最大的风险是它做完了但不是你要的，所以必须在第一轮提示词里就说清楚。
+
+### 4.1 验收条件
+
+**反面教材：**
+> /goal 优化数据库查询性能
+
+这句话太模糊，加索引、改 ORM、引入缓存、重构数据层都算优化，但 Agent 猜不到你想要哪种。
+
+**正面示范：**
+
+```bash
+/goal 优化 src/db/users.ts 中的 getUserList 查询性能
+- 当前 p99 响应时间：~850ms（pg_stat_statements 数据）
+- 目标：p99 降到 200ms 以下
+- 改动范围：仅限 src/db/ 目录，不允许改 schema
+- 验证方式：EXPLAIN ANALYZE 输出不得出现 Seq Scan
+- 必须保持现有 API 签名不变
+- 完成后列出修改文件和 EXPLAIN ANALYZE 输出对比
+```
+
+这提供了一个有边界的可验证任务。边界清晰，Agent 就不容易跑偏。
+
+### 4.2 实战经验
+
+**1. 在 AGENTS.md 里写全局验收标准**
+把“禁止修改公共 API 签名”、“改动必须先跑 npm test”、“测试必须全部 green”这类规则放进 `~/.codex/AGENTS.md`。全局规则始终生效，Goal 里的验收条件针对具体任务。
+
+**2. 给目标设定 Token 预算**
+不要让 Agent 无限制跑下去。`/goal` 支持设置预算上限：
+
+```bash
+/goal --budget 50000 重构 src/utils/ 模块，提取公共工具函数
+```
+
+Token 预算是硬约束，到达上限自动停止，你可以先 review 成果，再决定是否继续。
+
+**3. 善用 `/goal status` 检查是否迷失**
+如果发现 Agent 开始改不相关的模块，或者在同一个错误上反复试错，直接 `/goal pause`，切回来人工 review。目前的 Agent 还没有好到可以完全放手。
+
+## 5. 总结
+
+过去几个月，AI 编程工具一直在卷模型能力。`/goal` 换了个方向：让任务可以暂停、恢复，状态可以跨会话持久化。
+
+Agent 自己跑完闭环之后，你需要花更多时间在定义目标上，说清楚"什么叫做完成"才是重点，而不是告诉它每一步做什么。
+
+## 6. 参考资料
+
+- [Codex CLI v0.128.0 Release Notes](https://github.com/openai/codex/releases/tag/rust-v0.128.0)
+- [Simon Willison: Codex CLI 0.128.0 adds /goal](https://simonwillison.net/2026/Apr/30/codex-goals/)
+- [Codex CLI 源码：goals/continuation.md](https://github.com/openai/codex/blob/main/codex-rs/core/templates/goals/continuation.md)
+- [Codex CLI 源码：goals/budget_limit.md](https://github.com/openai/codex/blob/main/codex-rs/core/templates/goals/budget_limit.md)
+- [Geoffrey Huntley: The Ralph Loop](https://ghuntley.com/ralph/)
+- [frankbria/ralph-claude-code](https://github.com/frankbria/ralph-claude-code)
+- [Codex CLI 最佳实践指南：AGENTS.md 配置](https://www.cnblogs.com/gyc567/p/19969603)
+- [Codex /goal and OpenGUI: long-running tasks need state](https://dev.to/fenix_23505d14df386c00ced/codex-goal-and-opengui-long-running-tasks-need-state-1c61)
+- [Codex v0.128.0：/goal 功能解析（日文）](https://qiita.com/xiji2646/items/183a1c04da1cbbdaacff)
+- [The Ralph Loop: Rethinking Context as a Resource](https://www.ikangai.com/the-ralph-loop-how-a-bash-script-is-forcing-developers-to-rethink-context-as-a-resource/)
+- [OpenAI 编码 Agent 最佳实践（官方）](https://platform.openai.com/docs/guides/agents-best-practices)
+- [Agentic Coding Tools: Complete Comparison (2026)](https://www.morphllm.com/agentic-coding-tools-comparison)
