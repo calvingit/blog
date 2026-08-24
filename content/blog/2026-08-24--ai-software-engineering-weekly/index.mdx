@@ -1,0 +1,173 @@
+---
+title: AI Software Engineering Weekly：Agent 从工具走向工程基础设施
+slug: ai-software-engineering-weekly-2026-08-24
+description: 分析本周 AI 软件工程生态的重要变化，覆盖 Codex、Claude Code、MCP、Agent workflow 与工程实践。
+date: 2026-08-24
+lastUpdated: 2026-08-24
+tags:
+  - AI
+  - Codex
+  - Claude Code
+  - MCP
+  - Agents
+  - Software Engineering
+searchIndex: true
+---
+
+过去一年，AI Coding Agent 的竞争重点正在发生变化：模型能力仍然重要，但真正影响工程落地的因素越来越集中在 Agent 的执行体系，包括上下文管理、任务调度、工具协议、隔离执行和长期任务恢复。
+
+本周几个变化共同指向一个趋势：AI Agent 正在从一次性代码生成工具，演变为软件工程基础设施。
+
+## 本周整体判断
+
+当前 AI 软件工程的核心问题已经不是“模型是否能生成代码”，而是：
+
+> 如何让 Agent 在复杂工程环境中持续、可靠、可验证地完成任务。
+
+一个真实开发任务包含需求理解、代码探索、方案设计、修改、测试、反馈修复等多个阶段，因此未来 Agent 系统需要具备类似软件系统的生命周期管理能力。
+
+## 1. Codex CLI：Agent Session 管理成为新的基础能力
+
+### 发生了什么
+
+Codex CLI 新版本增加了 Agent 管理和 Session 消息能力，包括 `codex agents` 和 `codex queue`。[^1]
+
+### 为什么重要
+
+传统 Coding Agent 更像一次函数调用：
+
+```
+请求 → Agent → 输出
+```
+
+而新的模式更接近：
+
+```
+Agent Pool
+ ├── Feature Agent
+ ├── Review Agent
+ ├── Research Agent
+ └── Test Agent
+```
+
+Agent 生命周期、任务状态和消息传递会成为新的工程问题。
+
+### 工程影响
+
+未来设计 Agent 平台时，需要关注：
+
+- Session 生命周期
+- Task ownership
+- 状态恢复
+- Agent 间通信
+- 执行记录
+
+多 Agent 并不是简单增加数量，而是引入调度系统。
+
+## 2. MCP：从工具调用协议走向 Agent 基础设施
+
+### 发生了什么
+
+Model Context Protocol 发布新的规范版本，引入无状态协议核心、扩展机制、Tasks 等能力。[^2]
+
+### 为什么重要
+
+MCP 的变化说明 Agent 工具连接正在从实验性接口向基础设施演进。
+
+过去工具连接依赖长期 session，而新的设计更加适合 HTTP 基础设施和大规模部署。[^2]
+
+### 工程影响
+
+未来企业级 Agent 架构需要考虑：
+
+- Tool discovery
+- 权限控制
+- 长任务执行
+- 可观测性
+- 协议兼容
+
+MCP 的价值不只是连接模型和工具，而是定义 Agent 与外部系统交互的标准边界。
+
+## 3. Claude Code：Sub-agent 与 Worktree 正在形成隔离执行模型
+
+### 发生了什么
+
+Claude Code 持续增强 sub-agent、worktree 和 session 协作能力。[^3]
+
+### 为什么重要
+
+Agent 修改代码具有副作用，多 Agent 并行执行必须解决隔离问题。
+
+Worktree 不只是 Git 技巧，而逐渐成为 Agent workspace isolation 的基础能力。
+
+### 工程影响
+
+推荐根据任务类型选择：
+
+| 场景 | 推荐方式 |
+| --- | --- |
+| 查询和分析 | 单 Agent |
+| 独立开发任务 | Worktree + Agent |
+| 长期职责 | Persistent Session |
+| Review | 独立 Reviewer |
+
+不要为了多 Agent 而拆分任务，边界清晰比数量更重要。
+
+## 4. Skills 与 AGENTS.md：Agent 配置进入工程治理阶段
+
+### 发生了什么
+
+项目级 Agent 配置逐渐成为开发流程的一部分，包括 AGENTS.md、Skills、Rules 和 Hooks。
+
+### 为什么重要
+
+未来开发效率的提升，不只来自更强模型，而来自更好的上下文工程。
+
+高质量配置应该描述：
+
+- 项目约束
+- 架构边界
+- 验证方式
+- 特殊流程
+
+而不是重复代码已经表达的信息。
+
+### 工程影响
+
+Skill 应该像软件组件一样维护：
+
+- 明确输入输出
+- 控制上下文大小
+- 可测试
+- 可复用
+
+## 我的工程判断
+
+AI 软件工程正在进入第二阶段。
+
+第一阶段解决：
+
+> AI 能否帮助开发者写代码？
+
+第二阶段解决：
+
+> 如何让 Agent 成为可靠的软件工程协作者？
+
+未来值得投入的方向包括：
+
+- Agent 生命周期管理
+- Context engineering
+- Skill 体系建设
+- Workspace isolation
+- 自动验证体系
+- Agent evaluation
+
+与其不断优化 Prompt，不如开始设计适合 Agent 工作的软件工程流程。
+
+## 参考资料
+
+[^1]: OpenAI Codex CLI release notes（Codex agents / queue）：https://github.com/openai/codex/releases
+
+[^2]: Model Context Protocol 2026-07-28 Specification：https://blog.modelcontextprotocol.io/posts/2026-07-28/
+
+[^3]: Claude Code Changelog：https://code.claude.com/docs/en/changelog
