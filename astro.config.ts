@@ -23,7 +23,7 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   site: SITE.url,
-  integrations: [expressiveCode(), mdx(), sitemap(), pagefindIntegration(), react()],
+  integrations: [expressiveCode(), mdx({ gfm: true }), sitemap(), pagefindIntegration(), react()],
   vite: {
     plugins: [tailwindcss()],
   },

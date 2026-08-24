@@ -38,7 +38,7 @@ searchIndex: true
 
 ### 发生了什么
 
-Codex CLI 开始增强 Agent 管理能力，包括 Agent 列表、Session 管理和任务消息传递能力。[1]
+Codex CLI 开始增强 Agent 管理能力，包括 Agent 列表、Session 管理和任务消息传递能力。[^1]
 
 这意味着 Agent 不再只是一次性的执行过程，而可以被视为长期存在的工作单元。
 
@@ -72,7 +72,7 @@ Agent Pool
 
 ### 发生了什么
 
-Claude Code 持续完善 sub-agent、worktree isolation 和 session 协作能力。[2]
+Claude Code 持续完善 sub-agent、worktree isolation 和 session 协作能力。[^2]
 
 ### 为什么重要
 
@@ -104,7 +104,7 @@ Claude Code 持续完善 sub-agent、worktree isolation 和 session 协作能力
 - Hooks
 - References
 
-AGENTS.md 已经成为多个 Coding Agent 共享的项目指令规范。[3]
+AGENTS.md 已经成为多个 Coding Agent 共享的项目指令规范。[^3]
 
 ### 工程影响
 
@@ -123,7 +123,7 @@ Skill 则应该像软件组件一样维护：
 - 有验证方式
 - 避免无限堆积说明
 
-相关研究也显示，大量 Skill 存在 metadata、结构和复用性问题，Skill 质量会直接影响 Agent routing 效果。[4]
+相关研究也显示，大量 Skill 存在 metadata、结构和复用性问题，Skill 质量会直接影响 Agent routing 效果。[^4]
 
 ## 4. 长任务可靠性：Goal、Loop 和恢复机制
 
@@ -240,16 +240,7 @@ AI Coding Agent 正在进入第二阶段。
 
 相比继续寻找更强的 Prompt，设计适合 Agent 工作的软件工程流程会产生更长期的价值。
 
-## 参考资料
-
-[1] OpenAI Codex CLI Release Notes  
-https://github.com/openai/codex/releases
-
-[2] Claude Code Releases  
-https://github.com/anthropics/claude-code/releases
-
-[3] AGENTS.md Specification  
-https://agents.md/
-
-[4] What Keeps Agent Skills from Being Reusable?  
-https://arxiv.org/abs/2608.08453
+[^1]: [OpenAI Codex CLI Release Notes](https://github.com/openai/codex/releases)
+[^2]: [Claude Code Releases](https://github.com/anthropics/claude-code/releases)
+[^3]: [AGENTS.md Specification](https://agents.md/)
+[^4]: [What Keeps Agent Skills from Being Reusable?](https://arxiv.org/abs/2608.08453)
