@@ -1,115 +1,139 @@
-# Astro Theme: Minimal Blog
+# Wen's Blog
 
-> **Note**: This repository is a customized version of the [Astro Theme: Minimal Blog](https://github.com/LekoArts/astro-theme-minimal-blog).
->
-> It serves as the source code for [Wen' Blog](https://zhangwen.site), migrating content from the previous Docusaurus-based site.
+[Wen's Blog](https://zhangwen.site) 的源码仓库，基于 Astro 构建，部署到 Netlify。
 
-Welcome to **Astro Theme: Minimal Blog**, an ideal option to start sharing your ideas. It's easy to set up and features everything you'd need for a blog.
+## 功能
 
-[**Demo Website**](https://astro-theme-minimal-blog.lekoarts.de)
+- 使用 MDX 写文章
+- 基于 Tailwind CSS v4 的站点样式
+- Expressive Code 代码高亮
+- `:::note` / `:::tip` / `:::caution` / `:::danger` 提示块
+- Mermaid 图表渲染
+- Sandpack 交互式代码示例
+- RSS、Sitemap、Tag 页面
+- Pagefind 全文搜索
+- Light / Dark / Auto 主题切换
 
-## ✨ Features
+## 技术栈
 
-- Write blog posts with MDX
-- Styled with [Tailwind](https://tailwindcss.com/)
-- Code blocks powered by [Expressive Code](https://expressive-code.com/)
-- Custom asides component
-- Live coding powered by [Sandpack](https://github.com/codesandbox/sandpack)
-- RSS, Sitemap
-- Light/Dark/System color mode toggle
-- Add tags to your blog posts
-- [Pagefind](https://pagefind.app/) search
+- Astro 6
+- TypeScript
+- React 19
+- Tailwind CSS 4
+- MDX
+- Pagefind
+- Netlify
 
-## 🚀 Getting started
+## 本地开发
 
-1. **Important:** Ensure that [pnpm](https://pnpm.io/installation) is installed
-1. Clone the [astro-theme-minimal-blog](https://github.com/LekoArts/astro-theme-minimal-blog) repository.
-1. Install dependencies.
-   ```shell
-   pnpm install
-   ```
-1. Run the development server.
-   ```shell
-   pnpm dev
-   ```
+先确保本机已安装 `pnpm`。
 
-## 📝 Using & modifying this theme
+```sh
+pnpm install
+pnpm dev
+```
 
-### Add content
+常用命令：
 
-This theme features a CLI to help you scaffold new blog posts. It asks you questions to fill out the frontmatter and creates a file in the end. Run the CLI:
+```sh
+pnpm dev            # 启动开发服务器
+pnpm build          # 生产构建，并生成 Pagefind 索引
+pnpm build:astro    # 仅执行 Astro 构建
+pnpm build:pagefind # 单独生成搜索索引
+pnpm preview        # 预览生产构建结果
+pnpm lint           # 运行 ESLint
+pnpm lint:fix       # 自动修复 lint 问题
+pnpm assistant      # 交互式创建博客文章
+```
 
-```shell
+## 内容工作流
+
+博客文章存放在 `content/blog/`，目录约定为：
+
+```text
+content/blog/YYYY-MM-DD--slug/index.mdx
+```
+
+页面路由使用 frontmatter 里的 `slug`，最终文章地址是：
+
+```text
+/{slug}/
+```
+
+新建文章最快的方式是运行：
+
+```sh
 pnpm assistant
 ```
 
-If you want to extend it, change the [`assistant.ts`](./scripts/assistant.ts) file.
+这个脚本会收集标题、slug、描述、日期和标签，然后创建文章目录与 `index.mdx`。
 
-### Change constants
+## Frontmatter 规范
 
-Parts of the theme are referencing [`constants.ts`](./src/constants.ts) to e.g. set the site title or main navigation. Modify its contents to suit your site before deploying it.
-
-### Change existing tags / Add new tags
-
-Inside [`constants.ts`](./src/constants.ts) the `FRONTMATTER_TAGS` map contains the available tags for your site. You need to add your display name and slug of the tag inside this map. The display name will be used in the UI and the slug will be used in the URL.
-
-It's referenced by Astro's content collections and also by the [`assistant.ts`](./scripts/assistant.ts) file.
-
-You can add a new tag like so:
-
-```ts
-export const FRONTMATTER_TAGS = new Map(
-  [
-    // Existing tags...
-    ['Display name', 'slug-of-your-tag'] as const,
-  ],
-)
-```
-
-## 🔍 Reference
-
-### Blog post frontmatter
-
-By default, these frontmatter fields are available. You need to change [`content.config.ts`](./src/content.config.ts) to adjust it.
+文章 schema 定义在 `src/content.config.ts`。当前支持这些字段：
 
 ```yaml
-title: Markdown Reference Overview
-slug: markdown-reference-overview
-description: A post showcasing the markdown formatting of a post
-date: 2025-02-18
-lastUpdated: 2025-02-18
+title: 一篇文章的标题
+slug: article-slug
+description: 文章摘要
+date: 2026-08-24
+lastUpdated: 2026-08-24
 tags:
-  - General
-  - MDX
+  - AI
+  - Tool
 searchIndex: true
-image: https://absolute-link.google.com/image.png
+image: https://example.com/cover.png
 ```
 
-### Custom MDX components
+说明：
 
-#### `<Aside>`
+- `title`、`slug`、`description`、`date`、`lastUpdated`、`tags` 必填
+- `image` 可选，用于社交分享图
+- `searchIndex` 默认为 `true`
+- `tags` 必须提前注册到 `src/constants.ts` 的 `FRONTMATTER_TAGS`
+
+## 标签管理
+
+可用标签定义在 `src/constants.ts`：
+
+```ts
+export const FRONTMATTER_TAGS = new Map([
+  ['AI', 'ai'] as const,
+  ['Claude', 'claude'] as const,
+  // ...
+])
+```
+
+新增标签时，需要同时更新：
+
+- `src/constants.ts` 中的 `FRONTMATTER_TAGS`
+- 文章 frontmatter 中的 `tags`
+- `pnpm assistant` 依赖的标签选项会自动读取这里的配置
+
+## 自定义 MDX 能力
+
+### Aside
 
 ```md
 :::note
-Text
+正文
 :::
 
-:::caution[Watch out!]
-Text
-:::
-
-:::tip
-Text
-:::
-
-:::danger
-Text
+:::caution[注意]
+正文
 :::
 ```
 
-Read the [Aside Example](./content/blog/2025-04-02--mdx-asides/index.mdx) to learn more.
+### Mermaid
 
-#### `<Playground>`
+````md
+```mermaid
+graph TD
+  A[Start] --> B[Finish]
+```
+````
+
+### Playground
 
 ````md
 <Playground template="react">
@@ -123,4 +147,34 @@ export default function App() {
 </Playground>
 ````
 
-Read the [Playground Example](./content/blog/2025-06-23--live-coding-with-sandpack/index.mdx) to learn more.
+## 关键目录
+
+```text
+content/blog/        博客文章
+src/pages/           页面与路由
+src/components/      站点组件
+src/constants.ts     站点标题、导航、标签等全局配置
+src/content.config.ts 内容集合 schema
+src/remark.ts        自定义 remark 插件
+scripts/assistant.ts 文章脚手架脚本
+```
+
+## 配置入口
+
+日常最常改的文件：
+
+- `src/constants.ts`：站点标题、描述、导航、标签
+- `astro.config.ts`：Astro 集成、Markdown 管线、Pagefind 开发态支持
+- `netlify.toml`：Netlify 构建与环境变量
+
+## 部署
+
+生产环境通过 Netlify 构建：
+
+```toml
+[build]
+command = "pnpm build"
+publish = "dist"
+```
+
+生产环境站点地址配置为 `https://zhangwen.site`。
