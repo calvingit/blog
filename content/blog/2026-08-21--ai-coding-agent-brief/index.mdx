@@ -1,0 +1,80 @@
+---
+title: AI Coding Agent Brief：从 Coding Agent 到工程化 Agent Workflow
+slug: ai-coding-agent-brief-2026-08-21
+description: 汇总本周 AI Coding Agent 领域的重要变化，关注 Codex、Claude Code、Skills、Agent workflow 与工程实践。
+date: 2026-08-21
+lastUpdated: 2026-08-21
+tags:
+  - AI
+  - Codex
+  - Claude Code
+  - Skills
+  - Agents
+  - Tool
+searchIndex: true
+---
+
+本周 AI Coding Agent 领域的重点不再只是模型能力提升，而是围绕 **Agent 工程化体系** 的完善：如何组织上下文、如何定义技能、如何管理长任务执行，以及如何让 Agent 在真实项目中稳定工作。
+
+## 本周重点
+
+### 1. Coding Agent 开始进入工程流程阶段
+
+过去的 AI 编程工具主要解决“生成代码”问题，而当前的发展重点转向：
+
+- 任务规划
+- 多步骤执行
+- 状态恢复
+- 工具调用
+- 代码验证
+- 长周期任务管理
+
+一个成熟的 Coding Agent 更接近一个具备执行能力的软件工程协作者，而不是简单的代码补全工具。
+
+## 2. Skills 与 AGENTS.md 成为 Agent 配置基础设施
+
+随着 Codex、Claude Code 等工具的发展，项目级 Agent 配置逐渐形成类似工程规范的角色：
+
+- AGENTS.md 定义项目级约束
+- Skills 封装可复用工作流程
+- References 提供按需加载知识
+- Hooks 负责自动化检查和事件处理
+
+核心变化是：开发者开始管理 Agent 的工作环境，而不仅仅是编写 Prompt。
+
+## 3. 长任务执行需要可靠恢复机制
+
+实际使用 Coding Agent 时，模型容量限制、网络异常、上下文中断仍然会影响任务完成率。
+
+工程化方案开始关注：
+
+- Task state 持久化
+- Resume 机制
+- Retry 策略
+- Workspace 管理
+- 执行事件记录
+
+这也是类似 Ralph Loop、Codex Goal 等方案受到关注的原因。
+
+## 4. MCP 与工具生态继续扩展
+
+Agent 能力的边界逐渐从模型本身转移到工具生态：
+
+- 文件系统
+- Git 操作
+- 数据库
+- 浏览器自动化
+- 企业 API
+
+未来 Agent 的竞争重点不仅是模型能力，而是模型、工具和编排层的组合能力。
+
+## 工程影响
+
+对于团队开发流程，建议关注以下方向：
+
+1. 建立项目级 Agent 规范，而不是依赖个人 Prompt。
+2. 将重复性的开发流程沉淀为 Skills。
+3. 为长任务设计可恢复执行机制。
+4. 保留人工审核节点，避免 Agent 自主修改造成不可控风险。
+
+AI Coding Agent 正从“辅助工具”演变为新的软件工程基础设施。未来开发效率的提升，很大程度取决于团队如何设计人与 Agent 的协作流程。
