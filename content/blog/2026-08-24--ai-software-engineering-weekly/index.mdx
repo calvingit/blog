@@ -1,7 +1,7 @@
 ---
-title: AI Software Engineering Weekly：Agent 从工具走向工程基础设施
+title: AI Software Engineering Weekly：Agent 正在进入工程基础设施阶段
 slug: ai-software-engineering-weekly-2026-08-24
-description: 分析本周 AI 软件工程生态的重要变化，覆盖 Codex、Claude Code、MCP、Agent workflow 与工程实践。
+description: 分析本周 AI 软件工程生态的重要变化，关注 Agent runtime、上下文工程、工具协议和开发工作流演进。
 date: 2026-08-24
 lastUpdated: 2026-08-24
 tags:
@@ -14,160 +14,176 @@ tags:
 searchIndex: true
 ---
 
-过去一年，AI Coding Agent 的竞争重点正在发生变化：模型能力仍然重要，但真正影响工程落地的因素越来越集中在 Agent 的执行体系，包括上下文管理、任务调度、工具协议、隔离执行和长期任务恢复。
+过去一年，AI Coding Agent 的关注点正在发生变化。
 
-本周几个变化共同指向一个趋势：AI Agent 正在从一次性代码生成工具，演变为软件工程基础设施。
+早期讨论集中在：模型能否生成代码、哪个模型 benchmark 更高。
 
-## 本周整体判断
+但进入真实工程环境后，新的问题开始出现：
 
-当前 AI 软件工程的核心问题已经不是“模型是否能生成代码”，而是：
+> 如何让 Agent 在复杂代码库中持续工作，并且保证过程可控、结果可验证？
 
-> 如何让 Agent 在复杂工程环境中持续、可靠、可验证地完成任务。
+本周几个变化共同指向一个趋势：Agent 正在从“增强开发工具”走向需要运行时、治理和验证体系的软件工程基础设施。
 
-一个真实开发任务包含需求理解、代码探索、方案设计、修改、测试、反馈修复等多个阶段，因此未来 Agent 系统需要具备类似软件系统的生命周期管理能力。
+## 本周判断：竞争重点正在从模型能力转向 Agent Harness
 
-## 1. Codex CLI：Agent Session 管理成为新的基础能力
-
-### 发生了什么
-
-Codex CLI 新版本增加了 Agent 管理和 Session 消息能力，包括 `codex agents` 和 `codex queue`。[^1]
-
-### 为什么重要
-
-传统 Coding Agent 更像一次函数调用：
+一个真实的软件开发任务并不是一次代码生成，而是：
 
 ```
-请求 → Agent → 输出
+需求理解
+  ↓
+代码探索
+  ↓
+方案设计
+  ↓
+修改实现
+  ↓
+测试验证
+  ↓
+反馈修复
 ```
 
-而新的模式更接近：
+因此，未来 Agent 系统的核心能力不仅是模型能力，还包括：
+
+- Context engineering
+- Task orchestration
+- Workspace isolation
+- Tool permission
+- Evaluation
+- Long-running execution
+
+这也是为什么近期 Coding Agent 的变化越来越像基础设施演进，而不是 IDE 功能竞争。
+
+## Agent 开始拥有生命周期，而不是一次性对话
+
+Codex CLI 新版本增加 Agent 管理和 Session 消息能力，包括 `codex agents` 和 `codex queue`。[^1]
+
+这个变化的重要意义不是增加几个命令，而是暴露了一个新的工程问题：
+
+> Agent 需要被管理。
+
+传统模式：
 
 ```
-Agent Pool
- ├── Feature Agent
+用户请求 → Agent → 输出结果
+```
+
+未来更可能接近：
+
+```
+Agent Runtime
+ ├── Task Agent
  ├── Review Agent
  ├── Research Agent
- └── Test Agent
+ └── Verification Agent
 ```
 
-Agent 生命周期、任务状态和消息传递会成为新的工程问题。
+但需要注意：多 Agent 并不等于更高效率。
 
-### 工程影响
+真正困难的问题是：
 
-未来设计 Agent 平台时，需要关注：
+- 谁负责什么任务
+- 如何保存状态
+- 如何恢复失败任务
+- 如何验证执行结果
 
-- Session 生命周期
-- Task ownership
-- 状态恢复
-- Agent 间通信
-- 执行记录
+因此下一阶段竞争重点可能不是“更多 Agent”，而是更好的 Agent runtime。
 
-多 Agent 并不是简单增加数量，而是引入调度系统。
+## MCP 的价值不只是连接工具，而是重新定义边界
 
-## 2. MCP：从工具调用协议走向 Agent 基础设施
+Model Context Protocol 正在推动 Agent 与外部系统之间的标准化连接。[^2]
 
-### 发生了什么
+它解决的是一个关键问题：
 
-Model Context Protocol 发布新的规范版本，引入无状态协议核心、扩展机制、Tasks 等能力。[^2]
+> Agent 如何安全、统一地访问外部能力？
 
-### 为什么重要
+但协议标准化只是第一步。
 
-MCP 的变化说明 Agent 工具连接正在从实验性接口向基础设施演进。
+企业真正需要解决的问题包括：
 
-过去工具连接依赖长期 session，而新的设计更加适合 HTTP 基础设施和大规模部署。[^2]
+- Agent 是否拥有最小权限
+- 工具返回的数据是否可信
+- 操作是否可以审计
+- 敏感数据如何保护
 
-### 工程影响
+因此 MCP 更像 Agent 基础设施的一部分，而不是完整解决方案。
 
-未来企业级 Agent 架构需要考虑：
-
-- Tool discovery
-- 权限控制
-- 长任务执行
-- 可观测性
-- 协议兼容
-
-MCP 的价值不只是连接模型和工具，而是定义 Agent 与外部系统交互的标准边界。
-
-## 3. Claude Code：Sub-agent 与 Worktree 正在形成隔离执行模型
-
-### 发生了什么
+## Workspace isolation 正在成为 Agent 执行边界
 
 Claude Code 持续增强 sub-agent、worktree 和 session 协作能力。[^3]
 
-### 为什么重要
+其中更值得关注的不是某个具体工具，而是背后的趋势：
 
-Agent 修改代码具有副作用，多 Agent 并行执行必须解决隔离问题。
+> Agent 修改代码需要独立、安全、可恢复的执行环境。
 
-Worktree 不只是 Git 技巧，而逐渐成为 Agent workspace isolation 的基础能力。
+Git worktree 只是其中一种实现方式，未来还可能包括：
 
-### 工程影响
+- Container sandbox
+- VM isolation
+- Remote execution environment
 
-推荐根据任务类型选择：
+对于工程团队：
 
 | 场景 | 推荐方式 |
 | --- | --- |
-| 查询和分析 | 单 Agent |
-| 独立开发任务 | Worktree + Agent |
-| 长期职责 | Persistent Session |
-| Review | 独立 Reviewer |
+| 查询分析 | 单 Agent |
+| 独立开发 | Worktree + Agent |
+| 高风险修改 | Sandbox + Verification |
+| 长周期任务 | Persistent Session |
 
-不要为了多 Agent 而拆分任务，边界清晰比数量更重要。
+隔离能力会逐渐成为 Agent 系统的基础组件。
 
-## 4. Skills 与 AGENTS.md：Agent 配置进入工程治理阶段
+## Context engineering 正在替代 Prompt engineering
 
-### 发生了什么
+Skills、AGENTS.md、Rules 和 Hooks 的价值，不只是保存提示词，而是在管理 Agent 的工作环境。
 
-项目级 Agent 配置逐渐成为开发流程的一部分，包括 AGENTS.md、Skills、Rules 和 Hooks。
-
-### 为什么重要
-
-未来开发效率的提升，不只来自更强模型，而来自更好的上下文工程。
-
-高质量配置应该描述：
+高质量 Agent 配置应该描述：
 
 - 项目约束
 - 架构边界
-- 验证方式
-- 特殊流程
+- 验证流程
+- 特殊开发规则
 
 而不是重复代码已经表达的信息。
 
-### 工程影响
+未来 Skill 更像软件组件：
 
-Skill 应该像软件组件一样维护：
+- 有输入输出约定
+- 有版本管理
+- 有测试
+- 有失败案例
+- 有维护成本
 
-- 明确输入输出
-- 控制上下文大小
-- 可测试
-- 可复用
+这可能成为 AI 软件工程新的工程资产。
 
-## 我的工程判断
+## 被高估的方向：无限增加 Agent 数量
 
-AI 软件工程正在进入第二阶段。
+当前很多讨论强调 Multi-Agent。
 
-第一阶段解决：
+但实际工程瓶颈通常不是 Agent 数量，而是：
 
-> AI 能否帮助开发者写代码？
+- 任务拆分是否正确
+- 上下文是否准确
+- 工具权限是否合理
+- 是否存在可靠验证
 
-第二阶段解决：
+增加 Agent 数量，如果没有好的 orchestration，只会增加协调成本。
 
-> 如何让 Agent 成为可靠的软件工程协作者？
+## 对工程团队的建议
 
-未来值得投入的方向包括：
+如果现在开始建设 AI 软件工程体系，优先级应该是：
 
-- Agent 生命周期管理
-- Context engineering
-- Skill 体系建设
-- Workspace isolation
-- 自动验证体系
-- Agent evaluation
+1. 建立 Agent 执行记录和可观察性。
+2. 管理项目级 Context，而不是堆积 Prompt。
+3. 建立验证机制，而不是相信最终输出。
+4. 控制工具权限和执行边界。
+5. 将重复工作沉淀为可维护 Skill。
 
-与其不断优化 Prompt，不如开始设计适合 Agent 工作的软件工程流程。
+模型升级仍然重要，但未来效率差距更多来自 Agent 工作流设计能力。
 
 ## 参考资料
 
 [^1]: OpenAI Codex CLI release notes（Codex agents / queue）：https://github.com/openai/codex/releases
 
-[^2]: Model Context Protocol 2026-07-28 Specification：https://blog.modelcontextprotocol.io/posts/2026-07-28/
+[^2]: Model Context Protocol Specification：https://modelcontextprotocol.io/
 
 [^3]: Claude Code Changelog：https://code.claude.com/docs/en/changelog
