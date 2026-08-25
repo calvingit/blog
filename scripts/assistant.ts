@@ -1,9 +1,11 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import * as p from '@clack/prompts'
 import isValidFilename from 'valid-filename'
-import { FRONTMATTER_TAGS } from '../src/constants'
+import { normalizeTags } from '../src/tags'
 
-const TAGS_NAMES = Array.from(FRONTMATTER_TAGS.keys())
+function parseTagInput(value: string) {
+  return normalizeTags(value.split(/[,，]/).map(tag => tag.trim()).filter(Boolean))
+}
 
 async function main() {
   p.intro('Assistant')
@@ -84,13 +86,19 @@ async function main() {
           }
         },
       }),
-      tags: () => p.multiselect({
+      tags: () => p.text({
         message: 'Tags',
-        options: TAGS_NAMES.map(tag => ({
-          value: tag,
-          label: tag,
-        })),
-        required: true,
+        placeholder: 'AI, Agents, Tutorial',
+        validate: (value) => {
+          try {
+            if (parseTagInput(value).length === 0) {
+              return 'at least one tag is required'
+            }
+          }
+          catch (error) {
+            return error instanceof Error ? error.message : 'tags are invalid'
+          }
+        },
       }),
     }, {
       onCancel: () => {
@@ -102,6 +110,7 @@ async function main() {
     const relativeFilePath = `content/blog/${blog.date}--${blog.slug}`
     const absoluteFilePath = `${process.cwd()}/${relativeFilePath}`
     const finalPath = `${absoluteFilePath}/index.mdx`
+    const tags = parseTagInput(blog.tags)
     const fileContent = `---
 title: ${title}
 slug: ${blog.slug}
@@ -109,7 +118,7 @@ description: ${blog.description}
 date: ${blog.date}
 lastUpdated: ${blog.date}
 tags:
-${blog.tags.map(tag => `  - ${tag}`).join('\n')}
+${tags.map(tag => `  - ${tag}`).join('\n')}
 ---`
 
     p.log.info(`A file will be created at ${relativeFilePath} with:

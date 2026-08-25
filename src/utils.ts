@@ -1,10 +1,9 @@
-import type { FrontmatterTag } from '@constants'
 import type { AstroIntegration } from 'astro'
 import type { CollectionEntry } from 'astro:content'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sirv from 'sirv'
-import { FRONTMATTER_TAGS } from './constants'
+import { getPostsByTag as getPostsByTagFromCollection, getTags as getTagInfo } from './tags'
 
 /**
  * Returns a date in the format "MMM DD, YYYY"
@@ -66,36 +65,15 @@ export function capitalize<T extends string>(str: T): Capitalize<T> {
 /**
  * Get all posts tagged with the given tag
  */
-export function getPostsByTag(data: Array<CollectionEntry<'blog'>>, tag: FrontmatterTag) {
-  return data.filter(post => post.data.tags?.includes(tag))
+export function getPostsByTag(data: Array<CollectionEntry<'blog'>>, tag: string) {
+  return getPostsByTagFromCollection(data, tag)
 }
 
 /**
  * Get all tags, their slug, and the number of posts
  */
 export function getTags(data: Array<CollectionEntry<'blog'>>) {
-  const output = [] as Array<{ tag: FrontmatterTag, slug: string, count: number }>
-
-  for (const post of data) {
-    if (!post.data.tags)
-      continue
-
-    for (const tag of post.data.tags) {
-      const existingTag = output.find(t => t.tag === tag)
-      if (existingTag) {
-        existingTag.count++
-      }
-      else {
-        output.push({
-          tag,
-          slug: FRONTMATTER_TAGS.get(tag) as string,
-          count: 1,
-        })
-      }
-    }
-  }
-
-  return output
+  return getTagInfo(data)
 }
 
 /**

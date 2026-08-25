@@ -1,5 +1,3 @@
-type MapKey<T extends Map<any, any>> = T extends Map<infer K, any> ? K : never
-
 /**
  * Metadata for your site
  */
@@ -82,32 +80,6 @@ export const HEADER: Header = {
     },
   ],
 }
-
-/**
- * A map of name - slug pairs
- */
-export const FRONTMATTER_TAGS = new Map([
-  ['AI', 'ai'] as const,
-  ['Claude', 'claude'] as const,
-  ['Claude Code', 'claude-code'] as const,
-  ['Codex', 'codex'] as const,
-  ['Skills', 'skills'] as const,
-  ['Agents', 'agents'] as const,
-  ['OpenClaw', 'openclaw'] as const,
-  ['Flutter', 'flutter'] as const,
-  ['Invest', 'invest'] as const,
-  ['Others', 'others'] as const,
-  ['Softwares', 'softwares'] as const,
-  ['Thoughts', 'thoughts'] as const,
-  ['Reading', 'reading'] as const,
-  ['iOS', 'ios'] as const,
-  ['Android', 'android'] as const,
-  ['Tutorial', 'tutorial'] as const,
-  ['Tool', 'tool'] as const,
-  ['Multi-Agent', 'multi-agent'] as const,
-])
-
-export type FrontmatterTag = MapKey<typeof FRONTMATTER_TAGS>
 
 export const SKIP_NAV_ID = 'skip-to-content'
 

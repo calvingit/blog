@@ -28,11 +28,11 @@ There are no automated tests in this project.
 
 ### Content
 
-Blog posts live in `content/blog/` with the directory convention `YYYY-MM-DD--slug/index.mdx`. The content schema is defined in `src/content.config.ts` and enforces that every post has `title`, `slug`, `description`, `date`, `lastUpdated`, and `tags`. Tags must be pre-registered in `FRONTMATTER_TAGS` in `src/constants.ts` — adding a tag anywhere else will fail validation.
+Blog posts live in `content/blog/` with the directory convention `YYYY-MM-DD--slug/index.mdx`. The content schema is defined in `src/content.config.ts` and enforces that every post has `title`, `slug`, `description`, `date`, `lastUpdated`, and `tags`. Tags are article-driven: frontmatter accepts free-form strings, `src/tags.ts` normalizes them, generates slugs from the tag text, and throws on slug collisions during build.
 
 ### Configuration hub: `src/constants.ts`
 
-All site-wide settings live here: `SITE` (URL, title, description, lang), `HEADER` (nav links), `FRONTMATTER_TAGS` (allowed tag display-names → slugs), and `ASIDE_TYPES`. This is the first place to change when modifying site identity or navigation.
+All site-wide settings live here: `SITE` (URL, title, description, lang), `HEADER` (nav links), and `ASIDE_TYPES`. This is the first place to change when modifying site identity or navigation. For current tag behavior, read `src/tags.ts`.
 
 ### Pages and routing
 
@@ -76,4 +76,4 @@ Uses `@antfu/eslint-config` with: 2-space indent, single quotes, no semicolons. 
 
 ## Adding a blog post
 
-Use the interactive CLI: `pnpm assistant`. It prompts for title, slug, description, date, and tags, then creates `content/blog/YYYY-MM-DD--slug/index.mdx` with prefilled frontmatter. Extend the CLI at `scripts/assistant.ts` if needed.
+Use the interactive CLI: `pnpm assistant`. It prompts for title, slug, description, date, and tags, then creates `content/blog/YYYY-MM-DD--slug/index.mdx` with prefilled frontmatter. Tags are entered as comma-separated text and normalized through `src/tags.ts`. Extend the CLI at `scripts/assistant.ts` if needed.

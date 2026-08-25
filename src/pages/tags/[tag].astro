@@ -3,9 +3,8 @@ import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import Link from '@components/link.astro'
 import Seo from '@components/seo.astro'
 import Spacer from '@components/spacer.astro'
-import { FRONTMATTER_TAGS } from '@constants'
 import Layout from '@layouts/layout.astro'
-import { defaultDateFormat, getPostsByTag } from '@utils'
+import { defaultDateFormat, getTags } from '@utils'
 import { getCollection } from 'astro:content'
 
 /**
@@ -14,25 +13,17 @@ import { getCollection } from 'astro:content'
  */
 export async function getStaticPaths() {
   const entries = await getCollection('blog')
+  const tags = getTags(entries)
 
-  let result = []
-
-  for (const [tagName, tagSlug] of FRONTMATTER_TAGS) {
-    const postsWithTag = getPostsByTag(entries, tagName)
-
-    result.push({
-      params: {
-        tag: tagSlug,
-      },
-      props: {
-        tagName,
-        tagSlug,
-        postsWithTag,
-      },
-    })
-  }
-
-  return result
+  return tags.map(({ tag, slug }) => ({
+    params: {
+      tag: slug,
+    },
+    props: {
+      tagName: tag,
+      postsWithTag: entries.filter((post) => post.data.tags.includes(tag)),
+    },
+  }))
 }
 
 const { tagName, postsWithTag } = Astro.props

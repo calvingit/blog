@@ -90,25 +90,22 @@ image: https://example.com/cover.png
 - `title`、`slug`、`description`、`date`、`lastUpdated`、`tags` 必填
 - `image` 可选，用于社交分享图
 - `searchIndex` 默认为 `true`
-- `tags` 必须提前注册到 `src/constants.ts` 的 `FRONTMATTER_TAGS`
+- `tags` 支持直接写字符串，构建时会自动去首尾空格、合并重复空格并去重
+- 标签 slug 由 `src/tags.ts` 直接根据标签文本生成
+- 如果两个不同标签会生成同一个 slug，构建会直接报错
 
 ## 标签管理
 
-可用标签定义在 `src/constants.ts`：
+标签逻辑集中在 `src/tags.ts`：
 
 ```ts
-export const FRONTMATTER_TAGS = new Map([
-  ['AI', 'ai'] as const,
-  ['Claude', 'claude'] as const,
-  // ...
-])
+normalizeTagName(tag)
+normalizeTags(tags)
+getTagSlug(tag)
+getTags(entries)
 ```
 
-新增标签时，需要同时更新：
-
-- `src/constants.ts` 中的 `FRONTMATTER_TAGS`
-- 文章 frontmatter 中的 `tags`
-- `pnpm assistant` 依赖的标签选项会自动读取这里的配置
+新增标签时，直接写进文章 frontmatter 即可。需要额外处理的只有 slug 冲突。
 
 ## 自定义 MDX 能力
 
@@ -153,8 +150,9 @@ export default function App() {
 content/blog/        博客文章
 src/pages/           页面与路由
 src/components/      站点组件
-src/constants.ts     站点标题、导航、标签等全局配置
+src/constants.ts     站点标题、导航等全局配置
 src/content.config.ts 内容集合 schema
+src/tags.ts          标签规范化、slug 生成、聚合与冲突检查
 src/remark.ts        自定义 remark 插件
 scripts/assistant.ts 文章脚手架脚本
 ```
@@ -163,7 +161,8 @@ scripts/assistant.ts 文章脚手架脚本
 
 日常最常改的文件：
 
-- `src/constants.ts`：站点标题、描述、导航、标签
+- `src/constants.ts`：站点标题、描述、导航
+- `src/tags.ts`：标签规范化、slug 规则、聚合行为
 - `astro.config.ts`：Astro 集成、Markdown 管线、Pagefind 开发态支持
 - `netlify.toml`：Netlify 构建与环境变量
 
