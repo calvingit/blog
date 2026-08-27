@@ -247,7 +247,7 @@ Agent 还是得借助项目自己的工具形成证据：
 
 ### 2. 我的主流程
 
-![我的 AI Coding 工作流：我的主流程.png](https://picui.ogmua.cn/s1/2026/08/27/6a901ae727f77.webp)
+![我的 AI Coding 工作流：我的主流程.png](../../../src/assets/blog/ai-coding-workflow/main-workflow.webp)
 
 这条流程不是要求每个小改动都写一套文档，简单、低风险、可回滚的任务直接完成即可，只有复杂或高影响任务才进入 Spec / Plan。
 
@@ -359,7 +359,7 @@ Agent 还是得借助项目自己的工具形成证据：
 
 ### 9. Skills 组合起来怎么用
 
-![App Skills 工作流.png](https://picui.ogmua.cn/s1/2026/08/27/6a901b3b4a15e.webp)
+![App Skills 工作流.png](../../../src/assets/blog/ai-coding-workflow/skills-workflow.png)
 
 #### 新需求或大功能
 
@@ -534,196 +534,21 @@ wayfinding -> debug -> test（先复现或补最小回归）
 ````markdown
 每周生成一份 **AI Software Engineering Weekly**。
 
-目标：面向有经验的软件工程师，分析过去一周 AI 如何改变软件工程实践。不要写成 AI 新闻摘要，也不要追求覆盖所有动态。核心任务是筛选真正影响工程决策的变化，给出有依据、有取舍的技术判断。
+面向有经验的软件工程师，分析过去一周真正影响软件工程决策的 AI 变化。不要按厂商或时间线罗列新闻，先提炼工程判断，再用证据支撑；没有足够重要的主题时可以少写，不要为了周更制造趋势。
 
-## 核心原则
+要求：
 
-### 1. 以工程判断组织内容
+- 区分已验证事实、来源观点和工程分析，不把推断写成事实。
+- 优先使用官方文档、Release Notes、源码、论文和 benchmark；社区内容只用于发现线索，事实需继续追溯。
+- 对每个判断检查反例、技术限制、成本、维护负担，以及是否值得普通团队现在投入。
+- 重点关注 Coding Agent、Agent Runtime、Planning/Delegation/Multi-agent、Skills/Rules、MCP、权限与安全、Worktree/Sandbox、评测、可观测性、可靠性，以及 AI 对开发、测试、审查和 CI/CD 的影响。
+- 文章使用中文，说明变化是什么、为什么重要、适用边界、反方观点和行动建议；外部事实用 Astro/MDX footnote，并集中整理参考资料。
 
-先研究过去一周的重要变化，再提炼一个或多个值得讨论的工程判断。
+信息来源优先级：官方一手资料 > 论文与 benchmark > 高质量工程实践 > 社区信号。每期只选择少量有工程价值的内容。
 
-事件、Release Notes、论文和社区讨论只是证据，不要按照厂商或发布时间逐条罗列。
-
-避免这种结构：
-
-* OpenAI 发布了什么
-* Anthropic 发布了什么
-* GitHub 发布了什么
-
-更关注：
-
-* 这些变化是否指向同一个工程趋势？
-* 哪些变化会影响实际开发流程、架构或团队决策？
-* 哪些只是产品功能更新，没有长期意义？
-
-如果没有足够强的共同趋势，可以讨论多个独立问题，不要强行制造一个宏大主题。
-
-### 2. 区分事实、来源观点和分析
-
-明确区分：
-
-* **已验证事实**：官方文档、Release Notes、源码、论文、Benchmark 明确支持的信息。
-* **来源观点**：厂商、论文作者、工程团队或社区提出的判断。
-* **工程分析**：根据上述证据做出的推断和建议。
-
-不要把推断写成事实。
-
-无法从可靠来源确认的信息，应明确说明未验证，或者不写。
-
-### 3. 保持批判性
-
-对于重要趋势，同时检查：
-
-* 为什么这个方向可能成立？
-* 是否存在反例？
-* 哪些部分可能被厂商或社区高估？
-* 当前还有哪些技术限制？
-* 成本、复杂度和维护负担是什么？
-* 是否真的值得普通工程团队现在投入？
-
-不要因为多家厂商同时发布类似能力，就自动认定其已经成为成熟工程实践。
-
----
-
-## 信息来源
-
-### Tier 0：官方一手来源
-
-优先级最高。
-
-重点关注：
-
-* OpenAI Codex、Codex CLI、Codex App、OpenAI Developer Blog、OpenAI Cookbook、OpenAI Agents SDK
-* Anthropic Claude Code、Agent Skills、MCP、Anthropic Engineering
-* GitHub Copilot
-* Cursor
-* Windsurf
-* Google Gemini CLI / Gemini Code Assist
-* 其他重要 Coding Agent / AI Developer Tool 官方文档
-
-优先读取：
-
-* Release Notes
-* Changelog
-* 官方文档
-* 源码仓库
-* Issues / PR（确有工程价值时）
-* 官方 Engineering Blog
-
-### Tier 1：研究与 Benchmark
-
-重点关注：
-
-* arXiv
-* SWE-bench / SWE-bench Verified
-* TerminalBench
-* AgentBench
-* SWE-RPG
-* 其他 software engineering / coding agent benchmark
-* Hugging Face Papers
-* Papers With Code
-
-关注主题包括：
-
-* Coding Agent 能力
-* Agent architecture
-* Planning
-* Tool use
-* Memory
-* Context engineering
-* Multi-agent
-* Long-horizon tasks
-* Agent evaluation
-* Software engineering productivity
-
-不要只看 benchmark 排名，还要检查：
-
-* 测试方法是否合理
-* 是否使用不同模型或 Harness
-* 是否存在 benchmark contamination
-* 提升是否能映射到真实开发场景
-
-### Tier 2：高质量工程实践
-
-包括但不限于：
-
-* Anthropic Engineering
-* OpenAI Cookbook
-* Microsoft Research / Developer Blog
-* Google DeepMind / Google Developers
-* Cloudflare
-* Vercel
-* Stripe
-* Sourcegraph
-* Shopify
-* 高质量开源 Coding Agent 项目的架构文章和技术复盘
-
-重点寻找：
-
-* 实际生产经验
-* Agent workflow
-* Context management
-* Evaluation
-* Observability
-* Reliability
-* Security
-* Developer productivity
-
-### Tier 3：社区信号
-
-用于发现问题和趋势：
-
-* Hacker News
-* Reddit
-* X / Twitter
-* GitHub Discussions / Issues
-* 开发者社区
-
-社区内容只能作为**发现来源或经验样本**。
-
-对于事实性结论，应继续追溯到：
-
-* 官方文档
-* 源码
-* Release Notes
-* 论文
-* 可验证工程资料
-
----
-
-## 长期关注范围
-
-不要要求每期全部覆盖，只选择本周真正有价值的内容。
-
-重点关注：
-
-* Codex CLI / Codex App / Claude Code 等 Coding Agent
-* Cursor、Windsurf、GitHub Copilot、Gemini CLI 等 AI Developer Tools
-* Agent Runtime
-* Session / Resume / Goal / Loop
-* Long-running Agent
-* Planning / Delegation
-* Sub-agent / Multi-agent
-* Agent orchestration
-* Skills / AGENTS.md / CLAUDE.md / Rules / Hooks
-* Context Engineering
-* MCP / Tool calling / Tool discovery
-* Permission / Agent security
-* Worktree / Sandbox / Container
-* Workspace isolation
-* Agent evaluation
-* Trajectory evaluation
-* Observability / Trace
-* Human-in-the-loop
-* Agent reliability
-* AI software engineering workflow
-* AI 对开发团队、代码审查、测试、CI/CD 等流程的影响
-
----
-
-如果本周没有足够重要的变化，可以少写，甚至明确说明没有值得形成完整文章的主题。不要为了周更而制造趋势。
-
+固定输出：本期判断、证据与链接、限制和反方观点、对工程团队的影响、行动建议、未验证项。
 ````
+
 
 这两个云端任务的共同点是：**长期运行、持续研究、先做判断、保留来源、再生成对外内容**；它们和本机自动化的区别在于，本机任务有文件系统和项目命令访问能力，云端任务更适合周期性信息生产与远端协作。
 
