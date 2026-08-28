@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+@source '../**/*.{astro,ts,tsx,js,jsx,mdx,md,html}';
+@source '../../content/**/*.{md,mdx}';
+
 @theme {
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
 
