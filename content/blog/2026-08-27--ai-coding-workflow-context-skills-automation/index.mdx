@@ -209,6 +209,8 @@ Flutter、Dart、Vue、Vite、React 等生态变化很快，涉及 API 语法、
 边界：哪些操作不能做，哪些事实不能猜
 ```
 
+![从问答案到交付任务](../../../src/assets/blog/ai-coding-workflow/illustrations/01-task-contract.png)
+
 #### 不同任务使用不同模式
 
 ##### 解释与调研
@@ -230,6 +232,8 @@ Flutter、Dart、Vue、Vite、React 等生态变化很快，涉及 API 语法、
 ##### 自动化
 
 适合固定周期、规则稳定、输出可检查的工作，目前我会把每日提交审查、每周代码健康检查、周报和已完成 Spec 归档等任务交给自动化执行。
+
+![不同任务使用不同模式](../../../src/assets/blog/ai-coding-workflow/illustrations/02-task-modes.png)
 
 ---
 
@@ -271,6 +275,8 @@ Agent执行过程中大概有三层约束：全局、项目、任务。
 **任务**
 
 任务层只描述这次工作的目标、范围和验收标准，越接近当前任务的明确规则，优先级越高。
+
+![全局、项目、任务三层约束](../../../src/assets/blog/ai-coding-workflow/illustrations/03-constraint-layers.png)
 
 ### 3. 我的 AI Coding 流程
 
@@ -314,6 +320,8 @@ Agent执行过程中大概有三层约束：全局、项目、任务。
 - **外部结果**：CI、后端联调、生产环境
 
 这些层级不能互相造假，比如本地测试通过，不等于线上、CI 已经验收；另一个模型说"没问题"，也不等于真实 diff 和测试没有问题。
+
+![模型输出不是证据](../../../src/assets/blog/ai-coding-workflow/illustrations/04-evidence-scale.png)
 
 #### Git Worktree
 
@@ -479,6 +487,8 @@ wayfinding -> debug -> test（先复现或补最小回归）
 | 双周清理 ChatGPT 应用缓存与日志 | 本地心跳；每两周周日           | 执行清理脚本，把超过 14 天的已知临时/缓存项移入废纸篓。                                      | 不永久删除；不动配置、凭据、Skills、sessions、worktrees、源码以及正在使用的 `logs_2.sqlite`。 |
 
 这几项任务都按同一套做法运行：先限定范围，再读证据，只执行被授权的动作，最后写清结果和 coverage gap。自动化显示成功，只能说明这次任务按规则跑完，不代表项目没有风险。
+
+![自动化应该有边界](../../../src/assets/blog/ai-coding-workflow/illustrations/05-automation-boundary.png)
 
 ### 3. 本机自动化提示词
 
