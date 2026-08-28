@@ -1,6 +1,6 @@
 ---
 title: 我的 AI Coding 工作流：从Context、Skills 到 Automation
-slug: ai-coding-workflow-context-skills-automation
+slug: ai-coding-workflow
 description: 复盘如何将 AI 接入真实研发流程，从项目上下文、任务边界、Skills 体系到自动化任务的完整工作流设计。
 date: 2026-08-27
 lastUpdated: 2026-08-27
@@ -17,134 +17,150 @@ tags:
 searchIndex: true
 ---
 
-> 一开始，我只是用 AI 查 API、解释报错、生成代码片段。后来，我开始把完整的研发任务交给 Agent：让它读取项目、调查调用链、修改代码、运行验证，再根据结果继续推进。
->
-> 这时我逐渐发现，真正影响结果的不是某一次提示词写得多漂亮，而是项目上下文、任务边界、工具权限和验证方式是否清楚。
->
-> 这篇文章记录我目前正在形成的一套工作方式：我如何使用 Agent 工具，如何学习 Agent，如何把全局规则和项目 Skills 放进日常研发流程，以及哪些工作适合自动化。我不打算做工具测评，也不想给出一套必须照抄的标准答案，这只是现阶段的工作记录。
->
-> 全文分为五部分：工具应用、Agent 学习路线、日常工作流、自动化，以及最近形成的一些判断。
+一开始，我只是用 AI 查 API、解释报错、生成代码片段。后来，我开始把完整的研发任务交给 Agent：让它读取项目、调查调用链、修改代码、运行验证，再根据结果继续推进。
+
+这时我逐渐发现，真正影响结果的不是某一次提示词写得多漂亮，而是项目上下文、任务边界、工具权限和验证方式是否清楚。
+
+这篇文章记录我目前正在形成的一套工作方式：我如何使用 Agent 工具，如何学习 Agent，如何把全局规则和项目 Skills 放进日常研发流程，以及哪些工作适合自动化。我不打算做工具测评，也不想给出一套必须照抄的标准答案，这只是现阶段的工作记录。
+
+全文分为五部分：工具应用、Agent 学习路线、日常工作流、自动化，以及最近形成的一些判断。
+
 ## 一、Agent 工具的应用
 
-### 1. ChatGPT 应用：主力 Agent 工作台
+### 1. ChatGPT
 
-我主要用它完成代码调查、实现、验证、审查、报告和自动化。
+OpenAI 将 Codex 改名为 ChatGPT，品牌统一了，增加了 Work 模式。我主要还是用 Codex 编程模式，一般不切换到 Work 模式。
 
-几个对我比较重要的能力：
+对我最有用的是：
 
-- 直接进入项目目录，读取真实代码和规则；
-- 执行 Git、测试、构建、ADB 等本地命令；
-- 使用独立任务和 worktree 隔离上下文；
-- 通过 Skills 固化项目工作流；
-- 连接浏览器、桌面应用、文档和视觉工具；
-- 保存任务历史和记忆，减少重复解释；
-- 创建周期性自动化任务。
+- 让 Agent 执行 Git、测试、构建、ADB 等命令，避免手动在终端敲命令
+- 尽量使用 worktree 隔离上下文，减少任务之间的干扰，可以同时对一个仓库并行多个需求开发
+- 内置了各种好用的插件， 支持第三方插件接入
+- 记忆功能挺强，几个月前的内容还记得
+- 一些周期性重复工作可以交给自动化定期执行
 
-#### 侧边聊天（Ask ChatGPT sidebar）
+下面聊几个大部分人不常用，但是我用起来很爽的功能：
 
-在 ChatGPT Atlas 中，**Ask ChatGPT** 是贴在当前网页旁边的紧凑聊天栏，可以一边浏览一边提问、起草或总结，不必离开当前标签页。打开方式是点击侧边的 **Ask ChatGPT**，或在新标签页直接开始聊天。它与当前页面共享浏览上下文；需要执行浏览器操作时，可以从提示框的 `+` 菜单进入 Agent mode。Agent mode 可以继续当前标签页中的任务，但不能在浏览器中运行代码、下载文件或安装扩展。
+#### 侧边聊天
 
-官方说明：[Using Ask ChatGPT sidebar and ChatGPT Agent on Atlas](https://help.openai.com/en/articles/12628199-using-ask-chatgpt-sidebar-and-chatgpt-agent-on-atlas)。Atlas 的侧边聊天和桌面应用的 Companion Window 不是同一个功能；macOS 桌面应用的 Companion Window 可用 `Option + Space` 呼出，Windows 使用 `Alt + Space`，用于快速提问、上传文件或开始新对话。[macOS 桌面应用说明](https://help.openai.com/en/articles/9703738-desktop-app-release-notes) · [Windows 桌面应用说明](https://help.openai.com/en/articles/9982051-using-the-chatgpt-windows-app)
+侧边聊天会共享主对话的上下文，但本身是临时的：侧边对话关闭后，内容不会保留，也无法再找回来对话。
 
-#### 内嵌浏览器
+适合在主对话旁边临时展开一个小话题，常用场景包括：
 
-ChatGPT 桌面应用的内嵌浏览器用于在应用内浏览网页、登录、下载文件和检查页面。基本流程：
+- 探讨另一种实现方案
+- 解释一个陌生名词或概念
+- 搜索和整理资料
+- 随手确认一个不想打断主线的问题
 
-1. 在 ChatGPT 桌面应用中打开 **Work** 或 **Codex** 会话。
-2. 点击工具栏的浏览器按钮，或使用快捷键：macOS `Command + Shift + B`，Windows `Ctrl + Shift + B`。
-3. 让 ChatGPT 使用当前页面；出现权限提示时，先检查网站、账号和动作，再批准访问。
-4. 需要多个页面时，让 ChatGPT 在同一任务中打开或切换标签页；下载文件前确认保存位置和内容。
+#### 内嵌浏览器：前端开发调试
 
-内嵌浏览器使用自己的浏览器状态，和 Chrome 的 cookies、已登录会话、打开的标签页及扩展隔离。需要复用现有 Chrome 会话时，应使用 Codex Chrome extension。可用能力受账号、套餐和工作区设置影响。[Using the built-in browser in the ChatGPT desktop app](https://help.openai.com/en/articles/20001277-using-the-built-in-browser-in-the-chatgpt-desktop-app)
+内嵌浏览器让 Agent 直接面对真实页面完成调试，而不只是阅读代码或猜测效果。它可以打开本地页面，使用鼠标点选组件，给多个元素批量打标签，再把这些标注和修改要求一起发回对话。
 
-#### Browser Tool 与 Site Tools 的区别
+这对前端迭代尤其方便：可以边看页面边指出具体问题，要求 Agent 同时调整一组组件，再通过截图、页面操作、Console 和 Network 检查修改结果。设计、实现和验证都在同一个任务里完成，减少了手动描述元素、来回切换工具和复制报错信息的成本。
 
-**Browser Tool** 是让 ChatGPT 查看和操作内嵌浏览器页面的整体能力；**Site Tools** 是网页通过 WebMCP 暴露给 Agent 的特定工具。网页支持时，地址栏会出现箭头：点击可查看工具及其读写性质，使用中箭头会变蓝。Site Tools 只对提供它的当前页面生效，不会跨网站或跨标签页继承；页面关闭后也不可用。
+#### 对话新窗口与分屏
 
-Site Tools 可能读取当前页面状态和登录会话，也可能执行修改操作。ChatGPT 会在网站交互前请求许可，并在发送个人信息、购买、删除数据、修改权限或代发消息等敏感动作前再次确认。可以在桌面应用 **Browser settings → Permissions** 中关闭 **Enable site tools**。官方说明：[Using site tools in the ChatGPT desktop app](https://help.openai.com/en/articles/20001423-using-site-tools-in-the-chatgpt-desktop-app)
+可以在对话列表对对话右键，选择 **在新窗口打开**，再用 macOS 或 Windows 的系统窗口排列将两个对话并排或分屏。这样适合把主任务和审查、资料或验证对话同时放在屏幕上；两个窗口仍是独立对话，不能把一个窗口的上下文自动当成另一个窗口的上下文。
 
-#### 会话新窗口与分屏
+#### 复制深度链接
 
-桌面应用中，可以在会话列表对会话右键，选择 **在新窗口打开**，再用 macOS 或 Windows 的系统窗口排列将两个会话并排或分屏。这样适合把主任务和审查、资料或验证会话同时放在屏幕上；两个窗口仍是独立会话，不能把一个窗口的上下文自动当成另一个窗口的上下文。
+复制对话的深度链接，可以另开一个对话读取原对话内容，用于交接工作或继续处理任务。但我最近需要把当前进展交给新的 Agent 时，通常使用 `handoff` SKILL 生成临时文档。
+
+#### 置顶对话
+
+把常用或未完成的重要对话置顶，方便后续检索。自动化任务也可以选择置顶对话，这样每次执行都会在同一个对话里运行，持续保留任务上下文。
+
+#### 电脑控制
+
+电脑控制把 Agent 变成远程操作员：它可以读取本地应用的当前状态，点击、输入、滚动、拖拽和选择内容，代替人在电脑前完成一系列界面操作。适合远程查看和操作开发工具、控制Chrome浏览器及其他桌面应用；每次操作后重新检查界面状态，再决定下一步，能处理需要鼠标和键盘配合的任务。
 
 ### 2. ZCode：远程查看和控制任务
 
-ZCode 主要解决"人不在电脑前，但任务还在跑"的问题。我会用手机查看当前工作区、任务和会话，必要时继续输入或处理 Agent 的确认请求。
+> 官方网站：https://zcode.z.ai/cn
 
-除了扫码连接，也可以通过 Bot Channel 从常用通讯工具进入工作区，更适合较长时间的移动访问。
+ZCode 是个可选项，用它是因为智谱对自己的GLM系列模型比较数据，能够更好的优化和缓存Token使用。
 
-远程控制提高的是可达性，不代表应该让 Agent 无限运行。长任务仍然需要明确阶段、超时边界和可恢复的中间结果。
+另一个用它的原因是它的远程连接非常好，不需要代理，解决随时有个想法发给它来处理一下的问题，重点是web移动端适配比较好。
 
-### 3. Pi：独立顾问、多模型审查和受限实现
+当然也可以使用类似龙虾和 Hermes Agent 的 IM 连接方式，也可以通过 Bot Channel 从微信或者飞书进入工作区，更适合较长时间的移动访问。
 
-Pi 不是 ChatGPT 应用的替代品，我主要在高风险或存在争议时使用：
+### 3. Pi
+
+> 官方网站：https://pi.dev
+
+Pi 是开源的，非常简洁，内置插件不多，要什么功能自己跟AI说。纯命令行操作，可以对接各个厂商的模型。
+
+我基于它做了一个 `[pi-agent](https://github.com/calvingit/pi-skills)` skill，用于替代 Codex 或者 zcode内置的 Sub Agent 功能。
+
+这个skill主要包含以下模式，可以自行去扩展：
 
 - **Adviser**：让另一个模型独立给出第二意见；
 - **Committee**：多个模型从不同角度交叉检查；
 - **Implementer**：在干净 worktree 和明确文件范围内实现一个小切片。
 
-使用 Pi 时，我会坚持几个边界：
+使用方法：
 
-- 第一轮独立审查尽量不把主 Agent 的结论喂给它；
-- 长任务先做最小 preflight，确认模型、权限和工具链可用；
-- 默认串行调用，避免供应商并发和限额问题；
-- 实现任务必须限制允许修改的文件和验收条件；
-- Pi 的 receipt 只是声明，主 Agent 仍要检查真实状态、diff 并重新验证。
+- 第一轮独立审查尽量不把主 Agent 的结论喂给它
+- 长任务先做最小 preflight，确认模型、权限和工具链可用
+- 默认串行调用，避免供应商并发和限额问题
+- 实现任务必须限制允许修改的文件和验收条件
+- Pi 的 receipt 只是声明，主 Agent 仍要检查真实状态、diff 并重新验证
 
-### 4. CodeGraph：理解调用关系
+### 4. CodeGraph
 
-当仓库已经建立 `.codegraph/` 索引时，我会优先用 CodeGraph 查符号、调用者和调用路径。相比单纯全文搜索，它更适合回答：
+> 官方网站：https://colbymchenry.github.io/codegraph
 
-- 这个方法是谁调用的；
-- 一个状态如何跨层传递；
-- 修改共享函数会影响哪些路径；
-- 动态分发后真正落到哪个实现。
+当仓库已经建立 `.codegraph/` 索引时，Agent会优先用 CodeGraph 查符号、调用者和调用路径。相比单纯全文搜索，它更适合回答：
 
-没有索引时，再退回 `rg` 和直接阅读代码。是否建立索引由项目决定，不强制所有仓库使用。
+- 这个方法是谁调用的
+- 一个状态如何跨层传递
+- 修改共享函数会影响哪些路径
+- 动态分发后真正落到哪个实现
 
-### 5. Context7：查询当前版本文档
+没有索引时，再退回 `rg` / `grep` 和直接阅读代码。是否建立索引由项目决定，不强制所有仓库使用。
 
-Flutter、Dart、Vue、Vite、React 等生态变化很快。涉及 API 语法、配置、版本迁移和库特有问题时，我会让 Agent 先查当前文档，再给方案。
+### 5. Context7
+
+> 官方网站：https://context7.com，免费，但是需要注册账号拿到API Key。
+
+Flutter、Dart、Vue、Vite、React 等生态变化很快，涉及 API 语法、配置、版本迁移和库特有问题时，我会让 Agent 先查当前文档，再给方案。
 
 这能减少一个常见问题：模型给出的答案逻辑上合理，但 API 已经改名、废弃或只适用于旧版本。
 
-### 6. Chrome  Browser  DevTools
+### 6. chrome-devtools-mcp
 
-浏览器工具主要用于本地 Web 验证：
+> 官方网站：https://github.com/ChromeDevTools/chrome-devtools-mcp
 
-- 打开本地页面并操作真实界面；
-- 共享已有登录状态；
-- 检查 Console、Network 和页面元素；
-- 截图验证布局和交互；
-- 复现只有浏览器环境才出现的问题。
+这个 Chrome 开发者工具的 MCP 浏览器工具主要用于本地 Web 验证：
+
+- 打开本地页面并操作真实界面
+- 共享已有登录状态
+- 检查 Console、Network 和页面元素
+- 截图验证布局和交互
+- 复现只有浏览器环境才出现的问题
 
 我通常优先使用 ChatGPT 应用内置 Browser；需要已有 Chrome 登录态、扩展或现有标签页时，再控制本机 Chrome。可重复回归和 CI 场景仍然应该沉淀为 Playwright 等正式测试。
 
-### 7. 终端和项目原生工具
+### 7. 终端工具
 
-Agent 还是得借助项目自己的工具形成证据：
+常用的终端工具有：
 
-- Git / Git worktree：版本、diff 和任务隔离；
-- `rg`：快速搜索代码和配置；
-- FVM / Flutter test / analyze：Flutter 项目验证；
-- npm / pnpm / lint / typecheck / build：前端和 Node 项目验证；
-- ADB：Android 真机、日志和 deeplink 验证；
-- 项目 Makefile 和校验脚本：统一团队可复现的入口。
-
-工具越接近项目真实运行方式，验证价值越高。
-
+- **herdr**：一款专为 AI 时代设计的轻量级终端多路复用工具（类似 AI 版 tmux），它的核心功能是管理和监控多个 Agent，提供后台持久化会话、鼠标原生交互以及 Agent 状态实时追踪
+- **Warp**：闭源转开源了，带 AI 能力的终端，用于生成、解释和整理命令，减少查命令和手动拼接参数的时间；
+- **Otty**：Typora 团队的另一款 AI 终端工具
+- **Kimi**：配置了 `kimi-k3`，可以用无头模式在其他Agent里来运行
 
 ## 二、Agent 学习路线
 
-我不是先把资料全部读完才开始用，而是在真实任务里一点点补齐对 Agent 的理解。
+我没有时间把电子书或视频从头看到尾，大部分时候是在一点点补齐对 Agent 的理解，查缺补漏，挑挑拣拣。
 
 ### 1. 先会使用工具
 
-从对话问答、代码生成、文档查询和错误解释开始，先建立对 Agent 能力边界的直觉。
+从和大模型对话问答、代码生成、文档查询和错误解释开始，先建立对 Agent 能力边界的直觉。
 
 ### 2. 再理解 Agent 如何工作
 
-慢慢理解 Model、Context、Agent Loop、Tool、Harness、Permission、Memory 和 Verification 这些基本组成。
+慢慢理解 Model、Context、Agent Loop、Tool、Harness、RAG、Memory 这些基本组成。
 
 ### 3. 从单次问答转向完整交付
 
@@ -162,21 +178,26 @@ Agent 还是得借助项目自己的工具形成证据：
 
 从单 Agent 到工具调用、Skills、多 Agent 独立审查，再到有边界的自动化，一层层增加复杂度。
 
-## 三、日常工作流：项目 Skills 驱动的研发流程
-### 1. 从提问到交付
+## 三、日常工作流
 
-#### 1. 从"问答案"转向"交付任务"
+本章节介绍我在真实项目里如何使用 Skills 驱动的研发流程。
+
+经过一年的时间变化，其实版本迭代了无数个。跟随着AI 模型 和 Agent 的发展，从 Prompt、Context、Harness、Loop、Graph 等各种Engineering概念吸收精华，依照自己的理解和项目需要进行变更。
+
+### 1. 从需求到交付
+
+#### 从"问答案"转向"交付任务"
 
 早期使用 AI，更多是问语法、查资料、生成代码片段。现在我更常把一个完整但有边界的任务交给 Agent，例如：
 
-- 根据异常堆栈追踪真实调用链，定位根因；
-- 修改 Flutter、Vue 或 Node 项目，并补最小必要测试；
-- 审查当天提交、近 100 条提交或某个功能分支；
-- 分析线上日志，输出带证据的分类报告；
-- 设计发布流程、项目 Skills 和 Agent 协作契约；
-- 调用浏览器、ADB、截图或本地服务验证真实行为；
-- 整理文档、报告、信息图和分享材料；
-- 把重复工作变成定时任务。
+- 根据异常堆栈追踪真实调用链，定位根因
+- 修改 Flutter、Vue 或 Node 项目，并补最小必要测试
+- 审查当天提交、近 100 条提交或某个功能分支
+- 分析线上日志，输出带证据的分类报告
+- 设计发布流程、项目 Skills 和 Agent 协作契约
+- 调用浏览器、ADB、截图或本地服务验证真实行为
+- 整理文档、报告、信息图和分享材料
+- 把重复工作变成定时任务
 
 这里的变化是：输入不再只是"帮我写一段代码"，而是尽量包含：
 
@@ -192,176 +213,186 @@ Agent 还是得借助项目自己的工具形成证据：
 
 ##### 解释与调研
 
-适合了解某段代码、比较方案、查询最新文档。默认只读，不直接改代码。
+适合了解某段代码、比较方案、查询最新文档，默认只读，不直接改代码。
 
 ##### 诊断
 
-适合线上日志、崩溃堆栈、网络问题和状态异常。要求沿调用链、配置链和数据流定位根因，不把报错行直接当作根因。
+适合线上日志、崩溃堆栈、网络问题和状态异常，要求沿调用链、配置链和数据流定位根因，不把报错行直接当作根因。
 
 ##### 实现
 
-适合边界清楚的功能和 Bug 修复。Agent 可以修改代码，但必须控制 diff，并执行与风险匹配的验证。
+适合边界清楚的功能和 Bug 修复，Agent 可以修改代码，但必须控制 diff，并执行与风险匹配的验证。
 
 ##### 审查
 
-重点找运行时缺陷、行为回归、边界遗漏和验证缺口。审查阶段默认只读，避免一边改一边改变证据现场。
+重点找运行时缺陷、行为回归、边界遗漏和验证缺口，审查阶段默认只读，避免一边改一边改变证据现场。
 
 ##### 自动化
 
-适合固定周期、规则稳定、输出可检查的工作。目前我会把每日提交审查、每周代码健康检查、周报和已完成 Spec 归档等任务交给自动化执行。
+适合固定周期、规则稳定、输出可检查的工作，目前我会把每日提交审查、每周代码健康检查、周报和已完成 Spec 归档等任务交给自动化执行。
 
 ---
 
-### 2. 项目规则与 Skills 驱动的工作流
+### 2. Skills 驱动的工作流
 
-### 1. 三层约束：全局、项目、任务
+Agent执行过程中大概有三层约束：全局、项目、任务。
 
-#### 全局层：`~/.codex/AGENTS.md`
+**全局**
 
-存放跨项目长期有效的偏好，例如：
+创建 `~/.codex/AGENTS.md`，存放跨项目长期有效的偏好，例如：
 
-- 默认中文、结论先行；
-- 修改前先理解调用关系；
-- 保留用户已有改动；
-- 不擅自 commit、push 或执行破坏性命令；
-- 没有验证证据就不能声称成功；
-- 涉及开源库最新 API 时查询当前文档。
+- 默认中文、结论先行
+- 修改前先理解调用关系
+- 保留用户已有改动
+- 不擅自 commit、push 或执行破坏性命令
+- 没有验证证据就不能声称成功
+- 涉及开源库最新 API 时查询当前文档
 
 这相当于给所有 Agent 设置一套最低工程标准。
 
-#### 项目层：仓库内的 `AGENTS.md`、文档和 Skills
+还有用户级别的skills目录： `~/.agents/skills`，这里放通用的、跨项目的skills，后面有提到。
+
+**项目**
+
+项目仓库内的 `AGENTS.md`、Rules文档和 Skills
 
 项目层描述真实的工程约束，例如：
 
-- 项目结构、模块边界和代码风格；
-- Flutter、Vue、后端各自的验证命令；
-- 哪些目录可以修改；
-- Spec、实现、审查、归档怎样衔接；
-- 项目特有的业务规则和例外。
+- 项目结构、模块边界和代码风格
+- Flutter、Vue、后端各自的验证命令
+- 哪些目录可以修改
+- Spec、实现、审查、归档怎样衔接
+- 项目特有的业务规则和例外
+- 提交日志规范
+- 单元测试规范
 
 项目规则应该跟着仓库走，避免团队流程依赖某个人电脑上的全局配置。
 
-#### 任务层：当前请求
+**任务**
 
-任务层只描述这次工作的目标、范围和验收标准。越接近当前任务的明确规则，优先级越高。
+任务层只描述这次工作的目标、范围和验收标准，越接近当前任务的明确规则，优先级越高。
 
-### 2. 我的主流程
+### 3. 我的 AI Coding 流程
 
 ![我的 AI Coding 工作流：我的主流程.png](../../../src/assets/blog/ai-coding-workflow/main-workflow.webp)
 
 这条流程不是要求每个小改动都写一套文档，简单、低风险、可回滚的任务直接完成即可，只有复杂或高影响任务才进入 Spec / Plan。
 
-### 3. 复杂任务：先收敛，再实现
+#### 复杂任务
 
-复杂需求最容易出现的问题，是 Agent 在需求仍然模糊时就开始写代码。我的做法是先把下面几件事说清楚：
+复杂需求最容易出现的问题，是 Agent 在需求仍然模糊时就开始写代码。
 
-- 用户真正想解决的问题是什么；
-- 哪些行为必须保持不变；
-- 影响哪些模块、接口和状态；
-- 验收条件如何映射到测试或可观察结果；
-- 哪些风险需要提前验证。
+我的做法是先把下面几件事说清楚：
 
-然后再拆成尽量独立的垂直切片。每个切片都应该能说明：改了什么、为什么、怎么验证、还缺什么。
+- 用户真正想解决的问题是什么
+- 哪些行为必须保持不变
+- 影响哪些模块、接口和状态
+- 验收条件如何映射到测试或可观察结果
+- 哪些风险需要提前验证
 
-### 4. Bug 修复：修根因，不修截图
+然后再拆成尽量独立的垂直切片，每个切片都应该能说明：改了什么、为什么、怎么验证、还缺什么。
 
-报错堆栈、日志和用户描述通常只是症状。真正修改前，我会要求 Agent：
+#### Bug 修复
 
-1. 找到入口和直接调用者；
-2. 追踪状态、配置或数据从哪里产生；
-3. 检查相邻调用路径是否也受影响；
-4. 找到所有路径共同经过的最小修复点；
-5. 留下一个能防止回归的最小验证。
+报错堆栈、日志和用户描述通常只是症状，真正修改前，我会要求 Agent：
+
+1. 找到入口和直接调用者
+2. 追踪状态、配置或数据从哪里产生
+3. 检查相邻调用路径是否也受影响
+4. 找到所有路径共同经过的最小修复点
+5. 留下一个能防止回归的最小验证
 
 一个共享入口上的正确保护，通常比在多个页面分别加判断更小、更可靠。
 
-### 5. 验证闭环：模型输出不是证据
+#### 验证闭环
 
-我通常看四类证据：
+模型输出不是证据，我通常看四类证据：
 
-- **静态证据**：代码、调用关系、配置、Git diff；
-- **自动检查**：单元测试、Widget 测试、静态分析、lint、构建；
-- **运行时证据**：日志、接口响应、浏览器、真机、ADB；
-- **外部结果**：CI、后端联调、应用商店、生产环境。
+- **静态证据**：代码、调用关系、配置、Git diff
+- **自动检查**：单元测试、Widget 测试、静态分析、lint、构建
+- **运行时证据**：日志、接口响应、浏览器、真机、ADB
+- **外部结果**：CI、后端联调、生产环境
 
-这些层级不能互相冒充。比如本地测试通过，不等于线上、CI 或应用商店已经验收；另一个模型说"没问题"，也不等于真实 diff 和测试没有问题。
+这些层级不能互相造假，比如本地测试通过，不等于线上、CI 已经验收；另一个模型说"没问题"，也不等于真实 diff 和测试没有问题。
 
-### 6. Git 与 Worktree：把并行工作的风险隔离开
+#### Git Worktree
 
-复杂功能、并行任务和外部 Agent 实现，尽量放到独立 worktree：
+把并行工作的风险隔离开，复杂功能、并行任务和外部 Agent 实现，尽量放到独立 worktree：
 
-- 每个任务有独立文件状态；
-- 主工作区已有修改不会被覆盖；
-- 可以清楚检查每个 Agent 的实际 diff；
-- 失败任务可以保留现场，不污染主分支。
+- 每个任务有独立文件状态
+- 主工作区已有修改不会被覆盖
+- 可以清楚检查每个 Agent 的实际 diff
+- 失败任务可以保留现场，不污染主分支
 
 但 worktree 只隔离文件，不会自动解决共享设计冲突。多个 Agent 同时修改依赖注入、公共配置或共享类型，仍然应该串行处理。
 
-### 7. Skills：把稳定流程变成可复用能力
+### Skills
 
-`AGENTS.md` 适合放原则，Skill 适合放一个具体任务的操作手册。
+`AGENTS.md` 适合放原则，Skill 适合放一个具体任务的操作手册，把稳定流程变成可复用能力。
 
 我现在更关注 Skill 的**触发条件、输入输出契约、权限边界和失败处理**，而不只是里面写了多少提示词。
 
-### 8. 两套 Skills：全局能力与项目能力
+#### 用户级别 Skills
 
-#### 全局 Skills：`~/.agents/skills`（当前 19 个有效 Skill）
+`~/.agents/skills` 当前包含 19 个有效 Skill。
 
-全局 Skills 不绑定某个仓库，适合跨项目复用：
+用户级别 Skills 不绑定某个仓库，适合跨项目复用：
 
-| Skill | 用途 |
-| --- | --- |
-| `claude-coder` | 把明确的编码、重构或测试任务委托给 Claude Code；返回后由主 Agent 检查实际 diff。 |
-| `codex-reviewer` | 使用 Codex CLI 做分析、执行或续跑，并对 CLI 输出做批判性复核。 |
-| `find-docs` | 查询开源库、SDK、CLI 的当前官方文档；先解析库 ID，再查具体概念。 |
-| `fuck-my-shit-mountain` | 用户明确点名后，按指定模式做大范围、对抗式的工程审查；默认不会自动触发。 |
-| `pi-agent` | 路由 Pi 的 adviser、committee、implementer 模式，做独立意见、多模型审查或受限实现。 |
-| `kimi-worker` | 用户明确要求时，调用 Kimi CLI 完成一个边界清楚的实现任务。 |
-| `prompt-optimizer` | 把目标、上下文、边界、输出和验收条件整理成更稳定的提示词。 |
-| `teach` | 在当前工作区内用循序渐进的方式讲解一个新概念或技能。 |
-| `handoff` | 把当前会话压缩成可交接的上下文，便于另一个 Agent 继续。 |
-| `resolving-merge-conflicts` | 处理正在进行的 merge/rebase 冲突，保持冲突边界和 Git 状态可见。 |
-| `humanizer-zh` | 去除中文文档中的 AI 味、翻译腔和模板化表达，同时保留事实与责任主体。 |
-| `tavily-search` / `tavily-cli` | 做一次性网页搜索或通过 CLI 查询文章、新闻和资料。 |
-| `tavily-extract` | 从指定 URL 提取干净正文，适合已有链接的定向阅读。 |
-| `tavily-crawl` / `tavily-map` | 批量抓取站点内容，或先发现一个站点的 URL 结构。 |
-| `tavily-dynamic-search` | 用程序化调用筛选搜索结果，只把决策所需的信息带回上下文。 |
-| `tavily-research` | 做多来源、带引用的深度研究和比较报告。 |
-| `tavily-best-practices` | 在代码中集成 Tavily 搜索、抽取、爬取和研究能力时提供实现规范。 |
-| `url-to-markdown` | 把公开网页转换为本地 Markdown，供后续阅读、翻译或归档。 |
+| Skill                          | 用途                                                                                |
+| ------------------------------ | ----------------------------------------------------------------------------------- |
+| `claude-coder`                 | 把明确的编码、重构或测试任务委托给 Claude Code，返回后由主 Agent 检查实际 diff。    |
+| `codex-reviewer`               | 使用 Codex CLI 做分析、执行或续跑，并对 CLI 输出做批判性复核。                      |
+| `find-docs`                    | Context7 查询开源库、SDK、CLI 的当前官方文档；先解析库 ID，再查具体概念。           |
+| `fuck-my-shit-mountain`        | 按指定模式做大范围、对抗式的工程审查；默认不会自动触发。                            |
+| `pi-agent`                     | 路由 Pi 的 adviser、committee、implementer 模式，做独立意见、多模型审查或受限实现。 |
+| `kimi-worker`                  | 用户明确要求时，调用 Kimi CLI 完成一个边界清楚的实现任务。                          |
+| `prompt-optimizer`             | 把目标、上下文、边界、输出和验收条件整理成更稳定的提示词。                          |
+| `teach`                        | 在当前工作区内用循序渐进的方式讲解一个新概念或技能。                                |
+| `handoff`                      | 把当前对话压缩成可交接的上下文，便于另一个 Agent 继续。                             |
+| `resolving-merge-conflicts`    | 处理正在进行的 merge/rebase 冲突，保持冲突边界和 Git 状态可见。                     |
+| `humanizer-zh`                 | 去除中文文档中的 AI 味、翻译腔和模板化表达，同时保留事实与责任主体。                |
+| `tavily-search` / `tavily-cli` | 做一次性网页搜索或通过 CLI 查询文章、新闻和资料。                                   |
+| `tavily-extract`               | 从指定 URL 提取干净正文，适合已有链接的定向阅读。                                   |
+| `tavily-crawl` / `tavily-map`  | 批量抓取站点内容，或先发现一个站点的 URL 结构。                                     |
+| `tavily-dynamic-search`        | 用程序化调用筛选搜索结果，只把决策所需的信息带回上下文。                            |
+| `tavily-research`              | 做多来源、带引用的深度研究和比较报告。                                              |
+| `tavily-best-practices`        | 在代码中集成 Tavily 搜索、抽取、爬取和研究能力时提供实现规范。                      |
+| `url-to-markdown`              | 把公开网页转换为本地 Markdown，供后续阅读、翻译或归档。                             |
 
-这些能力的组合通常是：`find-docs` 负责官方技术资料，`tavily-*` 负责外部研究，`prompt-optimizer` 负责把任务写清楚，`pi-agent` 或 `claude-coder` 负责独立执行，`handoff` 负责跨会话交接，主 Agent 最后负责证据核对。
+这些能力的组合通常是：`find-docs` 负责官方技术资料，`tavily-*` 负责外部搜索研究，`prompt-optimizer` 负责把任务写清楚，`pi-agent` 或 `claude-coder` 负责独立执行，`handoff` 负责跨对话交接，主 Agent 最后负责证据核对。
 
-#### App Skills：`~/my-app/.agents/skills`（当前 16 个有效 Skill）
+#### 项目 Skills
 
-项目 Skills 绑定业务应用的目录、架构和验证规则，是真正进入业务代码时的主流程：
+项目 Skills 绑定业务应用的目录、架构和验证规则，是真正进入业务代码时的主流程。从 Skill这个概念开始到现在已经改了10几个版本了，包括很多流行的工作流Skills（Superpows， addyosmani/agent-skills等等）。
 
-| Skill | 用途 |
-| --- | --- |
-| `wayfinding` | 先定位模块、入口、规则和相关文档，建立任务地图。 |
-| `grilling` | 通过连续追问收敛需求、范围、取舍和验收条件。 |
-| `examine-architecture` | 在实现前检查模块边界、依赖方向、状态所有权和架构风险。 |
-| `domain-modeling` | 维护领域术语表和 ADR，避免同一业务概念在不同模块各说一套。 |
-| `to-spec` | 将已经收敛的需求落盘为 `SPEC.md` 和 `PLAN.md`。 |
-| `implement` | 按 Spec/Plan 选择 task unit，实现 feedback loop，并完成集成验证。 |
-| `create-page` | 按项目约定创建 Flutter 页面、路由和必要的 ViewModel。 |
-| `create-api` | 从接口契约生成 Dart Model、Repository、Mock，并完成 DI 接入。 |
-| `app-components` | 复用项目已有的业务 UI 组件和设计约定。 |
-| `debug` | 建立复现、假设、验证、修复、回归的 Bug 排查闭环。 |
-| `test` | 为关键业务逻辑编写或运行 Flutter 单元/Widget/集成测试。 |
-| `simplify` | 在行为不变的前提下收缩 diff、删除过度设计；实现和修复后强制执行。 |
-| `code-review` | 以只读方式审查运行时缺陷、回归风险、调用链和验证证据。 |
-| `i18n` | 按项目翻译源文件、Key 约定和生成流程维护多语言资源。 |
-| `loop` | 对已落盘的 Spec/Plan 自动循环执行到收尾；需要显式授权。 |
-| `archive-specs` | 读取真实代码和验证证据，把已完成任务沉淀为模块级 living spec。 |
+最近爱上了`mattpocock/skills`，在项目里用了几个月之后，挺适合我的，然后就魔改成了以下的版本：
+
+| Skill                  | 用途                                                              |
+| ---------------------- | ----------------------------------------------------------------- |
+| `wayfinding`           | 先定位模块、入口、规则和相关文档，建立任务地图。                  |
+| `grilling`             | 通过连续追问收敛需求、范围、取舍和验收条件。                      |
+| `examine-architecture` | 在实现前检查模块边界、依赖方向、状态所有权和架构风险。            |
+| `domain-modeling`      | 维护领域术语表和 ADR，避免同一业务概念在不同模块各说一套。        |
+| `to-spec`              | 将已经收敛的需求落盘为 `SPEC.md` 和 `PLAN.md`。                   |
+| `implement`            | 按 Spec/Plan 选择 task unit，实现 feedback loop，并完成集成验证。 |
+| `create-page`          | 按项目约定创建 Flutter 页面、路由和必要的 ViewModel。             |
+| `create-api`           | 从接口契约生成 Dart Model、Repository、Mock，并完成 DI 接入。     |
+| `app-components`       | 复用项目已有的业务 UI 组件和设计约定。                            |
+| `debug`                | 建立复现、假设、验证、修复、回归的 Bug 排查闭环。                 |
+| `test`                 | 为关键业务逻辑编写或运行 Flutter 单元/Widget/集成测试。           |
+| `simplify`             | 在行为不变的前提下收缩 diff、删除过度设计，实现和修复后强制执行。 |
+| `code-review`          | 以只读方式审查运行时缺陷、回归风险、调用链和验证证据。            |
+| `i18n`                 | 按项目翻译源文件、Key 约定和生成流程维护多语言资源。              |
+| `loop`                 | 对已落盘的 Spec/Plan 自动循环执行到收尾，需要显式授权。           |
+| `archive-specs`        | 读取真实代码和验证证据，把已完成任务沉淀为模块级 living spec。    |
 
 项目内还有一个重要设计：Skill 不只是"提示词合集"，而是带有入口检查、允许修改范围、验证命令、输出格式和失败处理的操作契约。
 
-### 9. Skills 组合起来怎么用
+**项目 Skills 组合起来怎么用**
 
 ![App Skills 工作流.png](../../../src/assets/blog/ai-coding-workflow/skills-workflow.png)
 
-#### 新需求或大功能
+##### 新需求或大功能
 
 ```text
 wayfinding
@@ -376,7 +407,7 @@ wayfinding
 
 如果需求还没有收敛，不直接进入 `to-spec`；如果只是一个很小、低风险的修改，也不强行走完整链路。
 
-#### 新增页面
+##### 新增页面
 
 ```text
 wayfinding -> grilling -> create-page
@@ -387,7 +418,7 @@ wayfinding -> grilling -> create-page
 
 页面 Skill 负责结构和入口，组件 Skill 负责复用视觉能力，测试和审查负责行为证据。
 
-#### 新增接口
+##### 新增接口
 
 ```text
 wayfinding -> grilling -> create-api
@@ -397,7 +428,7 @@ wayfinding -> grilling -> create-api
 
 接口变更先确认真实 API 契约和现有 `DkHttpClient`/Repository 模式，再生成 Model，避免只根据一段示例 JSON 编代码。
 
-#### Bug 修复
+##### Bug 修复
 
 ```text
 wayfinding -> debug -> test（先复现或补最小回归）
@@ -407,7 +438,7 @@ wayfinding -> debug -> test（先复现或补最小回归）
 
 `debug` 负责找到根因，`implement` 负责按边界落地；不能把"排查"和"顺手重构整个模块"混成一件事。
 
-#### 高风险或有争议的实现
+##### 高风险或有争议的实现
 
 ```text
 主 Agent 调查
@@ -418,20 +449,6 @@ wayfinding -> debug -> test（先复现或补最小回归）
 ```
 
 全局 Skill 负责外部协作，项目 Skill 负责业务实现。两者组合时，项目规则仍然是代码修改的最终边界。
-
----
-
-### 3. 如何开始
-
-不用一开始就搭建完整体系，可以先从一个小闭环开始：
-
-1. 写一份简短的项目 `AGENTS.md`，只放真实且长期有效的规则；
-2. 选择一个低风险 Bug，让 Agent 先调查调用链，再做最小修改；
-3. 明确要求它运行一个能证明行为的检查；
-4. 自己检查最终 diff，不以 Agent 的总结代替代码；
-5. 把重复出现三次以上的稳定流程，再整理成 Skill 或自动化。
-
-先把一个可靠闭环跑通，再考虑浏览器、CodeGraph、多 Agent、记忆和自动化。工具可以慢慢加，验证边界要从第一天就定下来。
 
 ---
 
@@ -453,13 +470,13 @@ wayfinding -> debug -> test（先复现或补最小回归）
 
 ### 2. 当前本机可核实的自动化
 
-| 名称 | 类型与时间 | 做什么 | 边界 |
-| --- | --- | --- | --- |
-| 每天 commit 质量审查 | 本地项目定时任务；工作日 23:00 | 检查当天所有本地可见 refs 上的已提交变更，按 SHA 去重，重点找真实运行时缺陷。 | 只读；不修改、格式化、生成、暂存、提交或推送；只运行必要的 targeted tests。 |
-| 每周代码健康/架构偏移检查 | 本地项目定时任务；周一 08:00 | 回顾当前作者过去 7 天的重大提交，检查模块边界、重复实现、状态复杂化和测试策略风险。 | 独立 worktree；只读；不把旧 automation memory 当作当前证据。 |
-| 每周归档已完成任务 Spec | 本地项目定时任务；周一 07:00 | 检查 `docs/tasks/`，只把已有实现和验证证据的任务归档为模块级 living spec。 | 不因超过 30 天就自动标记完成；不删除 task 目录；缺证据就列为 skipped/stale。 |
-| 周报总结 | 本地项目定时任务；周五 17:30 | 汇总所有分支和 worktree 的 Git、任务文档与归档文档，生成需求任务、代码优化、工程化三类周报。 | 使用精确时间窗口；正文不展开代码细节；未确认的结论要标记。 |
-| 双周清理 ChatGPT 应用缓存与日志 | 本地心跳；每两周周日 | 执行清理脚本，把超过 14 天的已知临时/缓存项移入废纸篓。 | 不永久删除；不动配置、凭据、Skills、sessions、worktrees、源码以及正在使用的 `logs_2.sqlite`。 |
+| 名称                            | 类型与时间                     | 做什么                                                                                       | 边界                                                                                          |
+| ------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 每天 commit 质量审查            | 本地项目定时任务；工作日 23:00 | 检查当天所有本地可见 refs 上的已提交变更，按 SHA 去重，重点找真实运行时缺陷。                | 只读；不修改、格式化、生成、暂存、提交或推送；只运行必要的 targeted tests。                   |
+| 每周代码健康/架构偏移检查       | 本地项目定时任务；周一 08:00   | 回顾当前作者过去 7 天的重大提交，检查模块边界、重复实现、状态复杂化和测试策略风险。          | 独立 worktree；只读；不把旧 automation memory 当作当前证据。                                  |
+| 每周归档已完成任务 Spec         | 本地项目定时任务；周一 07:00   | 检查 `docs/tasks/`，只把已有实现和验证证据的任务归档为模块级 living spec。                   | 不因超过 30 天就自动标记完成；不删除 task 目录；缺证据就列为 skipped/stale。                  |
+| 周报总结                        | 本地项目定时任务；周五 17:30   | 汇总所有分支和 worktree 的 Git、任务文档与归档文档，生成需求任务、代码优化、工程化三类周报。 | 使用精确时间窗口；正文不展开代码细节；未确认的结论要标记。                                    |
+| 双周清理 ChatGPT 应用缓存与日志 | 本地心跳；每两周周日           | 执行清理脚本，把超过 14 天的已知临时/缓存项移入废纸篓。                                      | 不永久删除；不动配置、凭据、Skills、sessions、worktrees、源码以及正在使用的 `logs_2.sqlite`。 |
 
 这几项任务都按同一套做法运行：先限定范围，再读证据，只执行被授权的动作，最后写清结果和 coverage gap。自动化显示成功，只能说明这次任务按规则跑完，不代表项目没有风险。
 
@@ -531,7 +548,7 @@ wayfinding -> debug -> test（先复现或补最小回归）
 - **文章要求**：讨论为什么成立、可能被高估的地方、限制和反方观点；外部事实使用 Astro/MDX footnote，并集中定义参考资料。
 - **提示词**：
 
-````markdown
+```markdown
 每周生成一份 **AI Software Engineering Weekly**。
 
 面向有经验的软件工程师，分析过去一周真正影响软件工程决策的 AI 变化。不要按厂商或时间线罗列新闻，先提炼工程判断，再用证据支撑；没有足够重要的主题时可以少写，不要为了周更制造趋势。
@@ -542,13 +559,11 @@ wayfinding -> debug -> test（先复现或补最小回归）
 - 优先使用官方文档、Release Notes、源码、论文和 benchmark；社区内容只用于发现线索，事实需继续追溯。
 - 对每个判断检查反例、技术限制、成本、维护负担，以及是否值得普通团队现在投入。
 - 重点关注 Coding Agent、Agent Runtime、Planning/Delegation/Multi-agent、Skills/Rules、MCP、权限与安全、Worktree/Sandbox、评测、可观测性、可靠性，以及 AI 对开发、测试、审查和 CI/CD 的影响。
-- 文章使用中文，说明变化是什么、为什么重要、适用边界、反方观点和行动建议；外部事实用 Astro/MDX footnote，并集中整理参考资料。
 
 信息来源优先级：官方一手资料 > 论文与 benchmark > 高质量工程实践 > 社区信号。每期只选择少量有工程价值的内容。
 
 固定输出：本期判断、证据与链接、限制和反方观点、对工程团队的影响、行动建议、未验证项。
-````
-
+```
 
 这两个云端任务的共同点是：**长期运行、持续研究、先做判断、保留来源、再生成对外内容**；它们和本机自动化的区别在于，本机任务有文件系统和项目命令访问能力，云端任务更适合周期性信息生产与远端协作。
 
@@ -603,42 +618,56 @@ Agent 可以调查、修改、验证和汇报，但需求取舍、风险接受�
 
 ## 参考资料
 
-这份清单来自最近一个月的 Chrome 历史和收藏标签，建议按"先理解运行机制，再接入工具"的顺序阅读。
+我自己收藏的一些资料，建议按"先理解运行机制，再接入工具"的顺序阅读。
 
 ### Agent 学习
 
-| 资料 | 在线入口 |
-| --- | --- |
-| Introduction to Agents | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-introduction-to-agents) |
-| Agent Tools & Interoperability with MCP | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-agent-tools-and-interoperability-with-mcp) |
-| Context Engineering: Sessions & Memory | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-context-engineering-sessions-and-memory) |
-| Agent Quality | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-agent-quality) |
-| Prototype to Production | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-prototype-to-production) |
-| 5-day Generative AI Intensive Course with Google | [Kaggle 课程总览](https://www.kaggle.com/learn-guide/5-day-agents) |
-| Agentic Design Patterns | [作者代码仓库](https://github.com/DanieleSalatti/AgenticDesignPatterns) / [图书信息](https://www.amazon.com/Agentic-Design-Patterns-Hands-Intelligent/dp/3032014018) |
-| Agent Design Patterns Blueprint | [Agent Design Pattern Catalogue](https://research.csiro.au/ss/science/projects/agent-design-pattern-catalogue)（相关设计模式资料） |
-| Hello-Agents V1.0.2 | [datawhalechina/hello-agents](https://github.com/datawhalechina/hello-agents) |
-| The Complete Guide to Building Skills for Claude | [Anthropic 官方 PDF](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf) |
-| AI Agents: Complete Course（Marina Wyss） | [原文：Medium](https://medium.com/data-science-collective/ai-agents-complete-course-f226aa4550a1) |
+| 资料                                             | 在线入口                                                                                                                                                             |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Introduction to Agents                           | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-introduction-to-agents)                                                                                            |
+| Agent Tools & Interoperability with MCP          | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-agent-tools-and-interoperability-with-mcp)                                                                         |
+| Context Engineering: Sessions & Memory           | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-context-engineering-sessions-and-memory)                                                                           |
+| Agent Quality                                    | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-agent-quality)                                                                                                     |
+| Prototype to Production                          | [Kaggle 白皮书](https://www.kaggle.com/whitepaper-prototype-to-production)                                                                                           |
+| 5-day Generative AI Intensive Course with Google | [Kaggle 课程总览](https://www.kaggle.com/learn-guide/5-day-agents)                                                                                                   |
+| Agentic Design Patterns                          | [作者代码仓库](https://github.com/DanieleSalatti/AgenticDesignPatterns) / [图书信息](https://www.amazon.com/Agentic-Design-Patterns-Hands-Intelligent/dp/3032014018) |
+| Agent Design Patterns Blueprint                  | [Agent Design Pattern Catalogue](https://research.csiro.au/ss/science/projects/agent-design-pattern-catalogue)（相关设计模式资料）                                   |
+| Hello-Agents                           | [datawhalechina/hello-agents](https://github.com/datawhalechina/hello-agents)                                                                                        |
+| The Complete Guide to Building Skills for Claude | [Anthropic 官方 PDF](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf)                                                      |
+| AI Agents: Complete Course（Marina Wyss）        | [原文：Medium](https://medium.com/data-science-collective/ai-agents-complete-course-f226aa4550a1)                                                                    |
+
+**如何开始？**
+
+不用一开始就搭建完整体系，可以先从一个小闭环开始：
+
+1. 写一份简短的项目 `AGENTS.md`，只放真实且长期有效的规则；
+2. 选择一个低风险 Bug，让 Agent 先调查调用链，再做最小修改；
+3. 明确要求它运行一个能证明行为的检查；
+4. 自己检查最终 diff，不以 Agent 的总结代替代码；
+5. 把重复出现三次以上的稳定流程，再整理成 Skill 或自动化。
+
+先把一个可靠闭环跑通，再考虑多 Agent、记忆和自动化。工具可以慢慢加，但是验证边界要从第一天就定下来。
+
+---
 
 #### 最近半年 GitHub Star 筛选
 
 半年时间关注了 349 个仓库， 当然大部分是吃灰的，只是方便自己搜索。下面只补充与 Agent 工程学习直接相关、且能补足现有资料的项目。
 
-| 方向 | 项目 | 适合学习什么 |
-| --- | --- | --- |
-| Agent Runtime | [Apache Maka](https://github.com/apache/maka) | 本地优先工作区、工具调用、权限决策、事件溯源和终止事件。 |
-| Agent Runtime / Harness | [OpenHands](https://github.com/OpenHands/OpenHands) | AI 驱动开发 Agent 的运行时和工程化实现。 |
-| Harness | [learn-harness-engineering](https://github.com/walkinglabs/learn-harness-engineering) | 从 0 到 1 理解 Coding Agent Harness。 |
-| 评测 | [OpenAI Evals](https://github.com/openai/evals) | LLM 和 Agent 系统的评测框架与基准注册表。 |
-| 评测 / 安全 | [promptfoo](https://github.com/promptfoo/promptfoo) | Prompt、Agent、RAG 的测试、红队和回归比较。 |
-| MCP | [GitHub MCP Server](https://github.com/github/github-mcp-server) | GitHub 官方 MCP Server 的工具暴露方式。 |
-| 代码安全审查 | [Codex Security](https://github.com/openai/codex-security) | 使用 Codex CLI/SDK 发现、验证和修复代码安全漏洞。 |
-| Skill 安全审查 | [SkillSpector](https://github.com/NVIDIA/SkillSpector) | Skills 的提示注入、数据外泄和供应链风险扫描。 |
-| Context 工程 | [headroom](https://github.com/headroomlabs-ai/headroom) | 压缩工具输出、日志、文件和 RAG 内容，控制上下文成本。 |
-| Agent记忆 | [TencentDB Agent Memory](https://github.com/TencentCloud/TencentDB-Agent-Memory) | 团队级 Chat Memory、Skill、LLM-Wiki 和 Code-Graph。 |
-| 代码审查 | [Alibaba open-code-review](https://github.com/alibaba/open-code-review) | 确定性流水线与 LLM Agent 结合的仓库级代码审查。 |
-| 一堆的Agent架构模式 | [all-agentic-architectures](https://github.com/FareedKhan-dev/all-agentic-architectures) | Reflexion、LATS、GraphRAG、MemGPT 等 Agent 架构的可运行示例。 |
+| 方向                    | 项目                                                                                     | 适合学习什么                                                  |
+| ----------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Agent Runtime           | [Apache Maka](https://github.com/apache/maka)                                            | 本地优先工作区、工具调用、权限决策、事件溯源和终止事件。      |
+| Agent Runtime / Harness | [OpenHands](https://github.com/OpenHands/OpenHands)                                      | AI 驱动开发 Agent 的运行时和工程化实现。                      |
+| Harness                 | [learn-harness-engineering](https://github.com/walkinglabs/learn-harness-engineering)    | 从 0 到 1 理解 Coding Agent Harness。                         |
+| 评测                    | [OpenAI Evals](https://github.com/openai/evals)                                          | LLM 和 Agent 系统的评测框架与基准注册表。                     |
+| 评测 / 安全             | [promptfoo](https://github.com/promptfoo/promptfoo)                                      | Prompt、Agent、RAG 的测试、红队和回归比较。                   |
+| MCP                     | [GitHub MCP Server](https://github.com/github/github-mcp-server)                         | GitHub 官方 MCP Server 的工具暴露方式。                       |
+| 代码安全审查            | [Codex Security](https://github.com/openai/codex-security)                               | 使用 Codex CLI/SDK 发现、验证和修复代码安全漏洞。             |
+| Skill 安全审查          | [SkillSpector](https://github.com/NVIDIA/SkillSpector)                                   | Skills 的提示注入、数据外泄和供应链风险扫描。                 |
+| Context 工程            | [headroom](https://github.com/headroomlabs-ai/headroom)                                  | 压缩工具输出、日志、文件和 RAG 内容，控制上下文成本。         |
+| Agent记忆               | [TencentDB Agent Memory](https://github.com/TencentCloud/TencentDB-Agent-Memory)         | 团队级 Chat Memory、Skill、LLM-Wiki 和 Code-Graph。           |
+| 代码审查                | [Alibaba open-code-review](https://github.com/alibaba/open-code-review)                  | 确定性流水线与 LLM Agent 结合的仓库级代码审查。               |
+| 一堆的Agent架构模式     | [all-agentic-architectures](https://github.com/FareedKhan-dev/all-agentic-architectures) | Reflexion、LATS、GraphRAG、MemGPT 等 Agent 架构的可运行示例。 |
 
 ### Agent 基础与 Harness
 
@@ -646,7 +675,7 @@ Agent 可以调查、修改、验证和汇报，但需求取舍、风险接受�
 - [AI Agents in Depth：MCP](https://bojieli.github.io/ai-agent-book/book/chapter4/#mcp)：了解模型如何连接浏览器、文件和业务系统。
 - [π-agent book](https://books.antinomie.org/pi/) / [PI from Scratch](https://pi-from-scratch.vercel.app/)：从运行时和最小实现角度拆解 Coding Agent。
 - [Inside DeepSeek Harness](https://helmcode.com/deepseek-harness)：观察上下文、工具和长任务控制如何组织。
-- [earendil-works/pi](https://github.com/earendil-works/pi) / [apache/maka](https://github.com/apache/maka)：对照会话、工具结果、权限和终止事件的真实实现。
+- [earendil-works/pi](https://github.com/earendil-works/pi) / [apache/maka](https://github.com/apache/maka)：对照对话、工具结果、权限和终止事件的真实实现。
 
 ### Skills 工作流
 
