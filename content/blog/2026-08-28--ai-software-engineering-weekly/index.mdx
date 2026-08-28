@@ -1,5 +1,5 @@
 ---
-title: AI Software Engineering Weekly：Cloud Agent 扩边，运行时协作继续补齐
+title: AI Software Engineering Weekly：Cloud Agent 走出 IDE，运行时能力继续补齐
 slug: ai-software-engineering-weekly-2026-08-28
 description: 本周关注 Cursor、Claude Code、Codex、GitHub Copilot 的 Agent 工作流更新，以及 SWE-bench Science 对专业工程场景提出的新问题。
 date: 2026-08-28
@@ -14,7 +14,7 @@ tags:
 searchIndex: true
 ---
 
-这周值得看的变化主要有两类：Cloud Agent 继续离开 IDE，开始接触仓库、事件和团队协作入口；Agent 运行时则在补隔离、跨会话通信和长期任务能力。研究侧，新的科学软件 Benchmark 再次提醒我们，通用 Coding Agent 的高分很难直接外推到专业工程场景。
+这周的更新主要落在两个方向：Cloud Agent 开始接触仓库、事件和协作入口；Claude Code 继续补跨会话通信、受限执行和长任务能力。研究侧，SWE-bench Science 说明公开榜单在专业工程场景里的解释力仍然有限。
 
 ## 官方更新
 
@@ -22,35 +22,31 @@ searchIndex: true
 
 Cursor 最近几次更新可以合在一起看。8 月 17 日推出 [Origin Code Hosting](https://cursor.com/changelog/origin-code-hosting)，把 repo、PR、代码浏览和 Agent 放到同一个产品里；8 月 19 日的 [Cloud Agents and Cursor Harness Improvements](https://cursor.com/changelog/08-19-26) 加入事件订阅、`/goal`、独立 VM 上运行的 subagent，以及长任务中的 steering；8 月 27 日又上线 [Start from scratch, without a repo](https://cursor.com/changelog/start-from-scratch)，用户甚至可以先启动 Cloud Agent，再决定是否把结果保存成 Origin repo。
 
-把三次更新拆开看，分别像代码托管、Agent runtime 和新建项目体验。放到一起更容易看出 Cursor 的产品方向：尽量让 Agent 自己拿到完成任务所需的环境，减少用户在 IDE、GitHub、CI 和聊天工具之间来回切换。
+三次更新合在一起，Cursor 的产品方向比较清楚：尽量把 Agent 完成任务所需的环境收进同一套产品，减少在 IDE、GitHub、CI 和聊天工具之间来回切换。
 
-这个方向对个人项目很顺手，对团队则多了一层架构选择。Origin 对从 GitHub 同步进来的仓库明确保留 GitHub 作为 source of truth，但 Cursor 自己托管的 repo、Cloud Agent session、PR 和事件订阅都开始承载状态。团队如果要采用这类一体化工作流，最好先决定哪些状态可以只存在于 Agent 平台，哪些必须继续落在 Git、CI 或 issue 系统里。否则体验越集成，故障恢复和审计反而越依赖单个平台。
+Origin 对从 GitHub 同步进来的仓库明确保留 GitHub 作为 source of truth，但 Cursor 自己托管的 repo、Cloud Agent session、PR 和事件订阅也开始承载更多状态。状态分散到这些位置之后，故障恢复和审计会越来越依赖平台自己的状态模型。集成体验更顺，同时也会把“哪些状态放在哪里”变成架构问题。
 
 ### GitHub Copilot：Agent 入口进了 Teams
 
-GitHub 在 [Shared agentic work with GitHub Copilot in Microsoft Teams](https://github.blog/changelog/2026-08-21-shared-agentic-work-with-github-copilot-in-microsoft-teams/) 里把 Copilot cloud agent 带进了 Teams。频道、线程和私聊都可以启动共享 Agent session；有仓库写权限的人还能让 Copilot直接修改代码。
+GitHub 在 [Shared agentic work with GitHub Copilot in Microsoft Teams](https://github.blog/changelog/2026-08-21-shared-agentic-work-with-github-copilot-in-microsoft-teams/) 里把 Copilot cloud agent 带进了 Teams。频道、线程和私聊都可以启动共享 Agent session；有仓库写权限的人还能让 Copilot 直接修改代码。
 
-这类更新表面上只是多了一个入口，实际使用时更值得关注的是任务归属。一次开发任务可能从 Teams 讨论开始，随后进入 Agent session，产生 commit 和 PR，再被 CI 或 review 重新唤醒。工具之间如果没有稳定的 task identity，日志会很多，任务状态仍然是碎的。
+入口本身不复杂，麻烦在任务归属。一次开发任务可能从 Teams 讨论开始，随后进入 Agent session，产生 commit 和 PR，再被 CI 或 review 重新唤醒。没有稳定的 task identity 时，日志虽然能查到，任务却不一定能完整还原。
 
-所以我对“从哪里启动 Agent”已经没那么在意。更应该检查的是：同一项工作跨聊天、Agent、PR 和 CI 后，能不能被追踪、恢复和重新交接。
+### Claude Code 2.1.248：协作扩展，同时增加受限执行
 
-### Claude Code 2.1.248：一边扩协作，一边收紧执行边界
+[Claude Code v2.1.248](https://github.com/anthropics/claude-code/releases/tag/v2.1.248) 增加了 `--restricted`，会移除默认可执行命令或代码的内置工具，并限制 `WebFetch`、文件访问和权限绕过。同一版本还扩大了 `SendMessage` / `ListAgents` 的跨会话通信范围，让 `/loop` 的动态模式在 Bedrock、Vertex、Foundry 等环境中也可用，并修了不少 background session、worktree lock、prompt cache 和跨会话消息相关的问题。
 
-[Claude Code v2.1.248](https://github.com/anthropics/claude-code/releases/tag/v2.1.248) 里有几项更新放在一起很有意思。
+跨会话通信和 `/loop` 让任务更容易持续运行，`--restricted` 以及 background/worktree 相关修复则把执行边界收得更细。长任务和多会话协作进入真实项目后，权限、隔离、恢复这些问题会很快超过“多开几个 subagent”本身。
 
-新增的 `--restricted` 会移除默认可执行命令或代码的内置工具，并限制 `WebFetch`、文件访问和权限绕过；同一版本又扩大了 `SendMessage` / `ListAgents` 的跨会话通信范围，并让 `/loop` 的动态模式在 Bedrock、Vertex、Foundry 等环境中也可用。版本里还修了不少 background session、worktree lock、prompt cache 和跨会话消息相关的问题。
-
-这些更新没有一个特别抢眼，但组合起来很贴近真实 Agent runtime 的需求：一边允许任务跑得更久、多个 session 互相通信，一边给部署方更明确的能力裁剪和隔离手段。长任务和多会话协作要进入团队环境，控制面通常比“再多一个 subagent”更实际。
-
-`--restricted` 尤其值得留意。很多团队过去只能在“完全开放工具”与“频繁人工确认”之间取舍，现在开始出现更细的运行时配置。不过它仍然只是 Claude Code 自身的一套策略，不能替代容器权限、仓库权限、网络策略和 CI 里的独立验证。
+过去在 CLI Agent 上常见的取舍，是完全开放工具，或者频繁人工确认。`--restricted` 给了更细的运行时配置，但它仍然只是 Claude Code 自身的一套策略，不能替代容器权限、仓库权限、网络策略和 CI 里的独立验证。
 
 ### OpenAI：`codex mcp-server` 退场，Agent runtime 接口继续分化
 
 OpenAI 8 月 24 日在 [Release Notes](https://openai.com/products/release-notes/) 中宣布弃用 `codex mcp-server`，推荐改用 Codex app server；如果要从 Claude Code 使用 Codex，则推荐 Codex plugin for Claude Code。
 
-这项变更本身很小，但对内部平台设计有参考价值。MCP 适合工具发现和调用，一个完整 Coding Agent 还要处理 session、审批、状态、事件和流式执行结果。把整套 Agent runtime 都包装成 MCP tool，接口很容易变得别扭。
+这项变更可以看作接口分层的一次调整。MCP 适合工具发现和调用，一个完整 Coding Agent 还要处理 session、审批、状态、事件和流式执行结果。把整套 Agent runtime 都包装成 MCP tool，接口很容易变得别扭。
 
-这里不宜过度解读成“app server 会成为新的通用标准”。OpenAI 目前只明确了迁移方向。对工程团队更实用的结论是：工具协议和任务运行时可以分开建模，不需要把所有 Agent 能力都塞进同一层协议。
+目前官方只说明了迁移方向，不能据此推断 app server 会成为通用 Agent runtime 标准。内部平台如果也在做类似集成，把工具协议和任务运行时分开建模会更稳妥。
 
 ## 研究与 Benchmark
 
@@ -58,11 +54,11 @@ OpenAI 8 月 24 日在 [Release Notes](https://openai.com/products/release-notes
 
 8 月 20 日发布的 [SWE-bench Science](https://arxiv.org/abs/2608.19799) 收集了 98 个 GitHub 仓库中的 119 个科学软件工程任务，覆盖 20 个科学领域。论文报告中，表现最好的 Agent 在 pass@1 上仍低于 50%。作者归纳的常见失败包括领域知识不足、探索方向错误、修复覆盖不完整，以及无法把已有科学知识正确泛化到新情况。
 
-更有意思的是它对“给 Agent 更多上下文”这件事泼了点冷水。论文的配对消融显示，质量高、和任务匹配的科学指导会改善平均表现和 token 效率；不合适的指导可能产生锚定，未必提高精确修复成功率。
+论文的配对消融还有一个结果：质量高、和任务匹配的科学指导会改善平均表现和 token 效率；不合适的指导可能产生锚定，未必提高精确修复成功率。这给“多塞一些上下文总会更好”泼了点冷水。
 
-这和项目里的 `AGENTS.md`、Skills、Rules 很接近。上下文工程真正难维护的是适用范围和信噪比。规则越积越多，旧经验越容易干扰新任务。团队把这些文件长期追加却很少删除，最后得到的可能是一份对模型很“丰富”、对任务很吵的上下文。
+这和项目里的 `AGENTS.md`、Skills、Rules 很接近。上下文工程难维护的地方之一，是规则的适用范围和信噪比。规则长期只加不删，和当前任务无关的内容会越来越多，旧经验也可能干扰新任务。
 
-这个 Benchmark 也提醒我们谨慎看待统一的 Coding Agent 排名。仓库级修复能力会被领域知识、验证方式、环境复杂度和探索策略明显影响。评估自己团队的 Agent workflow，最好保留一套来自真实项目的任务集，不能只看公开榜单。
+这也限制了统一 Coding Agent 排名的解释力。仓库级修复能力会被领域知识、验证方式、环境复杂度和探索策略明显影响。评估实际 workflow 时，一套来自真实项目的任务集往往比单看公开榜单更有参考价值。
 
 ## 社区观察
 
@@ -70,12 +66,12 @@ OpenAI 8 月 24 日在 [Release Notes](https://openai.com/products/release-notes
 
 Claude Code 正在持续扩展跨会话协作，不过 GitHub Issues 里已经出现多组相似反馈。比如 Windows 用户报告过 [消息显示在目标 session 但没有真正进入模型队列](https://github.com/anthropics/claude-code/issues/86671)，也有人遇到 [Windows Desktop 中 SendMessage 显示成功但实际没有送达](https://github.com/anthropics/claude-code/issues/87615)。这些都是用户报告，不能据此判断所有平台都存在同样问题。
 
-它们仍然值得放在 Weekly 里，因为这类失败很典型：Agent 协作最麻烦的场景往往不是明确报错，而是“看起来投递成功，实际上任务没有继续”。如果团队准备把跨 session 消息当成自动化编排的一部分，至少要补 delivery acknowledgement、timeout 和可查询状态，不能只相信一次 `SendMessage` 的成功返回。
+这类失败的麻烦在于系统可能没有明确报错：界面显示投递成功，任务却没有继续。一旦跨 session 消息进入自动化编排，delivery acknowledgement、timeout 和可查询状态就成了基础设施要求，单靠一次 `SendMessage` 的成功返回不够。
 
-换句话说，跨会话通信已经足够值得实验，但离“可以放心拿它当内部消息总线”还有距离。
+目前这套能力更适合作为实验性协作机制，还不宜直接当成内部消息总线。
 
 ## 总结
 
-这一周最值得记住的，是 Agent 产品继续把执行环境往自己手里收：Cursor 在仓库、事件和 Cloud Agent 之间做更深整合，GitHub 把 Copilot session 放进 Teams，Claude Code 则同时补跨会话协作和受限执行模式。对工程团队来说，现在可以开始试这些入口和工作流，但代码事实、验证结果和任务状态最好仍然有独立、可查询的落点。
+这周几项产品更新都在扩展 Agent 的运行范围：Cursor 把仓库、事件和 Cloud Agent 绑得更紧，GitHub 把 Copilot session 放进 Teams，Claude Code 则补了跨会话协作和受限执行。跨工具、跨会话之后，状态能不能追踪、验证是否独立，比入口本身更值得关注。
 
-研究侧的信号更朴素。SWE-bench Science 说明专业工程任务对领域知识和上下文质量仍然敏感。与其继续往 Agent 里塞更多规则，不如定期清理项目上下文，并用自己的真实任务集验证它到底有没有帮忙。
+SWE-bench Science 给出的信号更朴素：专业工程任务仍然依赖领域知识和上下文质量。项目里的 `AGENTS.md`、Skills、Rules 需要定期清理，也要用真实任务集验证这些规则到底有没有帮忙。
