@@ -90,7 +90,7 @@ ZCode 是个可选项，用它是因为智谱对自己的GLM系列模型比较�
 
 Pi 是开源的，非常简洁，内置插件不多，要什么功能自己跟AI说。纯命令行操作，可以对接各个厂商的模型。
 
-我基于它做了一个 `[pi-agent](https://github.com/calvingit/pi-skills)` skill，用于替代 Codex 或者 zcode内置的 Sub Agent 功能。
+我基于它做了一个 [pi-agent](https://github.com/calvingit/skills/blob/main/skills/global/pi-agent/SKILL.md) skill，用于替代 Codex 或者 zcode内置的 Sub Agent 功能。
 
 这个skill主要包含以下模式，可以自行去扩展：
 
@@ -340,24 +340,24 @@ Agent执行过程中大概有三层约束：全局、项目、任务。
 
 | Skill                          | 用途                                                                                |
 | ------------------------------ | ----------------------------------------------------------------------------------- |
-| [`claude-coder`](https://github.com/calvingit/skills/blob/main/skills/global/claude-coder/SKILL.md) | 把明确的编码、重构或测试任务委托给 Claude Code，返回后由主 Agent 检查实际 diff。 |
-| [`codex-reviewer`](https://github.com/calvingit/skills/blob/main/skills/global/codex-reviewer/SKILL.md) | 使用 Codex CLI 做分析、执行或续跑，并对 CLI 输出做批判性复核。 |
-| [`find-docs`](https://github.com/calvingit/skills/blob/main/skills/global/find-docs/SKILL.md) | Context7 查询开源库、SDK、CLI 的当前官方文档；先解析库 ID，再查具体概念。 |
-| [`fuck-my-shit-mountain`](https://github.com/calvingit/skills/blob/main/skills/global/fuck-my-shit-mountain/SKILL.md) | 按指定模式做大范围、对抗式的工程审查；默认不会自动触发。 |
-| [`pi-agent`](https://github.com/calvingit/skills/blob/main/skills/global/pi-agent/SKILL.md) | 路由 Pi 的 adviser、committee、implementer 模式，做独立意见、多模型审查或受限实现。 |
-| [`kimi-worker`](https://github.com/calvingit/skills/blob/main/skills/global/kimi-worker/SKILL.md) | 用户明确要求时，调用 Kimi CLI 完成一个边界清楚的实现任务。 |
-| [`prompt-optimizer`](https://github.com/calvingit/skills/blob/main/skills/global/prompt-optimizer/SKILL.md) | 把目标、上下文、边界、输出和验收条件整理成更稳定的提示词。 |
-| [`teach`](https://github.com/calvingit/skills/blob/main/skills/global/teach/SKILL.md) | 在当前工作区内用循序渐进的方式讲解一个新概念或技能。 |
-| [`handoff`](https://github.com/calvingit/skills/blob/main/skills/global/handoff/SKILL.md) | 把当前对话压缩成可交接的上下文，便于另一个 Agent 继续。 |
-| [`resolving-merge-conflicts`](https://github.com/calvingit/skills/blob/main/skills/global/resolving-merge-conflicts/SKILL.md) | 处理正在进行的 merge/rebase 冲突，保持冲突边界和 Git 状态可见。 |
-| [`humanizer-zh`](https://github.com/calvingit/skills/blob/main/skills/global/humanizer-zh/SKILL.md) | 去除中文文档中的 AI 味、翻译腔和模板化表达，同时保留事实与责任主体。 |
-| [`tavily-search`](https://github.com/calvingit/skills/blob/main/skills/global/tavily-search/SKILL.md) / [`tavily-cli`](https://github.com/calvingit/skills/blob/main/skills/global/tavily-cli/SKILL.md) | 做一次性网页搜索或通过 CLI 查询文章、新闻和资料。 |
-| [`tavily-extract`](https://github.com/calvingit/skills/blob/main/skills/global/tavily-extract/SKILL.md) | 从指定 URL 提取干净正文，适合已有链接的定向阅读。 |
-| [`tavily-crawl`](https://github.com/calvingit/skills/blob/main/skills/global/tavily-crawl/SKILL.md) / [`tavily-map`](https://github.com/calvingit/skills/blob/main/skills/global/tavily-map/SKILL.md) | 批量抓取站点内容，或先发现一个站点的 URL 结构。 |
-| [`tavily-dynamic-search`](https://github.com/calvingit/skills/blob/main/skills/global/tavily-dynamic-search/SKILL.md) | 用程序化调用筛选搜索结果，只把决策所需的信息带回上下文。 |
-| [`tavily-research`](https://github.com/calvingit/skills/blob/main/skills/global/tavily-research/SKILL.md) | 做多来源、带引用的深度研究和比较报告。 |
-| [`tavily-best-practices`](https://github.com/calvingit/skills/blob/main/skills/global/tavily-best-practices/SKILL.md) | 在代码中集成 Tavily 搜索、抽取、爬取和研究能力时提供实现规范。 |
-| [`url-to-markdown`](https://github.com/calvingit/skills/blob/main/skills/global/url-to-markdown/SKILL.md) | 把公开网页转换为本地 Markdown，供后续阅读、翻译或归档。 |
+| [claude-coder](https://github.com/calvingit/skills/blob/main/skills/global/claude-coder/SKILL.md) | 把明确的编码、重构或测试任务委托给 Claude Code，返回后由主 Agent 检查实际 diff。 |
+| [codex-reviewer](https://github.com/calvingit/skills/blob/main/skills/global/codex-reviewer/SKILL.md) | 使用 Codex CLI 做分析、执行或续跑，并对 CLI 输出做批判性复核。 |
+| [find-docs](https://github.com/calvingit/skills/blob/main/skills/global/find-docs/SKILL.md) | Context7 查询开源库、SDK、CLI 的当前官方文档；先解析库 ID，再查具体概念。 |
+| [fuck-my-shit-mountain](https://github.com/calvingit/skills/blob/main/skills/global/fuck-my-shit-mountain/SKILL.md) | 按指定模式做大范围、对抗式的工程审查；默认不会自动触发。 |
+| [pi-agent](https://github.com/calvingit/skills/blob/main/skills/global/pi-agent/SKILL.md) | 路由 Pi 的 adviser、committee、implementer 模式，做独立意见、多模型审查或受限实现。 |
+| [kimi-worker](https://github.com/calvingit/skills/blob/main/skills/global/kimi-worker/SKILL.md) | 用户明确要求时，调用 Kimi CLI 完成一个边界清楚的实现任务。 |
+| [prompt-optimizer](https://github.com/calvingit/skills/blob/main/skills/global/prompt-optimizer/SKILL.md) | 把目标、上下文、边界、输出和验收条件整理成更稳定的提示词。 |
+| [teach](https://github.com/calvingit/skills/blob/main/skills/global/teach/SKILL.md) | 在当前工作区内用循序渐进的方式讲解一个新概念或技能。 |
+| [handoff](https://github.com/calvingit/skills/blob/main/skills/global/handoff/SKILL.md) | 把当前对话压缩成可交接的上下文，便于另一个 Agent 继续。 |
+| [resolving-merge-conflicts](https://github.com/calvingit/skills/blob/main/skills/global/resolving-merge-conflicts/SKILL.md) | 处理正在进行的 merge/rebase 冲突，保持冲突边界和 Git 状态可见。 |
+| [humanizer-zh](https://github.com/calvingit/skills/blob/main/skills/global/humanizer-zh/SKILL.md) | 去除中文文档中的 AI 味、翻译腔和模板化表达，同时保留事实与责任主体。 |
+| [tavily-search](https://github.com/calvingit/skills/blob/main/skills/global/tavily-search/SKILL.md) / [tavily-cli](https://github.com/calvingit/skills/blob/main/skills/global/tavily-cli/SKILL.md) | 做一次性网页搜索或通过 CLI 查询文章、新闻和资料。 |
+| [tavily-extract](https://github.com/calvingit/skills/blob/main/skills/global/tavily-extract/SKILL.md) | 从指定 URL 提取干净正文，适合已有链接的定向阅读。 |
+| [tavily-crawl](https://github.com/calvingit/skills/blob/main/skills/global/tavily-crawl/SKILL.md) / [tavily-map](https://github.com/calvingit/skills/blob/main/skills/global/tavily-map/SKILL.md) | 批量抓取站点内容，或先发现一个站点的 URL 结构。 |
+| [tavily-dynamic-search](https://github.com/calvingit/skills/blob/main/skills/global/tavily-dynamic-search/SKILL.md) | 用程序化调用筛选搜索结果，只把决策所需的信息带回上下文。 |
+| [tavily-research](https://github.com/calvingit/skills/blob/main/skills/global/tavily-research/SKILL.md) | 做多来源、带引用的深度研究和比较报告。 |
+| [tavily-best-practices](https://github.com/calvingit/skills/blob/main/skills/global/tavily-best-practices/SKILL.md) | 在代码中集成 Tavily 搜索、抽取、爬取和研究能力时提供实现规范。 |
+| [url-to-markdown](https://github.com/calvingit/skills/blob/main/skills/global/url-to-markdown/SKILL.md) | 把公开网页转换为本地 Markdown，供后续阅读、翻译或归档。 |
 
 这些能力的组合通常是：`find-docs` 负责官方技术资料，`tavily-*` 负责外部搜索研究，`prompt-optimizer` 负责把任务写清楚，`pi-agent` 或 `claude-coder` 负责独立执行，`handoff` 负责跨对话交接，主 Agent 最后负责证据核对。
 
@@ -369,21 +369,21 @@ Agent执行过程中大概有三层约束：全局、项目、任务。
 
 | Skill                  | 用途                                                              |
 | ---------------------- | ----------------------------------------------------------------- |
-| [`wayfinding`](https://github.com/calvingit/skills/blob/main/skills/engineering/wayfinding/SKILL.md) | 先定位模块、入口、规则和相关文档，建立任务地图。 |
-| [`grilling`](https://github.com/calvingit/skills/blob/main/skills/engineering/grilling/SKILL.md) | 通过连续追问收敛需求、范围、取舍和验收条件。 |
-| [`examine-architecture`](https://github.com/calvingit/skills/blob/main/skills/engineering/examine-architecture/SKILL.md) | 在实现前检查模块边界、依赖方向、状态所有权和架构风险。 |
-| [`domain-modeling`](https://github.com/calvingit/skills/blob/main/skills/engineering/domain-modeling/SKILL.md) | 维护领域术语表和 ADR，避免同一业务概念在不同模块各说一套。 |
-| [`to-spec`](https://github.com/calvingit/skills/blob/main/skills/engineering/to-spec/SKILL.md) | 将已经收敛的需求落盘为 `SPEC.md` 和 `PLAN.md`。 |
-| [`implement`](https://github.com/calvingit/skills/blob/main/skills/engineering/implement/SKILL.md) | 按 Spec/Plan 选择 task unit，实现 feedback loop，并完成集成验证。 |
+| [wayfinding](https://github.com/calvingit/skills/blob/main/skills/engineering/wayfinding/SKILL.md) | 先定位模块、入口、规则和相关文档，建立任务地图。 |
+| [grilling](https://github.com/calvingit/skills/blob/main/skills/engineering/grilling/SKILL.md) | 通过连续追问收敛需求、范围、取舍和验收条件。 |
+| [examine-architecture](https://github.com/calvingit/skills/blob/main/skills/engineering/examine-architecture/SKILL.md) | 在实现前检查模块边界、依赖方向、状态所有权和架构风险。 |
+| [domain-modeling](https://github.com/calvingit/skills/blob/main/skills/engineering/domain-modeling/SKILL.md) | 维护领域术语表和 ADR，避免同一业务概念在不同模块各说一套。 |
+| [to-spec](https://github.com/calvingit/skills/blob/main/skills/engineering/to-spec/SKILL.md) | 将已经收敛的需求落盘为 `SPEC.md` 和 `PLAN.md`。 |
+| [implement](https://github.com/calvingit/skills/blob/main/skills/engineering/implement/SKILL.md) | 按 Spec/Plan 选择 task unit，实现 feedback loop，并完成集成验证。 |
 | `create-page`          | 按项目约定创建 Flutter 页面、路由和必要的 ViewModel。             |
 | `create-api`           | 从接口契约生成 Dart Model、Repository、Mock，并完成 DI 接入。     |
 | `app-components`       | 复用项目已有的业务 UI 组件和设计约定。                            |
-| [`debug`](https://github.com/calvingit/skills/blob/main/skills/engineering/debug/SKILL.md) | 建立复现、假设、验证、修复、回归的 Bug 排查闭环。 |
+| [debug](https://github.com/calvingit/skills/blob/main/skills/engineering/debug/SKILL.md) | 建立复现、假设、验证、修复、回归的 Bug 排查闭环。 |
 | `test`                 | 为关键业务逻辑编写或运行 Flutter 单元/Widget/集成测试。           |
-| [`simplify`](https://github.com/calvingit/skills/blob/main/skills/engineering/simplify/SKILL.md) | 在行为不变的前提下收缩 diff、删除过度设计，实现和修复后强制执行。 |
-| [`code-review`](https://github.com/calvingit/skills/blob/main/skills/engineering/code-review/SKILL.md) | 以只读方式审查运行时缺陷、回归风险、调用链和验证证据。 |
+| [simplify](https://github.com/calvingit/skills/blob/main/skills/engineering/simplify/SKILL.md) | 在行为不变的前提下收缩 diff、删除过度设计，实现和修复后强制执行。 |
+| [code-review](https://github.com/calvingit/skills/blob/main/skills/engineering/code-review/SKILL.md) | 以只读方式审查运行时缺陷、回归风险、调用链和验证证据。 |
 | `i18n`                 | 按项目翻译源文件、Key 约定和生成流程维护多语言资源。              |
-| [`loop`](https://github.com/calvingit/skills/blob/main/skills/engineering/loop/SKILL.md) | 对已落盘的 Spec/Plan 自动循环执行到收尾，需要显式授权。 |
+| [loop](https://github.com/calvingit/skills/blob/main/skills/engineering/loop/SKILL.md) | 对已落盘的 Spec/Plan 自动循环执行到收尾，需要显式授权。 |
 | `archive-specs`        | 读取真实代码和验证证据，把已完成任务沉淀为模块级 living spec。    |
 
 项目内还有一个重要设计：Skill 不只是"提示词合集"，而是带有入口检查、允许修改范围、验证命令、输出格式和失败处理的操作契约。
@@ -607,12 +607,12 @@ wayfinding -> debug -> test（先复现或补最小回归）
 
 Agent 可以调查、修改、验证和汇报，但需求取舍、风险接受、生产操作和对外承诺仍然需要人负责。
 
-我不追求"完全无人参与"。我更希望把人的注意力从重复操作移到：
+我不追求"完全无人参与"，我更希望把人的注意力从重复操作移到：
 
-- 目标是否正确；
-- 证据是否充分；
-- 风险是否可以接受；
-- 这个改动是否真的值得存在。
+- 目标是否正确
+- 证据是否充分
+- 风险是否可以接受
+- 这个改动是否真的值得存在
 
 ---
 
@@ -640,11 +640,11 @@ Agent 可以调查、修改、验证和汇报，但需求取舍、风险接受�
 
 不用一开始就搭建完整体系，可以先从一个小闭环开始：
 
-1. 写一份简短的项目 `AGENTS.md`，只放真实且长期有效的规则；
-2. 选择一个低风险 Bug，让 Agent 先调查调用链，再做最小修改；
-3. 明确要求它运行一个能证明行为的检查；
-4. 自己检查最终 diff，不以 Agent 的总结代替代码；
-5. 把重复出现三次以上的稳定流程，再整理成 Skill 或自动化。
+1. 写一份简短的项目 `AGENTS.md`，只放真实且长期有效的规则
+2. 选择一个低风险 Bug，让 Agent 先调查调用链，再做最小修改
+3. 明确要求它运行一个能证明行为的检查
+4. 自己检查最终 diff，不以 Agent 的总结代替代码
+5. 把重复出现三次以上的稳定流程，再整理成 Skill 或自动化
 
 先把一个可靠闭环跑通，再考虑多 Agent、记忆和自动化。工具可以慢慢加，但是验证边界要从第一天就定下来。
 
