@@ -6,6 +6,10 @@ This file provides guidance to AI Agent when working with code in this repositor
 
 Personal blog (https://zhangwen.site) built with [Astro](https://astro.build), customized from [astro-theme-minimal-blog](https://github.com/LekoArts/astro-theme-minimal-blog). Static output deployed to Netlify. Blog posts are written in MDX.
 
+## Writing
+
+生成、改写或审校博客、Newsletter、技术评论及其他中文长文时，遵循 [`.agents/writing-style.md`](./.agents/writing-style.md)。通用中文表达、AI 生成痕迹清理、事实保真和发布前检查由该文件统一维护；Automation、Skill 和单篇 Prompt 只保留当前栏目或任务特有的规则，不重复共享写作规范。
+
 ## Commands
 
 **Package manager:** `pnpm` (required — do not use npm or yarn)
