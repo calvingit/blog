@@ -1,0 +1,366 @@
+---
+title: 震惊！AI 给我写了一个代码屎山：长期 AI Coding 的隐藏成本
+slug: ai-coding-created-a-code-mountain
+description: AI 很擅长把代码写得“正确、规范、可测试”，但长期使用 Coding Agent 后，代码库也可能堆满测试专用接口、过度依赖注入、伪抽象和防御性代码。真正需要清理的不是代码行，而是没有生产价值的维护义务。
+date: 2026-08-29
+lastUpdated: 2026-08-29
+tags:
+  - AI
+  - AI Coding
+  - Coding Agent
+  - Software Engineering
+  - Refactoring
+searchIndex: true
+---
+
+最近我在整理自己的 Coding Agent Skills 时，研究了一个挺有意思的项目：[simplify-codebase](https://github.com/tt-a1i/simplify-codebase)。它从 DeepSeek Harness 的 simplification 实践里提炼出了一套更通用的方法。
+
+一开始我只是把它理解成普通的“代码重构”：找重复代码、删没用的 abstraction、把复杂函数收一收。
+
+后来越看越觉得不对。
+
+它真正要解决的问题，恰好是我长期使用 AI Coding 之后越来越明显地遇到的一个问题：
+
+**AI 写出来的代码通常不是错的，甚至非常“规范”，但它会一点一点把项目写成屎山。**
+
+这种屎山和传统印象不太一样。它不是几千行塞在一个文件里，也不是变量叫 `a1`、`a2`，更不是满屏复制粘贴。
+
+恰恰相反，它通常长得非常专业：Interface 有了，Dependency Injection 有了，Repository 有了，Adapter 有了，Factory 有了，Strategy 有了，Mock 有了，RetryPolicy 也抽出来了，连 Clock 都可以注入。
+
+单独 review 每一个 PR，好像都没有什么大问题。
+
+半年之后再看：
+
+**这玩意到底为什么需要这么复杂？**
+
+## AI 特别擅长写“正确但没必要”的代码
+
+假设原来有这么一个函数：
+
+```dart
+Future<User> loadUser() async {
+  final response = await api.getUser();
+  return parseUser(response);
+}
+```
+
+让 Coding Agent 给它补测试。
+
+很可能最后变成：
+
+```dart
+Future<User> loadUser({
+  ApiClient? apiClient,
+  UserParser? parser,
+  RetryPolicy? retryPolicy,
+  Clock? clock,
+  Logger? logger,
+  Metrics? metrics,
+}) async {
+  final client = apiClient ?? ApiClient.instance;
+  final userParser = parser ?? DefaultUserParser();
+  final retry = retryPolicy ?? DefaultRetryPolicy();
+  // ...
+}
+```
+
+为什么？
+
+因为这样太好测试了。
+
+测试可以注入 `FakeApiClient`、`FakeClock`、`FakeRetryPolicy`、`FakeParser`，甚至可以精确验证第一次失败、等待多久、第二次重试、parser 被调用几次、logger 收到什么、metrics 上报了什么。
+
+测试写得很漂亮，Coverage 也很好看。
+
+但问题来了：**真实生产代码到底需不需要这些 variability？**
+
+如果整个应用永远只有一个 `ApiClient`，永远只有一个 parser，retry policy 也从来不会动态替换，那这些注入点到底是谁需要的？
+
+答案经常是：测试。
+
+于是为了测试生产代码，我们改变了生产代码本身的设计。
+
+这就是我现在越来越警惕的一类东西：**Test-induced Architecture**。
+
+## 测试方便，不等于生产抽象合理
+
+测试当然重要。
+
+但“方便测试”并不能自动证明一个 production abstraction 应该存在。
+
+一个正常的 Seam 可能来自真实系统边界，例如 HTTP、Database、File System、Clock、Process、External Service、Platform API。这里确实存在不同的 ownership、failure mode 或运行环境，把它们隔离出来通常是合理的。
+
+另一类 Seam 的来源则是：
+
+> 我测试的时候想把这里替换掉。
+
+这就需要谨慎了。
+
+我现在判断这类设计时，经常会问四个问题：
+
+1. 如果没有测试，这个 Interface / injection point 还会存在吗？
+2. 是否有真实生产调用方需要替换这个 dependency？
+3. 它是否对应真实的 ownership、failure、process 或 I/O boundary？
+4. 删除这个 seam 后，是否仍然可以通过公开生产行为验证 correctness？
+
+如果答案是 `No / No / No / Yes`，我会把它当成一个非常强的简化候选。
+
+注意，是“候选”，不是看到只有测试在调用就立刻删除。真正删除之前，还要继续确认调用方、动态注册、兼容性、持久化格式和行为是否真的不受影响。
+
+但至少这时候应该有人问一句：
+
+**这个东西为什么还存在？**
+
+## 最麻烦的不是 Dead Code
+
+Dead Code 其实没有那么可怕。
+
+IDE、编译器、静态分析工具，很容易告诉你 `unused function`、`unused import`、`unreachable code`。
+
+真正难清理的是那些：
+
+**有调用者、有测试、有类型、有文档，但没有多少真实业务价值的代码。**
+
+比如这样一套结构：
+
+```text
+HttpClient
+    ↓
+HttpClientAdapter
+    ↓
+NetworkService
+    ↓
+ApiService
+    ↓
+UserRemoteDataSource
+    ↓
+UserRepository
+    ↓
+UserRepositoryImpl
+```
+
+每层都合理，每层也都有职责说明，甚至每层都有自己的测试。
+
+但如果其中四层做的事情基本都是：
+
+```dart
+return nextLayer.call(...);
+```
+
+那么这个系统并没有获得六个真正的 abstraction。
+
+它只是获得了六个需要长期保持一致的概念。
+
+改一个参数，六层跟着改；改一个 error type，六层重新 mapping；加一个字段，六层 DTO 跟着传。
+
+最后所有人都很忙，但业务其实没发生什么变化。
+
+这种代码不能简单叫 Dead Code。
+
+它更像是：**Maintenance Obligation**。
+
+只要它存在，你以后就必须继续理解它、维护它、测试它、迁移它、兼容它。
+
+## DeepSeek Harness 确实在系统性做这件事
+
+这也是为什么 DeepSeek Harness 的 simplification 实践很有意思。
+
+它不是口头上说“代码要简单”，而是直接在仓库里维护了一个 [`dsh-find-simplifications`](https://github.com/deepseek-ai/deepseek-harness/blob/master/.agents/skills/dsh-find-simplifications/SKILL.md) Skill，专门寻找那些当前设计成本已经超过收益的代码面。
+
+它列出的强候选非常具体，包括：
+
+- public method、event、config、helper、package 没有生产消费者；
+- tests 或 docs 是唯一消费者，而且这些行为并不是系统真正依赖的 contract；
+- 两套状态或事件在表达同一个事实；
+- 所有实现都必须支持某个 seam method，但没有任何 consumer 使用；
+- 为了未来可能的需求保留 speculative product generality；
+- 某些 invariant、rollback path 或 special-case test 只是为了保护一个实际上没人用的 API；
+- 手写 infrastructure 已经可以被成熟依赖或平台 builtin 替代，而且替换后能真正减少实现、测试和文档维护面。
+
+更关键的是，它明确要求先区分 **production consumer**、**non-production consumer** 和 **ambiguous consumer**，不能因为静态搜索没找到调用就直接删。
+
+仓库里还有一个很典型的真实案例：[Remove the `agent/steering` mirror emit](https://github.com/deepseek-ai/deepseek-harness/blob/master/.agents/notes/archived/simplification/2026-07-04-remove-agent-steering-mirror.md)。
+
+这个 transient event 和前一行已经写入 durable log 的 `steering/message` 表达的是同一个事实。调查结果是：它没有任何生产 listener，唯一 subscriber 是一个 regression test。
+
+最后他们没有“重构”这个 event，而是把 declaration、emit、README、架构文档、catalog 以及对应测试依赖一起删除，测试改为验证真正保留下来的 durable event。
+
+这个例子非常典型：
+
+**代码不是没用。测试确实在用。但它没有生产价值。**
+
+这和简单的 unused code cleanup 完全不是一回事。
+
+## AI 特别容易制造哪些 Maintenance Obligation
+
+长期使用 Coding Agent 后，我现在会特别留意几类东西。
+
+第一类是过度 Dependency Injection。一个函数十几个参数：`clock`、`logger`、`parser`、`client`、`retryPolicy`、`metrics`、`scheduler`、`validator`、`callback`。看起来高度解耦，但生产环境只有一种组合。这种设计很多时候不是业务需要“解耦”，而是测试需要“控制一切”。
+
+第二类是 Relay Layer。一层调用下一层，再调用下一层，每层都没有真正隐藏复杂度，也没有形成独立 ownership，只是把调用链拉得更长。
+
+第三类是为测试暴露内部状态，例如 `retryCount`、`pendingCount`、`debugState`、`onStarted`、`onCompleted`、`onRetry`、`isInitialized`。如果生产调用方完全不需要知道这些状态，而它们唯一的消费者是测试，那么 production Interface 很可能已经被测试污染了。
+
+第四类是 Defensive Programming Theater。AI 很喜欢写 `validate`、`copy`、`fallback`、`try/catch`、`retry`、`rollback`、`null check`、`duplicate guard`，因为每一条单独看都很“安全”。问题是，同一个 trusted boundary 内部，如果函数 A 调函数 B，B 再把 A 已经验证过的所有东西重新验证一遍，通常没有增加多少安全性，只增加了更多分支。
+
+第五类是 Ownerless Flexibility。`Strategy`、`StrategyFactory`、`StrategyRegistry`、`DefaultStrategy`、`FallbackStrategy` 都有了，最后生产代码永远只有 `DefaultStrategy`。问为什么有 Factory，答案往往是“以后可能需要扩展”。未来当然可能需要，也可能永远不需要，但代码库从今天开始已经在为这个未来付维护成本。
+
+## AI 为什么特别容易把这些东西写出来？
+
+因为 AI Coding 的工作方式和人不太一样。
+
+一个有经验的工程师在设计过程中，会在脑子里尝试很多方案：要不要抽 Interface？好像没必要。要不要做 Factory？目前只有一种实现，先算了。这里加个 callback 测试方便？不值得污染生产接口。
+
+这些被否定的方案不会进入 Git。
+
+AI Agent 不一样。
+
+它非常倾向于把“思考过程”变成代码：Interface、Adapter、Helper、Fixture、Fallback、Compatibility Layer、Callback、Temporary Abstraction。
+
+尤其当我们要求它：实现功能、补齐测试、覆盖 edge case、遵循最佳实践、保持可扩展。
+
+这些要求组合起来，很容易得到一个极其“政治正确”的工程实现。
+
+任何一项单独拿出来都能解释，但没人再问：
+
+> 我们真的需要维护这么多东西吗？
+
+于是 AI Coding 产生了一种很有意思的现象：
+
+**探索成本被沉积到了 production codebase 里。**
+
+人类会把很多失败方案丢在脑子里，AI 会把其中一部分留在仓库里。
+
+## 所以我开始把 Simplification 看成一个独立工程阶段
+
+以前我的开发流程大概是：
+
+```text
+Requirement
+    ↓
+Design
+    ↓
+Implement
+    ↓
+Test
+    ↓
+Code Review
+```
+
+现在我越来越倾向于加入一个阶段：
+
+```text
+Requirement
+    ↓
+Design
+    ↓
+Implement
+    ↓
+Test
+    ↓
+Simplify
+    ↓
+Code Review
+```
+
+而且 `Simplify` 不只是“把这次 PR 写得简单一点”。
+
+长期运行 Coding Agent 的项目，还应该周期性做：
+
+```text
+Codebase
+    ↓
+Simplification Survey
+    ↓
+寻找没有真实生产 ownership 的维护义务
+    ↓
+证明可以删除
+    ↓
+删除
+    ↓
+重新验证行为
+```
+
+我更喜欢把这个过程叫 **Entropy Reclamation**，熵回收。
+
+不是因为代码“乱”了才整理，而是系统运行久了之后，天然会留下历史实验、迁移残留、测试脚手架、过时兼容层、推测性 abstraction、没人使用的 extension point、重复状态和重复 wiring。
+
+AI Coding 只是把这个过程加速了。
+
+## Simplify 不是追求更少的代码
+
+这一点非常重要。
+
+如果目标变成“谁删的代码多谁厉害”，很容易走向另一个极端。
+
+例如删掉一个 Repository，然后所有调用方自己写数据库逻辑。LOC 下降了，系统反而更差了。
+
+真正应该减少的是：需要维护的事实、需要同步的状态、需要兼容的 Contract、需要理解的 abstraction，以及需要长期支持的 variability。
+
+所以我现在很认同一句话：
+
+> **Delete obligations, not lines.**
+
+删除的是维护义务，不是代码行。
+
+有些 500 行代码只承担一个清晰、稳定的复杂行为，完全应该留下。有些 30 行 Interface + Factory + Adapter，却让整个项目从此多维护三个概念，那反而更值得质疑。
+
+## Architecture Review、Codebase Design 和 Simplify 不是一回事
+
+我最近整理自己的 Coding Agent Skills 时，也专门把这三个能力拆开了。
+
+`review-architecture` 回答：
+
+> 当前架构合理吗？
+
+它会去发现状态 ownership 错误、依赖方向倒置、同一个事实被多处维护之类的问题。
+
+`codebase-design` 回答：
+
+> 如果要解决，正确的 boundary 应该怎么设计？
+
+它讨论的是 Module、Interface、Seam、Adapter、Dependency Direction。
+
+而 `simplify` 问的是另一个更狠的问题：
+
+> **这个东西真的需要存在吗？**
+
+它甚至不是试图“改善”这个 abstraction，而是先质疑：我们为什么要拥有这个 abstraction？
+
+如果没有 production consumer，没有真实变化来源，没有真实 ownership，只剩下一堆测试和历史原因在支撑它，那最好的设计可能不是重构，而是删除。
+
+## 测试也应该接受这个问题
+
+过去我们经常说：不要为了代码方便而牺牲测试。
+
+这当然没问题。
+
+但现在我觉得还应该补一句：
+
+> **也不要为了测试方便，长期污染生产设计。**
+
+好的测试应该尽可能验证真实 Interface。
+
+如果 production consumer 调的是 `submitOrder()`，测试也尽量从 `submitOrder()` 验证最终结果，而不是为了测试方便，把内部的 `validate()`、`calculate()`、`retry()`、`persist()`、`notify()` 全部暴露出来，然后分别 assert 每一步。
+
+否则最后我们得到的是一套非常容易测试的 Implementation，以及一套越来越难修改的系统。
+
+## 长期 AI Coding 需要“生成”和“回收”两个方向
+
+现在大家讨论 AI Coding，关注的基本都是 Agent 能不能写更多代码、能不能跑更久、能不能自己修 bug、能不能自己开 PR。
+
+这些都属于一个方向：**Generation**。
+
+但如果 Agent 真的开始长期参与一个项目，另一个能力会越来越重要：**Reclamation**。
+
+它得知道什么时候不要再加一层了，这个 Interface 没人需要，这个 Factory 可以删掉，这套 test-only seam 不应该进入生产设计，这个 migration 已经结束，这个 compatibility path 已经过期，这两个 state 其实描述的是同一件事。
+
+一个长期运行的 Coding Agent，如果只会不断添加东西，不会主动证明哪些东西可以安全删除，最终很可能只是一个更高效的技术债生成器。
+
+这大概也是我最近研究 `simplify-codebase` 最大的感受。
+
+下一次让 AI 给你写出一个 Interface、Factory、Adapter、Strategy 或十几个 dependency injection 参数时，不妨多问一句：
+
+**这是业务真的需要，还是 AI 为了证明自己写得对？**
+
+这个问题，可能比“代码够不够规范”重要得多。
