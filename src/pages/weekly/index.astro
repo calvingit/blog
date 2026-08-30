@@ -1,0 +1,59 @@
+---
+import Link from '@components/link.astro'
+import Seo from '@components/seo.astro'
+import SkipNavContent from '@components/a11y/skip-nav-content.astro'
+import Spacer from '@components/spacer.astro'
+import Layout from '@layouts/layout.astro'
+import { getContentUrl, getWeeklyEntries, getWeeklySeries, type WeeklySeries, WEEKLY_SERIES } from '@content'
+import { defaultDateFormat, sortAsc } from '@utils'
+
+const weeklyEntries = await getWeeklyEntries()
+const series = (Object.keys(WEEKLY_SERIES) as WeeklySeries[]).map((slug) => ({
+  slug,
+  ...WEEKLY_SERIES[slug],
+  posts: sortAsc(weeklyEntries.filter((entry) => getWeeklySeries(entry) === slug)),
+}))
+---
+
+<Layout>
+  <Seo slot="seo" title="Weekly" description="每周技术工程观察。" />
+  <SkipNavContent>
+    <h1 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Weekly</h1>
+    <Spacer axis="vertical" size={12} />
+    <div class="flex gap-16 flex-col">
+      {
+        series.map(({ slug, title, description, posts }) => (
+          <section>
+            <div class="border-b border-border pb-4">
+              <h2 class="font-medium text-lg md:text-xl text-highlight">
+                <Link variant="highlight" href={`/weekly/${slug}/`}>
+                  {title}
+                </Link>
+              </h2>
+              <Spacer axis="vertical" size={2} />
+              <p class="text-subtle">{description}</p>
+            </div>
+            <Spacer axis="vertical" size={6} />
+            {posts.length > 0 ? (
+              <div class="flex gap-8 flex-col">
+                {posts.map((entry) => (
+                  <div>
+                    <Link variant="highlight" href={getContentUrl(entry)}>
+                      {entry.data.title}
+                    </Link>
+                    <Spacer axis="vertical" size={2} />
+                    <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
+                    <Spacer axis="vertical" size={2} />
+                    <p class="text-subtle">{entry.data.description}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p class="text-faded">暂无文章。</p>
+            )}
+          </section>
+        ))
+      }
+    </div>
+  </SkipNavContent>
+</Layout>

@@ -1,5 +1,3 @@
-import type { CollectionEntry } from 'astro:content'
-
 export interface TagInfo {
   tag: string
   slug: string
@@ -49,13 +47,13 @@ export function getTagSlug(tag: string): string {
   return slug
 }
 
-export function getPostsByTag(data: Array<CollectionEntry<'blog'>>, tag: string) {
+export function getPostsByTag<T extends { data: { tags: string[] } }>(data: T[], tag: string) {
   const normalizedTag = normalizeTagName(tag)
 
   return data.filter(post => post.data.tags?.some(postTag => normalizeTagName(postTag) === normalizedTag))
 }
 
-export function getTags(data: Array<CollectionEntry<'blog'>>): TagInfo[] {
+export function getTags<T extends { id: string, data: { tags: string[] } }>(data: T[]): TagInfo[] {
   const output = new Map<string, TagInfo>()
   const sourceBySlug = new Map<string, string>()
 

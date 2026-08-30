@@ -17,6 +17,9 @@
       "@constants": [
         "./src/constants.ts"
       ],
+      "@content": [
+        "./src/content.ts"
+      ],
       "@utils": [
         "./src/utils.ts"
       ],

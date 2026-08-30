@@ -30,8 +30,18 @@ export const SITE: Record<string, string> = {
   defaultAuthor: 'Wen',
 }
 
+interface HeaderLink {
+  title: string
+  url: string
+}
+
+interface HeaderMenu {
+  title: string
+  links: HeaderLink[]
+}
+
 interface Header {
-  internal: Array<{ title: string, url: string }>
+  internal: Array<HeaderLink | HeaderMenu>
   external: Array<{
     title: string
     url: string
@@ -48,12 +58,29 @@ export const HEADER: Header = {
    */
   internal: [
     {
+      title: 'Home',
+      url: '/',
+    },
+    {
       title: 'Blog',
       url: '/blog/',
     },
     {
-      title: 'Reading',
-      url: '/tags/reading/',
+      title: 'Weekly',
+      links: [
+        {
+          title: 'AI Software Engineering',
+          url: '/weekly/ai/',
+        },
+        {
+          title: 'Frontend & Mobile Engineering',
+          url: '/weekly/frontend/',
+        },
+        {
+          title: '摸鱼精选',
+          url: '/weekly/reading/',
+        },
+      ],
     },
     {
       title: 'About',
@@ -67,13 +94,6 @@ export const HEADER: Header = {
     {
       title: 'GitHub',
       url: 'https://github.com/calvingit',
-      props: {
-        target: '_blank',
-      },
-    },
-    {
-      title: 'Twitter',
-      url: 'https://twitter.com/zhangwen_site',
       props: {
         target: '_blank',
       },

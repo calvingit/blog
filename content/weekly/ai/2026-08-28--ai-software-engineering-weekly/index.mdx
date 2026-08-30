@@ -1,0 +1,128 @@
+---
+title: AI Software Engineering Weekly：Cloud Agent 走出 IDE，Harness 也开始被系统化优化
+slug: ai-software-engineering-weekly-2026-08-28
+description: 本周关注 Cursor、Claude Code、Codex、GitHub Copilot 的 Agent 工作流变化，以及 Uber 软件工厂、AutoSaddler、SWE-bench Science 和社区对 Harness 的讨论。
+date: 2026-08-28
+lastUpdated: 2026-08-28
+series: ai
+tags:
+  - AI
+  - Codex
+  - Cursor
+  - GitHub Copilot
+  - Agents
+  - Software Engineering
+searchIndex: true
+---
+
+这周值得看的内容不少，而且比单纯的模型升级更偏工程：Cloud Agent 继续走出 IDE，GitHub 和 Cursor 都在接管更多任务入口；另一边，Uber、微软研究团队和开源社区开始把 Harness、评估、成本和运行时治理当成独立问题来处理。
+
+## 官方更新
+
+### Cursor：Cloud Agent 开始自己准备仓库和环境
+
+Cursor 过去两周的几次更新可以放在一起看。8 月 17 日上线 [Origin Code Hosting](https://cursor.com/changelog/origin-code-hosting)，把 repo、PR、代码浏览和 Agent 放进同一套产品；8 月 19 日的 [Cloud Agents and Cursor Harness Improvements](https://cursor.com/changelog/08-19-26) 增加事件订阅、`/goal`、长任务 steering 和独立 VM 上运行的 subagent；8 月 27 日又推出 [Start from scratch, without a repo](https://cursor.com/changelog/start-from-scratch)，连现成 Git 仓库都不再是 Cloud Agent 的前置条件。
+
+现在可以直接给一个任务，Cursor 在后台准备 Origin repo 和运行环境，完成后再决定是否把项目保存成正式仓库。浏览器里还能直接预览 Cloud Agent 的运行结果，并接 Vercel 发布。
+
+这条路线对原型开发很顺。到了多人项目，状态归属会复杂一些：代码、PR、Agent session、事件订阅和运行环境都可能留在 Cursor 里。Origin 对从 GitHub 同步的仓库仍保留 GitHub 作为 source of truth，但纯 Origin 项目显然会更依赖 Cursor 自己的状态模型。以后遇到恢复、审计或迁移问题，光有 Git commit 未必足够解释一次 Agent 任务发生了什么。
+
+### GitHub Copilot：Slack、Teams、Customize 和 Code Review 连成了一条线
+
+GitHub 8 月 21 日同时更新了 [Slack](https://github.blog/changelog/2026-08-21-the-new-github-copilot-experience-in-slack/) 和 [Microsoft Teams](https://github.blog/changelog/2026-08-21-shared-agentic-work-with-github-copilot-in-microsoft-teams/) 集成。聊天里的讨论可以直接启动 Copilot cloud agent session，参与者继续在原线程里补上下文和 steering；有仓库权限的人可以让 Agent 改代码、跑验证并开 PR。
+
+随后两项更新把这套流程补得更完整。8 月 25 日，Copilot app 的 [Customize tab](https://github.blog/changelog/2026-08-25-github-copilot-app-customize-tab-is-generally-available/) GA，把 MCP、plugins、skills、canvases 集中到一个入口。8 月 27 日，[Copilot code review](https://github.blog/changelog/2026-08-27-copilot-code-review-resolution-reasons-and-expanded-capabilities/) 开始完整审查 Copilot cloud agent 创建的 PR，也取消了原来的 300 文件 / 20,000 行代码限制，并允许对评论标记 `Addressed`、`Won't fix`、`Incorrect`。
+
+几项功能本身都不复杂，组合后更像一个完整闭环：任务从聊天进来，Cloud Agent 在 sandbox 里执行，PR 回到 GitHub，Code Review 再检查 Agent 产物。GitHub 还给 Teams/Slack 生成的 Agent PR 提供额外审批策略，说明“Agent 生成、Agent 审查、人最终批准”已经进入产品设计，而不只是 demo 工作流。
+
+这里还有一个实际问题没有自动消失：同一项工作跨聊天、Agent session、PR 和 CI 后，任务 ID 怎么保持一致。入口越多，后续追踪越依赖平台能不能把这些记录串起来。
+
+### Claude Code 2.1.248：长任务继续扩，权限边界也收得更细
+
+[Claude Code v2.1.248](https://github.com/anthropics/claude-code/releases/tag/v2.1.248) 这次没有一个特别大的 headline，但工程细节很多。
+
+新增的 `--restricted` 会移除默认可执行命令或代码的内置工具，并限制 `WebFetch`、文件访问和 `bypassPermissions`；跨会话的 `SendMessage` / `ListAgents` 扩大了可用范围，`/loop` 的动态模式也覆盖 Bedrock、Vertex、Foundry。这个版本还修了 background session、worktree lock、session 恢复、跨会话消息和 prompt cache 的一批问题。
+
+可以看出 Claude Code 现在花了不少精力在“任务持续跑下去以后怎么办”：机器睡眠、session 恢复、worktree 被清理、消息送达、权限等待、缓存失效，这些都属于长任务的日常故障面。
+
+`--restricted` 适合拿来做更保守的默认配置，但别把它当成完整隔离。容器、仓库 ACL、网络出口和 CI 的独立验证仍然在 Claude Code 之外。
+
+### OpenAI：`codex mcp-server` 被弃用
+
+OpenAI 8 月 24 日在 [Release Notes](https://openai.com/products/release-notes/) 里宣布弃用 `codex mcp-server`，推荐迁移到 Codex app server；如果从 Claude Code 调 Codex，则建议使用 Codex plugin for Claude Code。
+
+官方说明很短，能确认的只有弃用和迁移方向。工程上可以把它理解成接口职责在继续拆分：MCP 更适合工具发现和调用，完整 Coding Agent 还要暴露 session、审批、状态、事件和流式执行结果。OpenAI 没有宣称 app server 会成为通用 Agent runtime 标准，所以没必要往更大的行业结论上套。
+
+## 研究与 Benchmark
+
+### AutoSaddler：连 Harness 本身也开始被自动优化
+
+微软团队 8 月 24 日发布了 [AutoSaddler](https://arxiv.org/abs/2608.23041)，同时开放了 [GitHub 仓库](https://github.com/microsoft/AutoSaddler)。它把 Agent harness 当成可修改代码来处理：先从失败 trace 里找问题，再改 prompt、tool definition、tool implementation、middleware 或 agent loop，最后用独立验证集决定这个修改要不要留下。
+
+论文报告的结果是：GAIA2 提升 9.0 个百分点，SWE-Bench Pro 提升 9.6 个百分点，Terminal-Bench 2.0 提升 10.0 个百分点。作者还做了消融，认为更有效的组合是深度诊断、针对性修改和基于泛化效果的筛选，而不是只对单条失败轨迹做一次 reflection。
+
+这个工作有意思的地方在于研究对象换了。过去常见实验是“换一个模型能涨多少分”，AutoSaddler 直接去改模型外面的运行环境。它也公开了 V2 的 durable execution 设计：append-only events、不可变 provenance、可恢复 state、content-addressed candidate。对长期 Agent 来说，这些实现细节和分数本身一样有参考价值。
+
+当然，论文结果仍然来自指定 benchmark 和 harness，不能直接等同于真实项目收益。更现实的用途可能是借它的思路建立自己的回归集：改 Skills、AGENTS.md、tool schema 或 loop 逻辑后，用历史任务验证到底变好还是变坏。
+
+### SWE-bench Science：专业工程任务依旧不好做
+
+[SWE-bench Science](https://arxiv.org/abs/2608.19799) 收集了 98 个 GitHub 仓库中的 119 个科学软件工程任务，覆盖 20 个科学领域。论文里表现最好的配置 pass@1 仍低于 50%。作者归纳的失败包括领域知识不足、探索方向错误、修复覆盖不完整，以及科学知识无法正确泛化到新情况。
+
+它的配对消融比榜单更有用：质量高、和任务匹配的科学指导能改善平均结果和 token 效率；偏离任务的指导可能形成锚定，并不保证提高精确修复成功率。
+
+这和项目里长期堆积的 `AGENTS.md`、Skills、Rules 很像。规则越多，和当前任务无关的内容也会增加。旧规则长期不清理，偶尔还会把 Agent 往已经过时的做法上带。
+
+所以公开 benchmark 适合比较基础能力，真正上线前还是需要自己的任务集。专业领域、仓库结构和验证方式一变，同一个 Agent 的表现可能差很多。
+
+## 工程实践与博客
+
+### Uber：软件工厂已经进入“怎么把成本压下来”的阶段
+
+这条线索先出现在本周的 [TLDR Tech](https://tldr.tech/tech/2026-08-25) 和 Port 的 [Autonomous Engineering Newsletter](https://newsletter.port.io/p/how-uber-built-a-software-factory)，随后 Uber 在 8 月 27 日发了更完整的一手文章 [Running a Software Factory Efficiently at Uber Scale](https://www.uber.com/pr/en/blog/efficient-software-factory/)。
+
+Uber 给出的规模已经很大：超过 70% 的 PR 来自本地或云端 Agent，内部已经有 3,600 多个 Agent Skills，每天执行 30K 以上 Skill。2 月到 8 月之间，agentic 工具的周活增长 7 倍，请求数增长 9.4 倍。
+
+更值得看的是成本曲线。Uber 在模型固定的对比里，把每 1,000 次模型请求成本从峰值压低了接近 34%，每个 session 的成本相对 6 月峰值下降 52%。他们不是靠一个技巧做到的，而是把 Software Factory 拆成多层去优化：模型路由、context、tool 调用、运行环境、缓存和 workflow 都会影响最终账单。
+
+这类数据比“用了 Agent 以后效率翻倍”更有参考价值，因为它开始回答第二个问题：当 Agent 使用量真的上来以后，钱怎么花，哪里浪费，哪些优化值得长期维护。
+
+Uber 还提到 managed agent 已经在处理 code review、CI 自愈、E2E PR、on-call triage 和代码维护。到了这个规模，Skill 数量本身已经接近一个内部软件生态，版本管理、权限和评估迟早都会跟上。
+
+### GitHub：生产环境里的 Eval 要和产品决策绑在一起
+
+GitHub 8 月 25 日发布的 [How to evaluate LLMs before production](https://github.blog/ai-and-ml/llms/how-to-evaluate-llms-before-production/) 来自 secret scanning 的真实项目，不是 Coding Agent 专题，但里面的方法很适合 Agent workflow。
+
+他们把评估目标先拆成产品指标和安全约束。例如想减少 secret scanning 的 false positive，precision 是主要目标，recall 则是不能越过的安全线。后面的模型、prompt、dataset 和 pipeline 版本都围绕这个决策来记录和对比。
+
+这种做法比维护一个总分靠谱。Agent 项目尤其容易把“成功率上涨”当最终答案，但真实系统通常还有别的约束：不能漏掉高风险问题、不能把成本翻几倍、不能让平均延迟失控。一个改动如果让成功率涨 2%，却让关键失败类型翻倍，它未必值得上线。
+
+这篇文章还强调生产数据分布、error analysis、版本记录和在线实验。和 AutoSaddler 放在一起看，方向很一致：Harness 和 Agent workflow 的修改开始需要类似传统软件的回归验证，不能靠几次“感觉好像更聪明了”。
+
+### OpenClaw：Agent 把开源维护者的 review 带宽打满了
+
+GitHub 8 月 27 日采访了 OpenClaw 维护者，文章和完整 [视频访谈](https://www.youtube.com/watch?v=5VSwaUXtPIE) 都很值得看。OpenClaw 到 8 月 26 日已经接近 388K stars、81K forks 和 80K commits；维护者描述的一个直接变化，是有人用自动化“软件工厂”一次开出上百个 PR。
+
+问题随之变成如何判断哪些贡献值得看。维护者提到，Agent transcript、截图、测试结果和提交者对改动的解释，反而成了新的信任信号。代码是谁敲出来的没那么重要，提交者有没有理解功能、有没有验证过，更影响 review 成本。
+
+这和公司内部的 Agent PR 很像。生成代码越来越便宜以后，review 带宽不会同步变多。以后 PR 规范可能会逐渐要求“证明你做过验证”，而不仅是一段自动生成的变更说明。
+
+## Newsletter / 社媒精选
+
+### “Harness” 这周突然变成了高频词
+
+TLDR 这几天连续收录了几篇围绕 Harness 的文章，包括 Shrivu Shankar 的 [The Harness Is the Company](https://blog.sshh.io/p/the-harness-is-the-company) 和 Scott Fryxell 的 [The Harness Is the Thing](https://scott-fryxell.github.io/blog/the-harness-is-the-thing/)。后者在 [Hacker News](https://news.ycombinator.com/item?id=49452346) 也引发了不少讨论。
+
+两篇文章的角度不一样。Shrivu 把 harness 定义得很宽，包含模型外面的 infra、interface、context 和 state；Scott 更偏个人开发工作流，强调不同 TUI 共享 Skills、`AGENTS.md` 和工具配置后，底层模型可以更容易替换。
+
+HN 里的意见没有这么统一。有人认为 harness 会成为产品差异，也有人觉得它迟早会商品化；还有人直接指出，大型 system prompt 和工具集本身也会拖慢模型表现，越复杂未必越好。
+
+我更愿意把这波讨论当成术语正在成形，而不是已经有了标准答案。真正有用的是把“模型之外影响结果的东西”单独拿出来测量：tool schema、context、skills、hooks、loop、state、权限和验证。AutoSaddler 这周的论文刚好提供了一套更可验证的做法，比单纯争论“谁的 harness 最好”实在得多。
+
+Newsletter 和社区在这里的价值也比较清楚：它们能很快暴露正在升温的话题，但最后还是要回到论文、代码、真实生产数据里判断这个话题有没有工程价值。
+
+## 总结
+
+这周可以先记住三件事。第一，Cloud Agent 的入口继续变多，Cursor 开始自己准备仓库，GitHub 则把 Agent 放进 Slack、Teams、PR review 和 Customize。第二，Harness 已经从“怎么写 prompt 和配工具”的经验活，进入可评估、可优化的工程对象，AutoSaddler 和 GitHub 的生产 Eval 都在往这个方向推。
+
+第三，规模起来以后最先暴露的往往是成本和 review。Uber 已经在算每个 session、每千次请求怎么降本，OpenClaw 维护者则开始面对成批 Agent PR。对现阶段的项目来说，增加更多 Agent 通常不难；把状态、验证、成本和审查流程做得可追踪，才更接近下一步要解决的问题。

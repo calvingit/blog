@@ -1,5 +1,4 @@
 import type { AstroIntegration } from 'astro'
-import type { CollectionEntry } from 'astro:content'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sirv from 'sirv'
@@ -49,9 +48,9 @@ export function frontmatterToString(data: Record<string, any>): string {
 }
 
 /**
- * Sort the 'blog' collection ASC by date
+ * Sort entries from newest to oldest by date.
  */
-export function sortAsc(data: Array<CollectionEntry<'blog'>>) {
+export function sortAsc<T extends { data: { date: Date } }>(data: T[]) {
   return data.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
 }
 
@@ -65,14 +64,14 @@ export function capitalize<T extends string>(str: T): Capitalize<T> {
 /**
  * Get all posts tagged with the given tag
  */
-export function getPostsByTag(data: Array<CollectionEntry<'blog'>>, tag: string) {
+export function getPostsByTag<T extends { data: { tags: string[] } }>(data: T[], tag: string) {
   return getPostsByTagFromCollection(data, tag)
 }
 
 /**
  * Get all tags, their slug, and the number of posts
  */
-export function getTags(data: Array<CollectionEntry<'blog'>>) {
+export function getTags<T extends { id: string, data: { tags: string[] } }>(data: T[]) {
   return getTagInfo(data)
 }
 

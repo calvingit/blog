@@ -1,9 +1,9 @@
 ---
 import Layout from '@layouts/layout.astro'
 import Seo from '@components/seo.astro'
-import { getCollection } from 'astro:content'
 import { Content as Hero } from '@assets/hero.mdx'
 import SkipNavContent from '@components/a11y/skip-nav-content.astro'
+import { getAllContentEntries, getContentUrl } from '@content'
 import { defaultDateFormat, sortAsc } from '@utils'
 import Link from '@components/link.astro'
 import Prose from '@components/prose.astro'
@@ -30,7 +30,7 @@ const OSS_PROJECTS: Array<{ name: string; url: string; description: string }> = 
 
 const POSTS_TO_SHOW = 10
 
-const posts = sortAsc(await getCollection('blog')).slice(0, POSTS_TO_SHOW)
+const posts = sortAsc(await getAllContentEntries()).slice(0, POSTS_TO_SHOW)
 ---
 
 <Layout>
@@ -44,20 +44,20 @@ const posts = sortAsc(await getCollection('blog')).slice(0, POSTS_TO_SHOW)
     <section>
       <div class="border-b border-border pb-4 flex justify-between items-center">
         <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Latest Posts</h2>
-        <div><Link href="/blog/">Read all posts</Link></div>
+        <div><Link href="/blog/">Browse blog</Link></div>
       </div>
       <Spacer axis="vertical" size={8} />
       <div class="flex gap-10 flex-col">
         {
-          posts.map(({ data: post }) => (
+          posts.map((entry) => (
             <div>
-              <Link variant="highlight" href={`/${post.slug}/`}>
-                {post.title}
+              <Link variant="highlight" href={getContentUrl(entry)}>
+                {entry.data.title}
               </Link>
               <Spacer axis="vertical" size={2} />
-              <p class="text-sm text-faded leading-relaxed italic">{post.description}</p>
+              <p class="text-sm text-faded leading-relaxed italic">{entry.data.description}</p>
               <Spacer axis="vertical" size={3} />
-              <div class="text-faded">{defaultDateFormat(post.date)}</div>
+              <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
             </div>
           ))
         }

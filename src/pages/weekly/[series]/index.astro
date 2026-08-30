@@ -1,0 +1,51 @@
+---
+import Link from '@components/link.astro'
+import Seo from '@components/seo.astro'
+import SkipNavContent from '@components/a11y/skip-nav-content.astro'
+import Spacer from '@components/spacer.astro'
+import { getContentUrl, getWeeklyEntries, getWeeklySeries, type WeeklySeries, WEEKLY_SERIES } from '@content'
+import Layout from '@layouts/layout.astro'
+import { defaultDateFormat, sortAsc } from '@utils'
+
+export function getStaticPaths() {
+  return (Object.keys(WEEKLY_SERIES) as WeeklySeries[]).map((series) => ({
+    params: { series },
+    props: { series },
+  }))
+}
+
+const { series } = Astro.props
+const { title, description } = WEEKLY_SERIES[series]
+const posts = sortAsc((await getWeeklyEntries()).filter((entry) => getWeeklySeries(entry) === series))
+---
+
+<Layout>
+  <Seo slot="seo" title={title} description={description} />
+  <SkipNavContent>
+    <div class="border-b border-border pb-4">
+      <h1 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">{title}</h1>
+    </div>
+    <Spacer axis="vertical" size={4} />
+    <p class="text-subtle">{description}</p>
+    <Spacer axis="vertical" size={10} />
+    {
+      posts.length > 0 ? (
+        <div class="flex gap-10 flex-col">
+          {posts.map((entry) => (
+            <div>
+              <Link variant="highlight" href={getContentUrl(entry)}>
+                {entry.data.title}
+              </Link>
+              <Spacer axis="vertical" size={2} />
+              <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
+              <Spacer axis="vertical" size={4} />
+              <p class="text-subtle text-md md:text-lg">{entry.data.description}</p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="text-faded">暂无文章。</p>
+      )
+    }
+  </SkipNavContent>
+</Layout>
