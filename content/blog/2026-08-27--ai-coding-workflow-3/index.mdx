@@ -1,0 +1,264 @@
+---
+title: 我的 AI Coding 工作流（三）：我是怎么学习 Agent 的
+slug: ai-coding-workflow-3
+description: 记录我学习 Coding Agent 的路径：从会用工具，到理解 Model、Context、Harness、Runtime、Skills、Memory 和多 Agent。
+date: 2026-08-27
+lastUpdated: 2026-08-31
+tags:
+  - AI
+  - Agents
+  - Codex
+  - Skills
+  - Context Engineering
+  - MCP
+  - Learning
+searchIndex: true
+---
+
+我没有系统地把某一本 Agent 教材从头学到尾。大多数时候，是在真实开发里先碰到一个问题，再回头补对应的概念。
+
+例如 Agent 为什么突然忘了前文，我才认真看 Context 和 Memory；长任务为什么会中断，才去理解 Runtime、Goal 和 Harness；多个 Agent 为什么一起得出错误结论，才开始重视独立上下文和交叉验证。
+
+这种学习方式不算完整，但对工程实践很有效。概念一旦和真实问题对应起来，就不容易只停留在名词层面。
+
+系列文章：
+
+1. [工具篇](/blog/ai-coding-workflow-1/)
+2. [Skills 日常工作流篇](/blog/ai-coding-workflow-2/)
+3. **Agent 学习篇**
+4. [感悟篇](/blog/ai-coding-workflow-4/)
+
+## 先会用，再补运行机制
+
+最开始我用 AI 的方式很普通：问 API、解释错误、生成代码片段、写文档。
+
+这个阶段最重要的并不是学术语，而是建立能力边界的直觉。哪些问题模型一次能答对，哪些必须给代码上下文，哪些需要工具，哪些结果一定要自己验证。没有这层经验，后面学再多 Agent 架构，也很容易停在概念图上。
+
+当我开始把完整开发任务交给 Agent，问题才真正复杂起来。一个任务不再只是“生成代码”，而是要连续完成：
+
+```text
+理解目标
+-> 读取项目
+-> 调查调用关系
+-> 做决策
+-> 修改代码
+-> 运行验证
+-> 根据结果继续
+```
+
+到这里，仅仅知道 Prompt 怎么写已经不够了。
+
+## Model：能力上限，但不是全部
+
+模型能力当然重要。更强的模型通常能处理更长的推理链、更复杂的代码关系，也更容易在模糊任务里找到正确方向。
+
+但同一个模型放进不同 Agent Runtime，实际表现可以差很多。原因并不神秘：模型看到什么上下文、能调用什么工具、工具结果怎么返回、任务中断以后怎么恢复、修改代码以后有没有反馈循环，这些都不由模型本身决定。
+
+所以我现在理解 Coding Agent 时，会把模型和运行环境分开看。
+
+模型负责推理和生成，Runtime / Harness 负责把模型放进一个可以持续工作的工程环境里。只比较模型排行榜，解释不了为什么同一个模型在两个 Coding Agent 里体验完全不同。
+
+## Context：Agent 当下真正知道什么
+
+Context 是我后来花时间最多的部分。
+
+模型并不会天然“知道这个项目”。它能用来判断的，只是当前上下文里出现的内容：用户要求、`AGENTS.md`、代码、工具返回、日志、历史消息、检索结果，以及 Runtime 自动保留的状态。
+
+这也是为什么我现在很少试图用一条超长 Prompt 解决所有问题。项目知识会变化，任务需要的上下文也不同。比起一次塞满，更可靠的方式是让 Agent 根据当前任务逐步读取：
+
+1. 用户这次真正要求什么
+2. 项目级规则和相关文档怎么说
+3. 当前代码和调用关系是什么
+4. 测试、日志和运行结果能证明什么
+
+Context Engineering 对我来说也逐渐从“怎么把更多信息塞进去”，变成“当前这一步到底需要哪些真实信息”。
+
+## Tool：让模型接触真实世界
+
+没有工具时，Coding Agent 很容易变成一个会写代码的聊天机器人。
+
+文件系统、Shell、Git、浏览器、ADB、数据库、MCP、搜索工具这些能力接进来以后，模型才能调查和验证，而不是一直根据描述推测。
+
+我学习 Tool 时最关注三件事：
+
+- **输入边界**：Agent 到底能看到什么
+- **操作权限**：它能读、能写，还是能执行破坏性操作
+- **返回证据**：工具结果是否足够让下一步判断成立
+
+例如“测试通过”必须来自真实命令结果，不能来自模型自己总结；“接口已经恢复”也不能只看代码 diff，需要实际响应或运行时证据。
+
+## Harness：为什么 Agent 不只是一次模型调用
+
+后来我开始频繁看到 Harness 这个词，一开始觉得有点抽象。真正把它理解清楚，是因为我开始观察 Coding Agent 如何组织一次完整任务。
+
+一个可用的 Harness 至少要处理很多模型之外的事情：
+
+- 如何构造和更新上下文
+- 如何暴露工具
+- 如何解析工具调用
+- 如何管理权限和 sandbox
+- 如何保存 session 和任务状态
+- 如何处理错误、重试和中断
+- 如何把 diff、测试和运行结果重新送回模型
+- 什么时候应该停止
+
+这些能力决定了模型能不能持续工作。
+
+我现在更愿意把 Coding Agent 看成“模型 + Harness/Runtime + 工程环境”的组合。模型很强，但 Harness 如果频繁丢上下文、恢复失败、工具返回不稳定，最后的工程体验仍然会很差。
+
+## Runtime：长任务到底由谁负责
+
+理解 Harness 之后，我又开始把 Runtime 单独拿出来看。
+
+我比较关心的 Runtime 能力包括：
+
+- task / goal persistence
+- pause / resume
+- session recovery
+- worktree 或 workspace 管理
+- 权限和 sandbox
+- 长任务状态
+- tool execution
+- interruption recovery
+
+这直接影响我怎么设计自己的 Skills。
+
+以前我会在 Skill 里实现一套循环和任务状态，希望 Agent 可以“持续执行直到完成”。现在很多 Runtime 已经有 Goal、resume 和 recovery，再在 Skill 里复制同一套生命周期控制，反而容易出现两个 orchestrator。
+
+所以我现在的做法是 Runtime 优先负责生命周期，Skills 只补工程方法和执行协议。这个变化也是我最近重新设计 [Engineering Skills](https://github.com/calvingit/skills#engineering-skills) 的原因之一。
+
+## 从 Prompt 到 Skill
+
+早期我也会保存很多 Prompt。用久以后发现，真正值得长期复用的内容通常不只是几句话，而是一套相对稳定的工作方法。
+
+例如 Bug 排查里，我希望 Agent 保持这些行为：
+
+```text
+先复现
+-> 建立假设
+-> 用证据排除
+-> 找根因
+-> 加回归验证
+-> 再修复
+```
+
+代码审查又是另一套行为：先保持只读，确认需求和项目规范，再找实际运行风险和验证缺口。
+
+这些内容开始拥有明确的触发条件、输入、产物、权限边界和停止条件以后，就更适合做成 Skill，而不是继续塞进一个越来越长的 Prompt 文件。
+
+我现在判断一个东西值不值得变成 Skill，会先看它是否重复出现，以及它有没有相对稳定的工程方法。只有重复，不代表一定值得固化；如果每次上下文和决策都完全不同，做成 Skill 反而会制造错误约束。
+
+## Memory：保存稳定信息，不保存当前猜测
+
+Memory 很容易给人一种“Agent 终于会长期记住我”的感觉，但工程场景里我反而比较谨慎。
+
+适合长期保存的通常是：
+
+- 稳定的个人偏好
+- 项目长期约定
+- 已经验证过的工作方式
+- 反复出现、不会频繁变化的边界
+
+不适合直接当长期事实保存的包括：
+
+- 当前分支状态
+- 某个服务是否正常
+- 某个 API 当前版本行为
+- 未经确认的根因
+- 一次讨论里暂时形成的猜测
+
+这些东西变化太快。Memory 可以提供线索，但真正进入任务时仍然要重新读取现场。
+
+## RAG、CodeGraph 与外部知识
+
+项目越来越大以后，不可能把所有代码和文档都一次塞进上下文。
+
+RAG、代码搜索和 CodeGraph 解决的是“如何找到当前需要的信息”。我并不强求所有项目都建立复杂检索系统，很多时候 `rg` 加直接阅读已经够用。
+
+当问题涉及调用关系、跨模块状态传播或者大型仓库时，结构化代码索引才开始明显占优势。外部技术资料也是一样：如果只查一个 API，直接读官方文档通常比启动一套复杂 Research 流程更合适。
+
+我更关注检索结果是否真正减少了当前决策的不确定性，而不是用了哪种更先进的 RAG 架构。
+
+## 多 Agent：先理解独立性
+
+我最初对多 Agent 的直觉也很简单：一个 Agent 不够，就多叫几个。
+
+后来发现，如果多个 Agent 一开始就共享同一份分析和结论，它们很容易一起犯同一个错误。数量增加了，独立证据并没有增加。
+
+现在我用多 Agent，通常有三个目的：
+
+- **独立调查**：不给主 Agent 的结论，让另一个模型自己查
+- **职责隔离**：实现者、审查者、验证者分别工作
+- **执行隔离**：在独立 worktree 和明确文件范围内完成不同切片
+
+所以学习多 Agent 时，我现在更关注 delegation、context isolation、ownership 和 evidence merge，而不是单纯研究“几个 Agent 怎么聊天”。
+
+## Automation：等流程稳定以后再做
+
+Automation 是我比较晚才愿意大量使用的能力。
+
+如果一个流程本身还在频繁变化，把它自动化只会定时放大错误。真正适合自动化的工作，通常已经满足：入口稳定、规则稳定、权限明确、结果可检查。
+
+例如每日 commit 审查、周期性代码健康检查、Weekly 资料整理，都比“自动实现一个模糊需求并直接发布”更适合无人值守。
+
+所以我的学习顺序一直是先把单次任务跑可靠，再谈 Automation。
+
+## 我现在的学习顺序
+
+如果重新从头学 Coding Agent，我大概还是会按这个顺序，只是不会把它当成必须完成的课程表：
+
+1. **先把一个 Agent 工具用熟**：会读项目、改代码、运行验证
+2. **理解 Model 和 Context**：知道模型为什么会忘、会猜、会受错误上下文影响
+3. **理解 Tool 和 Harness**：知道 Agent 怎么接触文件、Shell、浏览器和外部系统
+4. **理解 Runtime**：知道 session、Goal、resume、权限、sandbox 和长任务状态由谁管理
+5. **学习 Context Engineering**：控制什么信息在什么时候进入上下文
+6. **把稳定工程方法做成 Skills**：不要先造一个完整框架
+7. **再看 Memory、RAG、多 Agent 和 Automation**：这些能力都建立在前面几个基础之上
+
+对开发者来说，我觉得最有效的学习方式还是找一个真实任务做。比如挑一个低风险 Bug，让 Agent 调查调用链、修改、验证，再回头看过程中哪里失败：是模型能力不够、上下文缺失、工具拿不到证据，还是 Runtime 恢复出了问题。这样学到的概念会直接对应工程现象。
+
+## 我收藏的一些资料
+
+下面这些是我近一段时间会反复翻的资料，不要求从头读完，可以根据当前问题挑着看。
+
+### Agent 基础
+
+| 资料 | 用途 |
+| --- | --- |
+| [Introduction to Agents](https://www.kaggle.com/whitepaper-introduction-to-agents) | Agent 基本组成和工作方式 |
+| [Agent Tools & Interoperability with MCP](https://www.kaggle.com/whitepaper-agent-tools-and-interoperability-with-mcp) | Tool 与 MCP |
+| [Context Engineering: Sessions & Memory](https://www.kaggle.com/whitepaper-context-engineering-sessions-and-memory) | Context、Session 与 Memory |
+| [Agent Quality](https://www.kaggle.com/whitepaper-agent-quality) | Agent 质量和评估 |
+| [Prototype to Production](https://www.kaggle.com/whitepaper-prototype-to-production) | 从原型到生产环境 |
+| [The Complete Guide to Building Skills for Claude](https://resources.anthropic.com/hubfs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf) | Skills 设计 |
+
+### Runtime 与 Harness
+
+- [AI Agents in Depth：基础与工具](https://bojieli.github.io/ai-agent-book/book/chapter1/#harness)
+- [AI Agents in Depth：MCP](https://bojieli.github.io/ai-agent-book/book/chapter4/#mcp)
+- [π-agent book](https://books.antinomie.org/pi/)
+- [PI from Scratch](https://pi-from-scratch.vercel.app/)
+- [Inside DeepSeek Harness](https://helmcode.com/deepseek-harness)
+- [OpenHands](https://github.com/OpenHands/OpenHands)
+- [Apache Maka](https://github.com/apache/maka)
+- [learn-harness-engineering](https://github.com/walkinglabs/learn-harness-engineering)
+
+### Skills 与工程实践
+
+- [Skills For Real Engineers](https://github.com/mattpocock/skills)：我当前 Engineering Skills 的主要行为基线
+- [calvingit/skills](https://github.com/calvingit/skills)：我自己持续修改的 Skills 集合
+- [incremental-implementation](https://github.com/addyosmani/agent-skills/blob/main/skills/incremental-implementation/SKILL.md)：垂直切片和增量实现
+- [reclaim-code-entropy](https://github.com/Yevanchen/reclaim-code-entropy)：从行为证据出发理解代码简化
+- [SkillSpector](https://github.com/NVIDIA/SkillSpector)：Skill 安全和供应链风险
+
+### 评测、上下文与代码工程
+
+- [OpenAI Evals](https://github.com/openai/evals)
+- [promptfoo](https://github.com/promptfoo/promptfoo)
+- [headroom](https://github.com/headroomlabs-ai/headroom)
+- [GitHub MCP Server](https://github.com/github/github-mcp-server)
+- [Alibaba open-code-review](https://github.com/alibaba/open-code-review)
+
+这些资料我基本都当参考手册用。遇到 Runtime 问题就去看 Runtime，设计 Skill 时再看 Skills，不会因为收藏了几十个仓库就强迫自己全部学完。
+
+下一篇是这个系列最后一篇：[这一年形成的一些判断](/blog/ai-coding-workflow-4/)。
