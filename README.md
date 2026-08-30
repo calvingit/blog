@@ -1,32 +1,51 @@
 # Wen's Blog
 
-[Wen's Blog](https://zhangwen.site) 的源码仓库，基于 Astro 构建，部署到 Netlify。
+[Wen's Blog](https://zhangwen.site) 是一个持续更新的中文个人博客，记录软件开发、AI Coding 与日常阅读中的观察和实践。
 
-## 功能
+## 写什么
 
-- 使用 MDX 写文章
-- 基于 Tailwind CSS v4 的站点样式
-- Expressive Code 代码高亮
-- `:::note` / `:::tip` / `:::caution` / `:::danger` 提示块
-- Mermaid 图表渲染
-- Sandpack 交互式代码示例
-- RSS、Sitemap、Tag 页面
-- Pagefind 全文搜索
-- Light / Dark / Auto 主题切换
+这里没有固定的选题边界，但内容大致围绕几条长期主线：
 
-## 技术栈
+- **AI 与软件工程**：Coding Agent、Skills、上下文管理、评估、自动化，以及 AI 进入真实研发流程后带来的工程问题。
+- **移动端与客户端开发**：iOS、Swift、Flutter、Dart、测试、架构和性能等实践记录。
+- **开发工具与技术笔记**：从命令行、Git、Node.js 到系统配置，整理那些实际解决过问题的经验。
+- **阅读、投资与生活思考**：读书笔记、投资观察和不定期的「摸鱼精选」。
 
-- Astro 6
-- TypeScript
-- React 19
-- Tailwind CSS 4
-- MDX
-- Pagefind
-- Netlify
+文章从具体问题出发，尽量写清楚过程、依据和限制，而不是只给结论。最近的内容可以从 [全部文章](https://zhangwen.site/blog/) 浏览，也可以直接阅读：
 
-## 本地开发
+- [我的 AI Coding 工作流：从 Context、Skills 到 Automation](https://zhangwen.site/ai-coding-workflow/)
+- [AI Software Engineering Weekly](https://zhangwen.site/ai-software-engineering-weekly-2026-08-28/)
+- [如何解决长期 AI Coding 产生的代码屎山？](https://zhangwen.site/ai-coding-created-a-code-mountain/)
 
-先确保本机已安装 `pnpm`。
+## 阅读入口
+
+- [博客首页](https://zhangwen.site/)：查看最新发布的文章。
+- [文章归档](https://zhangwen.site/blog/)：按时间浏览全部内容。
+- [标签页](https://zhangwen.site/tags/)：按主题筛选文章。
+- [RSS](https://zhangwen.site/rss.xml)：通过阅读器订阅更新。
+- [关于我](https://zhangwen.site/about/)：了解作者与这个站点。
+
+## 这个仓库
+
+本仓库保存博客源码和全部 MDX 文章。站点使用 Astro 构建并部署到 Netlify；如需提交勘误或改进文章，欢迎发起 Issue 或 Pull Request。
+
+文章位于 `content/blog/`，每篇文章使用独立目录：
+
+```text
+content/blog/YYYY-MM-DD--slug/index.mdx
+```
+
+新建文章可运行：
+
+```sh
+pnpm assistant
+```
+
+脚本会收集标题、slug、摘要、日期和标签，并生成文章目录与 `index.mdx`。文章 frontmatter 需包含 `title`、`slug`、`description`、`date`、`lastUpdated` 和 `tags`；具体 schema 见 `src/content.config.ts`。
+
+## 本地运行
+
+请先安装 [pnpm](https://pnpm.io/)。
 
 ```sh
 pnpm install
@@ -36,144 +55,10 @@ pnpm dev
 常用命令：
 
 ```sh
-pnpm dev            # 启动开发服务器
-pnpm build          # 生产构建，并生成 Pagefind 索引
-pnpm build:astro    # 仅执行 Astro 构建
-pnpm build:pagefind # 单独生成搜索索引
-pnpm preview        # 预览生产构建结果
-pnpm lint           # 运行 ESLint
-pnpm lint:fix       # 自动修复 lint 问题
-pnpm assistant      # 交互式创建博客文章
+pnpm build     # 生产构建，并生成全文搜索索引
+pnpm preview   # 本地预览构建结果
+pnpm lint      # 检查代码风格
+pnpm lint:fix  # 自动修复可处理的问题
 ```
 
-## 内容工作流
-
-博客文章存放在 `content/blog/`，目录约定为：
-
-```text
-content/blog/YYYY-MM-DD--slug/index.mdx
-```
-
-页面路由使用 frontmatter 里的 `slug`，最终文章地址是：
-
-```text
-/{slug}/
-```
-
-新建文章最快的方式是运行：
-
-```sh
-pnpm assistant
-```
-
-这个脚本会收集标题、slug、描述、日期和标签，然后创建文章目录与 `index.mdx`。
-
-## Frontmatter 规范
-
-文章 schema 定义在 `src/content.config.ts`。当前支持这些字段：
-
-```yaml
-title: 一篇文章的标题
-slug: article-slug
-description: 文章摘要
-date: 2026-08-24
-lastUpdated: 2026-08-24
-tags:
-  - AI
-  - Tool
-searchIndex: true
-image: https://example.com/cover.png
-```
-
-说明：
-
-- `title`、`slug`、`description`、`date`、`lastUpdated`、`tags` 必填
-- `image` 可选，用于社交分享图
-- `searchIndex` 默认为 `true`
-- `tags` 支持直接写字符串，构建时会自动去首尾空格、合并重复空格并去重
-- 标签 slug 由 `src/tags.ts` 直接根据标签文本生成
-- 如果两个不同标签会生成同一个 slug，构建会直接报错
-
-## 标签管理
-
-标签逻辑集中在 `src/tags.ts`：
-
-```ts
-normalizeTagName(tag)
-normalizeTags(tags)
-getTagSlug(tag)
-getTags(entries)
-```
-
-新增标签时，直接写进文章 frontmatter 即可。需要额外处理的只有 slug 冲突。
-
-## 自定义 MDX 能力
-
-### Aside
-
-```md
-:::note
-正文
-:::
-
-:::caution[注意]
-正文
-:::
-```
-
-### Mermaid
-
-````md
-```mermaid
-graph TD
-  A[Start] --> B[Finish]
-```
-````
-
-### Playground
-
-````md
-<Playground template="react">
-
-```js name=App.js active
-export default function App() {
-  return <h1>Hello World</h1>
-}
-```
-
-</Playground>
-````
-
-## 关键目录
-
-```text
-content/blog/        博客文章
-src/pages/           页面与路由
-src/components/      站点组件
-src/constants.ts     站点标题、导航等全局配置
-src/content.config.ts 内容集合 schema
-src/tags.ts          标签规范化、slug 生成、聚合与冲突检查
-src/remark.ts        自定义 remark 插件
-scripts/assistant.ts 文章脚手架脚本
-```
-
-## 配置入口
-
-日常最常改的文件：
-
-- `src/constants.ts`：站点标题、描述、导航
-- `src/tags.ts`：标签规范化、slug 规则、聚合行为
-- `astro.config.ts`：Astro 集成、Markdown 管线、Pagefind 开发态支持
-- `netlify.toml`：Netlify 构建与环境变量
-
-## 部署
-
-生产环境通过 Netlify 构建：
-
-```toml
-[build]
-command = "pnpm build"
-publish = "dist"
-```
-
-生产环境站点地址配置为 `https://zhangwen.site`。
+部署由 Netlify 使用 `pnpm build` 生成 `dist/` 后完成。
