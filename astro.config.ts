@@ -1,9 +1,9 @@
 import type { Options as AutolinkHeadingsOptions } from 'rehype-autolink-headings'
 import type { Options as ExternalLinkOptions } from 'rehype-external-links'
+import { unified } from '@astrojs/markdown-remark'
 import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
 import sitemap from '@astrojs/sitemap'
-import remarkSandpack from '@lekoarts/remark-sandpack'
 import tailwindcss from '@tailwindcss/vite'
 import { imageService } from '@unpic/astro/service'
 import expressiveCode from 'astro-expressive-code'
@@ -33,13 +33,16 @@ export default defineConfig({
   devToolbar: {
     enabled: false,
   },
+  // Preserve Astro 6's HTML whitespace behavior during the major upgrade.
+  compressHTML: true,
   markdown: {
-    // @ts-expect-error: Astro types don't match remark plugin
-    remarkPlugins: [[remarkSmartypants, { backticks: false }], remarkDirective, remarkAsides, remarkMermaid, [remarkSandpack, { componentName: ['Playground'] }]],
-    rehypePlugins: [
-      rehypeSlug,
-      [
-        rehypeExternalLinks,
+    processor: unified({
+      smartypants: false,
+      remarkPlugins: [[remarkSmartypants, { backticks: false }], remarkDirective, remarkAsides, remarkMermaid],
+      rehypePlugins: [
+        rehypeSlug,
+        [
+          rehypeExternalLinks,
         {
           target: '_blank',
           rel: ['nofollow'],
@@ -47,9 +50,9 @@ export default defineConfig({
           properties: { className: ['external_link'] },
           contentProperties: { className: ['sr-only'] },
         } satisfies ExternalLinkOptions,
-      ],
-      [
-        rehypeAutolinkHeadings,
+        ],
+        [
+          rehypeAutolinkHeadings,
         {
           behavior: 'after',
           group() {
@@ -67,7 +70,8 @@ export default defineConfig({
             ])
           },
         } satisfies AutolinkHeadingsOptions,
+        ],
       ],
-    ],
+    }),
   },
 })

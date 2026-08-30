@@ -51,7 +51,7 @@ All site-wide settings live here: `SITE` (URL, title, description, lang), `HEADE
 
 `astro.config.ts` wires the full remark/rehype pipeline:
 
-- **remark:** `remarkSmartypants`, `remarkDirective` + custom `remarkAsides` (`src/remark.ts`) transforms `:::note/tip/caution/danger` directives into `<Aside>` MDX components; `remarkSandpack` transforms fenced code blocks inside `<Playground>` into Sandpack components.
+- **remark:** `remarkSmartypants`, `remarkDirective` + custom `remarkAsides` (`src/remark.ts`) transforms `:::note/tip/caution/danger` directives into `<Aside>` MDX components.
 - **rehype:** `rehypeSlug`, `rehypeExternalLinks` (opens in new tab, adds sr-only label), `rehypeAutolinkHeadings`.
 
 ### Search (Pagefind)
