@@ -15,11 +15,11 @@ tags:
 searchIndex: true
 ---
 
-我前几版 AI Coding 工作流有一个很明显的问题：太像流水线了。
+我前几版 AI Coding 工作流最大的问题，是把开发想成了一条流水线。
 
-那时我会把 `wayfinding -> grilling -> architecture -> to-spec -> implement -> simplify -> code-review` 画成一条主流程。实际用久以后发现，这种画法很容易让 Agent 机械执行：明明只是一个局部配置修改，也想先跑一遍 Skill；明明需求已经很清楚，还要从 `wayfinding` 开始；Runtime 已经有 Goal 和 resume，又在 Skill 里套一层自己的循环控制。
+那时我会把 `wayfinding -> grilling -> architecture -> to-spec -> implement -> simplify -> code-review` 画成一条主流程。实际用久以后发现，这种画法很容易让 Agent 机械执行，明明只是一个局部配置修改，也想先跑一遍 Skill，明明需求已经很清楚，还要从 `wayfinding` 开始，Runtime 已经有 Goal 和 resume，又在 Skill 里套一层自己的循环控制。
 
-最近我把 [Engineering Skills](https://github.com/calvingit/skills#engineering-skills) 重新整理了一遍。现在的核心思路简单很多：**先判断当前任务还缺什么，再选一个负责当前阶段的 Workflow；遇到具体工程问题时，按需叠加 Engineering Discipline。** Skill 不负责接管完整的软件开发生命周期。
+最近我把 [Engineering Skills](https://github.com/calvingit/skills#engineering-skills) 重新整理了一遍。现在的思路简单多了，先判断当前任务缺什么，再选负责这一阶段的 Workflow，遇到具体工程问题时按需叠加 Engineering Discipline。 Skill 不负责接管完整的软件开发生命周期。
 
 系列文章：
 
@@ -32,7 +32,7 @@ searchIndex: true
 
 这是现在和以前最大的区别。
 
-下面这些任务，我通常直接处理：
+下面这些任务，我通常直接处理。
 
 - 一行或很局部的修改
 - 简单配置调整
@@ -40,7 +40,7 @@ searchIndex: true
 - 只查一个事实或阅读一段代码
 - 已经有清晰反馈循环，不需要额外工程方法的任务
 
-Skill 本身也有成本。它会增加上下文、步骤和约束，如果一个问题本来几分钟就能确认，强行进入完整工作流只会让任务变慢。
+Skill 也有成本，会增加上下文、步骤和约束。一个几分钟就能确认的问题，没必要强行塞进完整工作流。
 
 我现在把 Skill 看成一种“在特定工程问题上降低不确定性”的工具。它能明显减少错误率、帮助跨 session 保存关键事实，或者给复杂任务提供更稳定的方法时才值得用。
 
@@ -50,7 +50,7 @@ Skill 本身也有成本。它会增加上下文、步骤和约束，如果一�
 
 ### 全局层
 
-全局 `AGENTS.md` 放跨项目长期有效的最低工程规则，例如：
+全局 `AGENTS.md` 放跨项目长期有效的最低工程规则，例如
 
 - 修改前先理解相关代码和调用关系
 - 不覆盖用户已有改动
@@ -81,7 +81,7 @@ Engineering Skills 不应该把 Flutter、Vue、Node 或某个项目的目录结
 | Engineering Discipline | `debug`、`tdd`、`codebase-design`、`domain-modeling`、`simplify`、`code-review` 等 | 提供某一类工程问题的判断和实践方法 |
 | Execution Protocol | `loop` | 约束 progress、evidence、iteration、retry 和 no-progress，不重复 Runtime 的生命周期能力 |
 
-这个分类解决了我之前遇到的一个问题：同一套规则在多个 Skill 里重复出现，改一个流程时要到处同步。现在每类规则尽量只有一个 owner，Workflow 可以调用 Discipline，但不会再复制一遍它的完整规则。
+这个分类解决了我之前遇到的重复维护问题，同一套规则不再散落在多个 Skill 里，改一个流程时也不用到处同步。现在每类规则尽量只有一个 owner，Workflow 可以调用 Discipline，但不会再复制一遍它的完整规则。
 
 ## Workflow：看当前最大的未知是什么
 
@@ -113,11 +113,11 @@ Workflow 不再有固定起点。我通常先看当前工作卡在哪里。
 
 现在 `to-spec` 的产物是 `SPEC.md`，不再同时维护一份 `PLAN.md`。
 
-`SPEC.md` 回答的是：最终要构建什么、范围在哪里、验收条件是什么。实现进度、重试状态和 ticket 拆分都不应该混进规范文档，否则需求和执行状态会很快搅在一起。
+`SPEC.md` 回答的是最终要构建什么、范围在哪里、验收条件是什么。实现进度、重试状态和 ticket 拆分都不应该混进规范文档，否则需求和执行状态会很快搅在一起。
 
 ### `to-tickets` 不是“大任务就拆票”
 
-我现在判断要不要拆 ticket，主要看两件事：
+我现在判断要不要拆 ticket，主要看两件事
 
 1. 一个 fresh session 能不能可靠完成
 2. 工作之间是否存在真正的独立交付边界和 blocker
@@ -149,19 +149,19 @@ Workflow 确定当前阶段，Discipline 解决阶段里出现的具体工程问
 
 这些 Discipline 可以组合，但没有“每次实现后必须全跑一遍”的要求。
 
-比如一个普通行为实现，可能是：
+比如一个普通行为实现，可能是
 
 ```text
 implement + tdd -> code-review
 ```
 
-一个 Bug 修复更像：
+一个 Bug 修复更像
 
 ```text
 debug -> reproduction -> root cause -> regression test -> fix
 ```
 
-架构治理可能是：
+架构治理可能是
 
 ```text
 review-architecture -> codebase-design -> to-spec -> implement
@@ -173,9 +173,9 @@ review-architecture -> codebase-design -> to-spec -> implement
 
 ## `simplify`：我现在很重视的一类工程问题
 
-长期使用 Coding Agent 后，我越来越在意一种特殊的代码复杂度：它不一定是传统意义上的坏代码，甚至可能测试齐全、抽象漂亮，但没有真实的生产 ownership。
+长期使用 Coding Agent 后，我越来越在意一种特殊的代码复杂度，它不一定是传统意义上的坏代码，甚至可能测试齐全、抽象漂亮，但没有真实的生产 ownership。
 
-常见来源包括：
+常见来源包括
 
 - 为了测试方便加入大量 injection point
 - 只为某次调试保留的 hook 或 debug state
@@ -193,7 +193,7 @@ review-architecture -> codebase-design -> to-spec -> implement
 
 ![把长对话拆成可重新读取的 Artifact](../../../src/assets/blog/ai-coding-workflow-2/illustrations/02-artifact-handoff.webp)
 
-我现在让不同阶段只维护自己负责的 artifact：
+我现在让不同阶段只维护自己负责的 artifact。
 
 | 层次 | Artifact | Owner | 回答的问题 |
 | --- | --- | --- | --- |
@@ -206,7 +206,7 @@ review-architecture -> codebase-design -> to-spec -> implement
 
 例如 `implement` 发现 SPEC 不成立，正确动作不是顺手把 SPEC 改成当前实现，而是把冲突暴露出来。这个限制看起来麻烦，实际能避免长任务后期出现“代码、计划和最初需求都各自合理，但已经不是同一件事”的情况。
 
-一个比较典型的流转是：
+一个比较典型的流转是
 
 ```text
 需求/边界未定 -> grilling
@@ -250,7 +250,7 @@ Engineering Skills
 
 无论用了多少 Skill，我最后还是看真实证据。
 
-大致分成四类：
+大致分成四类。
 
 - **静态证据**：代码、调用关系、配置、Git diff
 - **自动检查**：单元测试、Widget 测试、lint、静态分析、构建
@@ -269,7 +269,7 @@ Engineering Skills
 
 ## 我现在的日常选择方式
 
-如果把上面的内容压成真实工作里的几个判断，大概是这样：
+如果把上面的内容压成真实工作里的几个判断，大概是这样。
 
 ```text
 局部、明确、低风险？
@@ -297,7 +297,7 @@ Engineering Skills
   -> loop 只补执行协议或 Runtime 缺失的最小控制
 ```
 
-这套方式比我之前那张“完整主流程图”少了很多仪式感，但更符合真实开发：小问题直接解决，真正复杂的地方才引入结构；需求、设计、执行和证据分别有自己的 owner，Agent 不需要靠一份越来越大的 Prompt 来记住所有事情。
+这套方式比我之前那张“完整主流程图”少了很多仪式感，却更贴近真实开发。小问题直接解决，复杂任务才引入结构，需求、设计、执行和证据各有自己的 owner，Agent 也不必靠一份越来越大的 Prompt 记住所有事情。
 
 Engineering Skills 还会继续变化，不过目前我更认可这个方向。Skill 的价值不在数量，也不在把工程流程写得多完整，而在它能不能在正确的时机提供一种稳定、可复查的工程方法。
 
