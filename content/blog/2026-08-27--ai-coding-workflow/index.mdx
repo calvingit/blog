@@ -16,7 +16,7 @@ searchIndex: true
 
 最近在团队内部做了一次分享，主要是有关我个人是如何使用 AI Coding 的，供大家参考一下。
 
-一开始我只想整理一下自己现在用哪些工具、平时怎么让 Agent 写代码。真正动手才发现，工具只是表面，往后还有 Context、Skills、Runtime、Artifact、验证、多 Agent 和 Automation，一篇文章根本装不下，原稿也越写越长，最后拆成了四篇。
+一开始我只想整理一下自己现在用哪些工具，平时怎么让 Agent 写代码。写着写着才发现，工具只是表面，往后还有 Context、Skills、Runtime、Artifact、验证、多 Agent 和 Automation，一篇文章根本装不下，原稿也越写越长，最后拆成了四篇。
 
 回过头来看，自己的使用方式一直变个不停，紧跟着模型能力的升级而进化。早期用 AI，更多是问 API、解释报错、补一段代码。现在经常把完整任务交给 Coding Agent，让它读仓库、查调用关系、修改代码、跑测试、看浏览器或真机结果，再根据证据继续处理。
 
@@ -26,7 +26,7 @@ searchIndex: true
 
 它只是我当前个人开发环境的一张快照，不是团队规范。模型、Coding Agent 和 Runtime 还在快速变化，具体工具以后肯定会换。真正值得留下来的，是那些在真实项目里反复出现的问题，以及目前对我有效的处理办法。
 
-## 一：我现在实际在用哪些工具
+1. **工具篇**
 
 [工具篇](/ai-coding-workflow-1/) 先从日常工作台讲起。
 
@@ -34,25 +34,25 @@ searchIndex: true
 
 我现在选工具时，越来越少比较“谁的功能更多”，更关心它能不能拿到当前任务的真实状态，包括代码、Git、测试、浏览器、真机和日志，这些信息能不能直接进入 Agent 的反馈循环。能解决这个问题的工具，我才会长期留下来。
 
-## 二：Engineering Skills 怎么进入日常开发
+2. **Skills 篇**
 
 [Skills 日常工作流篇](/ai-coding-workflow-2/) 是这次调整最多的一篇。
 
 我以前很容易把 Skill 设计成一条完整流水线，`wayfinding -> grilling -> to-spec -> implement -> simplify -> code-review` 一路走到底。真实项目里用久以后，这种设计越来越别扭，一个很小的修改也被迫走流程，需求已经清楚还要重新探索，Runtime 已经有 Goal 和 resume，Skill 又套一层自己的生命周期。
 
-现在的做法简单很多，先看当前还缺什么，再选负责这个阶段的 Workflow，`debug`、`tdd`、`simplify`、`code-review` 这些 Engineering Discipline 按实际问题叠加。长任务则靠 `MAP.md`、`SPEC.md`、tickets 和 evidence 这类 artifact 保存关键事实，不把所有状态都压在一条越来越长的聊天记录里。
+现在的做法简单很多，先看当前还缺什么，再选负责这个阶段的 Workflow，`debug`、`tdd`、`simplify`、`code-review` 这些 Engineering Discipline 按实际问题叠加。长任务则靠 `MAP.md`、`SPEC.md`、tickets 和 evidence 这类 artifact 保存关键事实，不把所有状态都堆在一条越来越长的聊天记录里。
 
-## 三：我是怎么学习 Agent 的
+3. **Agent 学习篇**
 
-[Agent 学习篇](/ai-coding-workflow-3/) 记录的是这些概念怎么一点点补起来。
+我学习的目的不是一定要成为Agent开发，只是遇到不懂的就问 AI，了解这些内在原理，对我使用 Agent 工具会更有帮助。所以，[Agent 学习篇](/ai-coding-workflow-3/) 记录的是这些概念怎么一点点补起来。
 
-我的学习方式一直比较工程化：先在项目里碰到问题，再回头找对应机制。Agent 忘了前文，才认真研究 Context 和 Memory。长任务会中断，才去理解 Runtime、Goal 和 Harness，多个 Agent 一起得出错误结论，才开始关心 context isolation 和 independent review。
+我的学习方式没有系统化，算是比较工程化吧，先在项目里碰到问题，再回头找对应机制。Agent 忘了前文，才认真研究 Context 和 Memory。长任务会中断，才去理解 Runtime、Goal 和 Harness，多个 Agent 一起得出错误结论，才开始关心 context isolation 和 independent review。
 
 最后串起来的大概是 Model、Context、Tool、Harness、Runtime、Skills、Memory、多 Agent 和 Automation。这个顺序谈不上课程大纲，只是实际踩坑以后留下的一条学习路径。
 
-## 四：长期使用以后留下的一些判断
+4. **感悟篇**
 
-[感悟篇](/ai-coding-workflow-4/) 不再讲具体工具，主要记录这一年反复遇到、目前仍然认可的一些判断。
+[感悟篇](/ai-coding-workflow-4/) 不再讲具体工具，主要记录这一年反复遇到、目前仍然认可的一些判断和思考。
 
 比如遇到 Agent 表现差时，我会先检查 Context，再考虑改 Prompt。Runtime 和工程环境会直接影响模型能力能不能稳定发挥，多 Agent 真正有价值的地方往往是独立性，Automation 更适合边界稳定、结果可检查的工作，Agent 的自我汇报不能替代真实证据。
 
@@ -60,9 +60,7 @@ searchIndex: true
 
 AI 把实现速度抬高以后，需求是否值得做、改动边界是否合理、证据是否充分、维护成本能不能接受，这些事情并不会自动变简单。
 
-## 写完以后，我自己也重新理了一遍
-
-写这组文章之前，我脑子里已经有一套工作习惯，只是很多东西散落在 AGENTS.md、Skills、自动化任务和日常对话里。真正写下来以后，哪些属于长期原则、哪些只是当前工具的能力、哪些地方已经设计过度，反而更容易看清楚。
+整理这些博客之前，我脑子里已经有一套工作习惯，只是很多东西散落在 AGENTS.md、Skills、自动化任务和日常对话里。真正写下来以后，哪些属于长期原则、哪些只是当前工具的能力、哪些地方已经设计过度，反而更容易看清楚。
 
 现在遇到一个新任务，我会先问几个很实际的问题，当前最大的未知是什么，这个任务真的需要 Skill 吗，哪些信息值得写进 artifact，Runtime 已经负责的事情还要不要再造一层控制，最后拿什么证据判断任务完成？
 
