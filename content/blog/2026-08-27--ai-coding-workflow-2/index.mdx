@@ -1,9 +1,9 @@
 ---
 title: 我的 AI Coding 工作流（二）：Skills 篇
 slug: ai-coding-workflow-2
-description: 记录我现在如何在真实开发中选择和组合 Engineering Skills，以及 Workflow、Discipline、Artifact、Runtime Goal 和 loop 的职责边界。
+description: 记录我现在如何在真实开发中选择和组合 Engineering Skills，以及 Workflow、Discipline、Artifact、Runtime 状态和 ticket execution graph 的职责边界。
 date: 2026-08-27
-lastUpdated: 2026-08-31
+lastUpdated: 2026-09-01
 tags:
   - AI
   - Agents
@@ -14,6 +14,8 @@ tags:
   - Code Review
 searchIndex: true
 ---
+
+> **更新于 2026-09-01：** 根据 Engineering Skills 的最新调整，本文补充了简单任务从 `SPEC.md` 直接进入 `implement` 的路径，并重新明确了 `to-tickets`、`loop` 与 Runtime 状态的边界：tickets 描述工程交付，Runtime 只保存会话与恢复状态。
 
 我前几版 AI Coding 工作流最大的问题，是把开发想成了一条流水线。
 
@@ -79,7 +81,7 @@ Engineering Skills 不应该把 Flutter、Vue、Node 或某个项目的目录结
 | Project Setup | `project-setup` | 可选地发现项目稳定入口，并把 Engineering Skills Profile 写入 `AGENTS.md` |
 | Workflow | `grilling`、`wayfinding`、`to-spec`、`to-tickets`、`implement` | 决定当前处于哪个工作阶段，以及应该产出什么 artifact |
 | Engineering Discipline | `debug`、`tdd`、`codebase-design`、`domain-modeling`、`simplify`、`code-review` 等 | 提供某一类工程问题的判断和实践方法 |
-| Execution Protocol | `loop` | 约束 progress、evidence、iteration、retry 和 no-progress，不重复 Runtime 的生命周期能力 |
+| Execution Protocol | `loop` | 消费多-ticket execution graph，维护 ready frontier、调度 `implement`、聚合 evidence，并依据 progress / retry / no-progress 规则稳定推进 |
 
 这个分类解决了我之前遇到的重复维护问题，同一套规则不再散落在多个 Skill 里，改一个流程时也不用到处同步。现在每类规则尽量只有一个 owner，Workflow 可以调用 Discipline，但不会再复制一遍它的完整规则。
 
@@ -92,8 +94,8 @@ Workflow 不再有固定起点。我通常先看当前工作卡在哪里。
 | 产品行为、范围、边界或验收还没谈清楚 | `grilling` | 已确认的需求与决策 |
 | 目标大体清楚，但关键技术路径仍有 Fog of war，需要跨 session 探索 | `wayfinding` | `MAP.md` + `decisions/` |
 | 需求或 Map 已经确定，需要形成可执行的规范契约 | `to-spec` | `SPEC.md` |
-| 已有 SPEC，但一个 fresh session 无法可靠完成，需要拆独立执行单元 | `to-tickets` | `tickets/*.md` |
-| 实现边界已经清楚 | `implement` | 已实现并验证的代码变更 |
+| 已有 SPEC，且需要多个可独立领取的交付单元、真实 blocker 或持续调度 | `to-tickets` | `tickets/*.md` |
+| 实现边界已经清楚 | `implement` | 已实现并验证的代码变更；可直接消费 scoped `SPEC.md` 或一张 ready ticket |
 
 这里有几个我现在比较坚持的边界。
 
@@ -115,6 +117,8 @@ Workflow 不再有固定起点。我通常先看当前工作卡在哪里。
 
 `SPEC.md` 回答的是最终要构建什么、范围在哪里、验收条件是什么。实现进度、重试状态和 ticket 拆分都不应该混进规范文档，否则需求和执行状态会很快搅在一起。
 
+范围明确、能在一个 fresh context 内可靠完成的任务，可以把 `SPEC.md` 直接交给 `implement`。是否先写 SPEC 取决于任务是否需要可回读的规范契约；一旦已经有 SPEC，也不意味着必须继续拆 tickets。
+
 ### `to-tickets`
 
 我现在判断要不要拆 ticket，主要看两件事
@@ -124,7 +128,11 @@ Workflow 不再有固定起点。我通常先看当前工作卡在哪里。
 
 只有满足这些条件，才把 `SPEC.md` 拆成 `tickets/*.md`。每张 ticket 是一个可以独立验收的 vertical slice，不是按文件、目录或“前端一张、后端一张”机械切割。
 
+跨多个 session 本身不是拆分理由。如果工作仍然是一个可控的 scoped task，也可以直接由 `implement` 消费 SPEC；只有需要独立领取、真实 blocker 或统一调度时，tickets 才有价值。
+
 ### `implement`
+
+`implement` 有两种入口：范围有限时直接以 `SPEC.md` 为输入；多 ticket 工作中则只处理一张 ready ticket。后者读取 parent SPEC 获得背景与全局约束，但不会把 sibling tickets 自动纳入本次范围。
 
 实现阶段可以更新 ticket 的状态、验收勾选和 evidence，但不能为了让代码继续往前写，偷偷修改 `What to build`、`Constraints` 或 `Acceptance criteria`。
 
@@ -200,9 +208,9 @@ review-architecture -> codebase-design -> to-spec -> implement
 | 决策探索 | `MAP.md` + `decisions/` | `wayfinding` | 路线还不清楚时，哪些事实和选择已经确认 |
 | 规范契约 | `SPEC.md` | `to-spec` | 最终要构建什么、范围和验收是什么 |
 | 执行图 | `tickets/*.md` | `to-tickets` | 工作怎么拆、哪些 ticket 有真实 blocker |
-| 执行证据 | ticket 状态、验收勾选、receipt、Runtime state | `implement` / Runtime / `loop` | 当前做到哪里，下一步依据是什么 |
+| 执行证据 | ticket 状态、验收勾选、receipt | `implement` / `loop` | 当前做到哪里、下一步能做什么、依据是什么 |
 
-下游可以读取上游，但不能静默改写上游。
+下游可以读取上游，但不能静默改写上游。Runtime 的 conversation、session、context recovery 与 interruption persistence 没有列入这张表：它们不属于 execution graph，也不能替代 ticket Status、acceptance evidence 或 ready frontier。
 
 例如 `implement` 发现 SPEC 不成立，正确动作不是顺手把 SPEC 改成当前实现，而是把冲突暴露出来。这个限制看起来麻烦，实际能避免长任务后期出现“代码、计划和最初需求都各自合理，但已经不是同一件事”的情况。
 
@@ -212,39 +220,35 @@ review-architecture -> codebase-design -> to-spec -> implement
 需求/边界未定 -> grilling
 技术路线有 Fog -> wayfinding -> MAP.md + decisions/
 已经确定 -> to-spec -> SPEC.md
-需要跨 sessions 执行 -> to-tickets -> tickets/
-边界明确 -> implement
+需要多个可独立领取的交付单元、真实 blocker 或持续调度 -> to-tickets -> tickets/
+范围已明确且一个 fresh context 可完成 -> implement
 完成后 -> code-review
 ```
 
 这只是选择关系，不是必须从上到下全部执行的生命周期。
 
-## Runtime Goal 和 `loop`：不要做两个 orchestrator
+## Runtime 状态和 `loop`：不要混成同一个 orchestrator
 
-这是这一轮 Skills 重构里我改动比较大的地方。
+这是这一轮 Skills 重构里最重要的边界调整。
 
-现在很多 Coding Agent Runtime 已经有 Goal、task persistence、pause/resume、session recovery 等能力。既然 Runtime 能可靠保存生命周期，Skill 层就没必要再造一套“继续、暂停、恢复、checkpoint”。
-
-我的职责划分是：
+很多 Coding Agent Runtime 已经有 Goal、task persistence、pause/resume 和 session recovery。它们保存的是会话生命周期；Skills 需要保存的则是工程交付事实。两类状态相互独立，不能彼此推导。
 
 ```text
-Runtime Goal / Task
-  -> lifecycle / persistence / pause / resume / recovery
+Runtime
+  -> conversation / session / context recovery / interruption persistence
 
-loop protocol
-  -> evidence / progress invariant / iteration / retry / no-progress
+Engineering workflow
+  -> SPEC.md / tickets/ / ticket status / receipt / evidence
 
-Engineering Skills
-  -> implement / tdd / debug / simplify / code-review ...
+loop
+  -> 读取 tickets/，维护 ready frontier，调度 implement，依据 evidence 判断 progress
 ```
 
-![Goal 管生命周期，loop 管进展证据](../../../src/assets/blog/ai-coding-workflow-2/illustrations/03-goal-loop.webp)
+![Runtime 管会话状态，loop 管 ticket 执行图](../../../src/assets/blog/ai-coding-workflow-2/illustrations/03-goal-loop.webp)
 
-所以 `loop` 现在不是 Goal 的替代品，也不是一个普通的“失败就重试”脚本。
+`loop` 既不是 Goal 的替代品，也不是一个普通的“失败就重试”脚本。它只在已有多-ticket execution graph 时工作：读取 `SPEC.md` 与 ticket 状态，计算 ready frontier，默认串行调度一张 ready ticket 交给独立的 `implement` 执行单元；完成后再依据 receipt 和 evidence 重算 frontier。
 
-外层 Runtime 已经负责 continue、stop 和 checkpoint 时，`loop` 只提供执行协议。只有 Runtime 缺少可靠的长期任务能力，而且任务确实需要多轮推进时，它才承担最小的 execution control。
-
-我会避免在一个已经有 Goal 的任务里再套一个拥有相同职责的 nested loop。两个 orchestrator 都觉得自己负责生命周期，最后往往是状态重复、停止条件冲突，出了问题也很难判断谁应该恢复。
+它不接管 continue、pause、resume、checkpoint 或 conversation recovery，也不为了推进进度改写 `What to build`、`Constraints`、`Acceptance criteria` 或 `Blocked by`。如果工程契约需要变更，应回到决策或规范阶段，再更新受影响的 SPEC 与 tickets。
 
 ## 验证：模型输出仍然不是证据
 
@@ -261,7 +265,7 @@ Engineering Skills
 
 ## Worktree 和多 Agent 仍然只是执行手段
 
-复杂功能、并行任务和外部 Agent 实现，我仍然倾向放进独立 worktree。它能隔离文件状态，也方便主 Agent 检查每个执行者实际改了什么。
+复杂功能或并行任务不自动等于需要独立 worktree。只有能证明任务之间需要文件隔离时才创建；默认串行推进一张 ready ticket。并行之前还必须确认 tickets 与 writable surfaces 足够隔离，避免把冲突从 Git 工作区搬到集成阶段。
 
 但 worktree 只能隔离文件，不能隔离设计冲突。多个 Agent 同时修改共享类型、依赖注入、公共配置或同一条核心调用链，仍然可能互相打架。
 
@@ -284,17 +288,18 @@ Engineering Skills
 已经确定，需要形成长期可回读契约？
   -> to-spec
 
-一个 fresh session 做不完，而且存在独立交付和真实 blocker？
+需要多个可独立领取的交付单元、真实 blocker 或持续调度？
   -> to-tickets
+  -> loop 默认串行调度 ready tickets
 
-可以实现？
+可以在一个 fresh context 内完成，或已指定一张 ready ticket？
   -> implement
   -> 按问题叠加 debug / tdd / codebase-design / simplify ...
   -> 需要时 code-review
 
-长任务生命周期？
-  -> 优先交给 Runtime Goal
-  -> loop 只补执行协议或 Runtime 缺失的最小控制
+会话暂停、恢复或中断？
+  -> 交给 Runtime Goal / Task
+  -> 不把它写进 SPEC、ticket 或 loop
 ```
 
 这套方式比我之前那张“完整主流程图”少了很多仪式感，却更贴近真实开发。小问题直接解决，复杂任务才引入结构，需求、设计、执行和证据各有自己的 owner，Agent 也不必靠一份越来越大的 Prompt 记住所有事情。
