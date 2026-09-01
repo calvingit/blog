@@ -15,7 +15,7 @@ tags:
 searchIndex: true
 ---
 
-> **更新于 2026-09-01：** 根据 Engineering Skills 的最新调整，本文补充了简单任务从 `SPEC.md` 直接进入 `implement` 的路径，并重新明确了 `to-tickets`、`loop` 与 Runtime 状态的边界：tickets 描述工程交付，Runtime 只保存会话与恢复状态。
+> **更新于 2026-09-01：** 根据 Engineering Skills 的后续调整，本文补充了需求权威与 `SPEC.md` 修订规则、需求变更后的 ticket 协调方式，以及 `loop` 的全图验收职责；同时明确 Runtime 管理用户会话，`loop` 管理 implementer 的执行生命周期。
 
 我前几版 AI Coding 工作流最大的问题，是把开发想成了一条流水线。
 
@@ -115,7 +115,9 @@ Workflow 不再有固定起点。我通常先看当前工作卡在哪里。
 
 现在 `to-spec` 的产物是 `SPEC.md`，不再同时维护一份 `PLAN.md`。
 
-`SPEC.md` 回答的是最终要构建什么、范围在哪里、验收条件是什么。实现进度、重试状态和 ticket 拆分都不应该混进规范文档，否则需求和执行状态会很快搅在一起。
+`SPEC.md` 是任务目录中唯一的本地规范快照，回答最终要构建什么、范围在哪里、验收条件是什么。外部 PRD、需求系统或本轮对话可以是上游 requirement authority，但必须先确认并编译为本地 SPEC，不能绕过它直接驱动 tickets 或实现。实现进度、重试状态和 ticket 拆分也不应该混进规范文档，否则需求和执行状态会很快搅在一起。
+
+后续需求新增、修改或删除时，`to-spec` 在同一份 `SPEC.md` 上做 amendment：保留未受影响的 R/AC ID，记录受影响的需求、验收、边界与测试决策。它只评估下游影响，不直接改 ticket；SPEC 确认后，再由 `to-tickets` 协调执行图。
 
 范围明确、能在一个 fresh context 内可靠完成的任务，可以把 `SPEC.md` 直接交给 `implement`。是否先写 SPEC 取决于任务是否需要可回读的规范契约；一旦已经有 SPEC，也不意味着必须继续拆 tickets。
 
@@ -129,6 +131,8 @@ Workflow 不再有固定起点。我通常先看当前工作卡在哪里。
 只有满足这些条件，才把 `SPEC.md` 拆成 `tickets/*.md`。每张 ticket 是一个可以独立验收的 vertical slice，不是按文件、目录或“前端一张、后端一张”机械切割。
 
 跨多个 session 本身不是拆分理由。如果工作仍然是一个可控的 scoped task，也可以直接由 `implement` 消费 SPEC；只有需要独立领取、真实 blocker 或统一调度时，tickets 才有价值。
+
+需求 amendment 确认后，`to-tickets` 才协调受影响的执行图：仍满足新 SPEC 的 ticket 和已有 evidence 保留；纯新增行为创建 amendment ticket；原契约已经失效的 ticket 标为 `superseded`，并创建 replacement 或 correction ticket。不能因为需求变了就把已经 `done` 的 ticket 直接改回 `ready`。只有 SPEC 未变、全图审查发现原契约未满足时，才回到原 ticket 修复。
 
 ### `implement`
 
@@ -220,9 +224,10 @@ review-architecture -> codebase-design -> to-spec -> implement
 需求/边界未定 -> grilling
 技术路线有 Fog -> wayfinding -> MAP.md + decisions/
 已经确定 -> to-spec -> SPEC.md
-需要多个可独立领取的交付单元、真实 blocker 或持续调度 -> to-tickets -> tickets/
+需要多个可独立领取的交付单元、真实 blocker 或持续调度 -> to-tickets -> tickets/ -> loop
 范围已明确且一个 fresh context 可完成 -> implement
-完成后 -> code-review
+单 ticket 的实现完成后 -> 由 implement 完成必要审查
+所有 active tickets 完成后 -> loop 执行 whole-graph review 与集成验证
 ```
 
 这只是选择关系，不是必须从上到下全部执行的生命周期。
@@ -248,7 +253,7 @@ loop
 
 `loop` 既不是 Goal 的替代品，也不是一个普通的“失败就重试”脚本。它只在已有多-ticket execution graph 时工作：读取 `SPEC.md` 与 ticket 状态，计算 ready frontier，默认串行调度一张 ready ticket 交给独立的 `implement` 执行单元；完成后再依据 receipt 和 evidence 重算 frontier。
 
-它不接管 continue、pause、resume、checkpoint 或 conversation recovery，也不为了推进进度改写 `What to build`、`Constraints`、`Acceptance criteria` 或 `Blocked by`。如果工程契约需要变更，应回到决策或规范阶段，再更新受影响的 SPEC 与 tickets。
+Runtime 仍然拥有用户层面的 conversation、session、context recovery 与 interruption persistence；但在一次 loop 调度中，`loop` 负责 implementer 的创建、等待、停止、恢复和重新派发，并在需求 amendment 到来时先停止受影响的写入。它也不为了推进进度改写 `What to build`、`Constraints`、`Acceptance criteria` 或 `Blocked by`。如果工程契约需要变更，应回到决策或规范阶段，再由 `to-spec` 与 `to-tickets` 更新受影响的 SPEC 和执行图。
 
 ## 验证：模型输出仍然不是证据
 
@@ -292,14 +297,21 @@ loop
   -> to-tickets
   -> loop 默认串行调度 ready tickets
 
-可以在一个 fresh context 内完成，或已指定一张 ready ticket？
+可以在一个 fresh context 内完成？
   -> implement
   -> 按问题叠加 debug / tdd / codebase-design / simplify ...
-  -> 需要时 code-review
+  -> 完成当前范围的验证与审查
 
-会话暂停、恢复或中断？
+已有多张 tickets，或已指定一张 ready ticket？
+  -> loop 选择并调度 implement
+  -> 所有 active tickets 完成后，whole-graph review 覆盖完整 landed scope
+
+用户会话暂停、恢复或中断？
   -> 交给 Runtime Goal / Task
-  -> 不把它写进 SPEC、ticket 或 loop
+  -> 不把它写进 SPEC 或 ticket
+
+loop 中的 implementer 被暂停、收回或重新派发？
+  -> 由 loop 管理执行单元，不与用户会话状态混用
 ```
 
 这套方式比我之前那张“完整主流程图”少了很多仪式感，却更贴近真实开发。小问题直接解决，复杂任务才引入结构，需求、设计、执行和证据各有自己的 owner，Agent 也不必靠一份越来越大的 Prompt 记住所有事情。
