@@ -3,7 +3,7 @@ title: 我的 AI Coding 工作流：一次给团队的个人分享
 slug: ai-coding-workflow
 description: 借一次团队内部分享，重新梳理我这一年使用 Coding Agent、Engineering Skills、Automation 和 Agent Runtime 的实际工作流。
 date: 2026-08-27
-lastUpdated: 2026-08-31
+lastUpdated: 2026-09-03
 tags:
   - AI
   - Agents
@@ -16,7 +16,7 @@ searchIndex: true
 
 最近在团队内部做了一次分享，主要是有关我个人是如何使用 AI Coding 的，供大家参考一下。
 
-一开始我只想整理一下自己现在用哪些工具，平时怎么让 Agent 写代码。写着写着才发现，工具只是表面，往后还有 Context、Skills、Runtime、Artifact、验证、多 Agent 和 Automation，一篇文章根本装不下，原稿也越写越长，最后拆成了四篇。
+一开始我只想整理一下自己现在用哪些工具，平时怎么让 Agent 写代码。写着写着才发现，工具只是表面，往后还有 Context、Skills、Runtime、本地产物、验证、多 Agent 和 Automation，一篇文章根本装不下，原稿也越写越长，最后拆成了四篇。
 
 回过头来看，自己的使用方式一直变个不停，紧跟着模型能力的升级而进化。早期用 AI，更多是问 API、解释报错、补一段代码。现在经常把完整任务交给 Coding Agent，让它读仓库、查调用关系、修改代码、跑测试、看浏览器或真机结果，再根据证据继续处理。
 
@@ -38,9 +38,9 @@ searchIndex: true
 
 [Skills 日常工作流篇](/ai-coding-workflow-2/) 是这次调整最多的一篇。
 
-我以前很容易把 Skill 设计成一条完整流水线，`wayfinding -> grilling -> to-spec -> implement -> simplify -> code-review` 一路走到底。真实项目里用久以后，这种设计越来越别扭，一个很小的修改也被迫走流程，需求已经清楚还要重新探索，Runtime 已经有 Goal 和 resume，Skill 又套一层自己的生命周期。
+我以前很容易把 Skill 设计成一条完整流水线，`wayfinding -> grilling -> to-spec -> high-level-design -> quick-implement -> simplify -> code-review` 一路走到底。真实项目里用久以后，这种设计越来越别扭，一个很小的修改也被迫走流程，需求已经清楚还要重新探索，Runtime 已经有 Goal 和 resume，Skill 又套一层自己的生命周期。
 
-现在的做法简单很多，先看当前还缺什么，再选负责这个阶段的 Workflow，`debug`、`tdd`、`simplify`、`code-review` 这些 Engineering Discipline 按实际问题叠加。长任务则靠 `MAP.md`、`SPEC.md`、tickets 和 evidence 这类 artifact 保存关键事实，不把所有状态都堆在一条越来越长的聊天记录里。
+现在的做法简单很多，先看当前还缺什么，再选负责这个阶段的 Workflow，`debug`、`tdd`、`simplify`、`code-review` 这些 Engineering Discipline 按实际问题叠加。长任务则靠 `MAP.md`、`SPEC.md`、按需的 `HLD.md`、tickets 和 evidence 这些本地产物保存关键事实，不把所有状态都堆在一条越来越长的聊天记录里。
 
 3. **Agent 学习篇**
 
@@ -62,6 +62,6 @@ AI 把实现速度抬高以后，需求是否值得做、改动边界是否合�
 
 整理这些博客之前，我脑子里已经有一套工作习惯，只是很多东西散落在 AGENTS.md、Skills、自动化任务和日常对话里。真正写下来以后，哪些属于长期原则、哪些只是当前工具的能力、哪些地方已经设计过度，反而更容易看清楚。
 
-现在遇到一个新任务，我会先问几个很实际的问题，当前最大的未知是什么，这个任务真的需要 Skill 吗，哪些信息值得写进 artifact，Runtime 已经负责的事情还要不要再造一层控制，最后拿什么证据判断任务完成？
+现在遇到一个新任务，我会先问几个很实际的问题，当前最大的未知是什么，这个任务真的需要 Skill 吗，哪些信息值得写进本地产物，Runtime 已经负责的事情还要不要再造一层控制，最后拿什么证据判断任务完成？
 
 这四篇记录的是我在 2026 年 8 月的答案，以后工具和做法还会继续变，过一段时间再回头看，大概又会有不少地方需要重写。
