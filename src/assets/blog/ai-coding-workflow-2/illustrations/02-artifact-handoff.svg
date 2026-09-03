@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">从长对话到可回读本地产物的交接</title>
+  <desc id="desc">长对话中的零散信息被整理为 MAP、SPEC、按需 HLD、tickets 和执行证据；Runtime 会话状态独立于执行图。</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity=".12"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="680" fill="#f6f3ed"/>
+  <text x="600" y="70" fill="#171717" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-size="34" font-weight="700" text-anchor="middle">长任务靠可回读的本地产物交接</text>
+  <text x="600" y="108" fill="#65615a" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-size="18" text-anchor="middle">每个阶段只维护自己负责的事实</text>
+
+  <g filter="url(#shadow)">
+    <rect x="70" y="170" width="205" height="255" rx="26" fill="#161616"/>
+  </g>
+  <circle cx="172" cy="225" r="34" fill="#fff"/>
+  <path d="M156 218c5-19 28-19 33-2 4 14-11 22-20 29l-12-9c-8-6-4-14-1-18Z" fill="#161616"/>
+  <text x="172" y="300" fill="#fff" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-size="25" font-weight="700" text-anchor="middle">长对话</text>
+  <text x="172" y="337" fill="#d8d8d8" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-size="17" text-anchor="middle">探索、实现、验证</text>
+  <text x="172" y="367" fill="#d8d8d8" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-size="17" text-anchor="middle">混在一起，容易丢失</text>
+
+  <path d="M300 296H366" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="395" y="145" width="300" height="330" rx="26" fill="#fff"/>
+  </g>
+  <text x="430" y="196" fill="#171717" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-size="19" font-weight="700">按职责拆分</text>
+  <g font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif">
+    <rect x="430" y="220" width="230" height="43" rx="12" fill="#e5e2dc"/>
+    <text x="450" y="249" fill="#171717" font-size="18" font-weight="700">MAP.md</text>
+    <text x="560" y="249" fill="#69655f" font-size="15">探索与决策</text>
+    <rect x="430" y="276" width="230" height="43" rx="12" fill="#e5e2dc"/>
+    <text x="450" y="305" fill="#171717" font-size="18" font-weight="700">SPEC.md</text>
+    <text x="560" y="305" fill="#69655f" font-size="15">需求与验收</text>
+    <rect x="430" y="332" width="230" height="43" rx="12" fill="#191919"/>
+    <text x="450" y="361" fill="#fff" font-size="18" font-weight="700">HLD.md</text>
+    <text x="560" y="361" fill="#d6d6d6" font-size="15">按需概要设计</text>
+    <rect x="430" y="388" width="230" height="43" rx="12" fill="#e5e2dc"/>
+    <text x="450" y="417" fill="#171717" font-size="18" font-weight="700">tickets/</text>
+    <text x="560" y="417" fill="#69655f" font-size="15">执行图</text>
+  </g>
+
+  <path d="M720 310H778" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="808" y="145" width="320" height="330" rx="26" fill="#fff"/>
+  </g>
+  <text x="846" y="196" fill="#171717" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-size="19" font-weight="700">执行与证据</text>
+  <g font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif">
+    <rect x="845" y="226" width="245" height="58" rx="14" fill="#191919"/>
+    <text x="868" y="262" fill="#fff" font-size="20" font-weight="700">loop</text>
+    <text x="945" y="262" fill="#d6d6d6" font-size="16">当前可执行任务</text>
+    <rect x="845" y="302" width="245" height="58" rx="14" fill="#e5e2dc"/>
+    <text x="868" y="338" fill="#171717" font-size="18" font-weight="700">worker receipt</text>
+    <rect x="845" y="378" width="245" height="58" rx="14" fill="#e5e2dc"/>
+    <text x="868" y="414" fill="#171717" font-size="18" font-weight="700">验收证据与审查</text>
+  </g>
+
+  <path d="M138 560C320 500 865 500 1058 560" fill="none" stroke="#a39e95" stroke-width="3" stroke-dasharray="9 11"/>
+  <rect x="340" y="535" width="520" height="84" rx="22" fill="#ddd8cf"/>
+  <text x="600" y="570" fill="#171717" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-size="18" font-weight="700" text-anchor="middle">Runtime：会话、恢复与中断状态</text>
+  <text x="600" y="598" fill="#615d56" font-family="Arial, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" text-anchor="middle">独立于本地产物与 ticket 执行图，不替代交付证据</text>
+</svg>
