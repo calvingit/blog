@@ -1,0 +1,74 @@
+---
+title: Frontend & Mobile Engineering Weekly：Rosetta 进入退场期，Expo Go 开始要求登录
+slug: frontend-mobile-engineering-weekly-2026-09-07
+description: 本周关注 macOS 27 的 Rosetta 退场计划、Expo Go 登录要求、pnpm 12.3 的升级修复，以及 Next.js 16.3 新增的 Turbopack 分块实验能力。
+date: 2026-09-07
+lastUpdated: 2026-09-07
+series: frontend
+tags:
+  - Frontend
+  - Mobile
+  - macOS
+  - React Native
+  - Expo
+  - pnpm
+  - Next.js
+  - Turbopack
+searchIndex: true
+---
+
+这周没有新的 Flutter、React 或 Vue 大版本，真正会改变项目安排的内容主要来自平台和工具链：Apple 明确了 Rosetta 的退出时间，Expo Go 把账号登录加入真机开发流程，pnpm 12 则在正式发布后的第一轮密集修补中暴露了几个升级时需要留意的边界。Next.js 还公开了 Turbopack 新的分块实验能力，适合有明确前端性能问题的项目开始做针对性验证。
+
+## Apple：macOS 27 是 Rosetta 支持 Intel-only App 的最后一版
+
+Apple 9 月 1 日发布了 [Rosetta 支持调整说明](https://developer.apple.com/news/?id=w5ngl9k2)。从 macOS 26.4 开始，依赖 Rosetta 的 App 启动时可能收到系统提示，要求用户更新到 Apple silicon 原生版本；macOS 27 则是 Apple silicon Mac 最后一个还能运行 Intel-only App 的 macOS 版本。Apple 建议尚未完成迁移的开发者现在就提供 universal binary。
+
+这项变化对纯 Dart 的 Flutter macOS App 通常不是主要问题，Flutter 自己早已支持 Apple silicon；风险更多来自应用打包进去的原生二进制、闭源 SDK、命令行工具和历史插件。如果某个依赖仍只有 `x86_64` slice，主应用即使已经是 arm64，也不能把迁移视为完成。macOS 产品可以在 CI 或发布前检查最终 `.app` 内的 Mach-O 文件，确认关键依赖是否包含 arm64，并在真实 Apple silicon 机器上关闭“依赖 Rosetta 也能跑”的假设。
+
+对于 Electron、Node CLI、Flutter desktop 和其他带原生扩展的项目，这也值得纳入依赖治理：维护者长期不提供 arm64 binary 的 package，已经有明确的平台淘汰时间。没有必要因为这则公告重写桌面技术栈，但应该把 Intel-only 原生依赖从“以后处理”改成有截止时间的兼容任务。
+
+## Expo Go：iOS 真机开发开始要求 CLI 和 App 登录同一账号
+
+Expo 在 9 月 3 日宣布，[最新版 iOS Expo Go 运行项目时要求登录](https://expo.dev/changelog/expo-go-57-login)。开发机上的 Expo CLI 和 iPhone 上的 Expo Go 都需要登录，而且必须使用同一个 Expo 账号；Android 版本后续也会采用这一要求。模拟器暂不受影响，development build 也不要求这样登录。
+
+这对正常使用 Expo 账号的个人开发流程影响不大，但共享测试机、培训环境、临时真机调试和不希望把开发账号放进设备的团队需要调整流程。过去 `npx expo start` 后让任意安装 Expo Go 的设备扫二维码即可加载项目，现在 iOS 真机多了一层账号状态。
+
+更重要的边界是 development build 不受影响。已经把真实项目从 Expo Go 转到自定义 development build 的团队没有迁移压力；仍把 Expo Go 当作团队长期测试容器的项目，可以借这次变化重新判断是否应该切到 development build，而不是设计共享账号之类的绕过方案。
+
+## pnpm 12.3：正式版之后的升级窗口还在快速修补
+
+pnpm 12 在上周正式发布，本周从 12.2 一路更新到 [12.3.2](https://github.com/pnpm/pnpm/releases)。这些版本大部分是修复，但有几项能说明 12.x 升级初期的实际风险。
+
+12.3.0 修复了本地目录、本地 tarball 和 `file:<path>` 依赖无法正常 `pnpm add` 的问题，也修复了 `.npmrc` 中 `:_authToken="${TOKEN}"` 这类带引号环境变量展开后认证失败的问题；循环 peer dependency 配合 npm alias 时，`--lockfile-only` 还可能生成后续无法通过 `--frozen-lockfile` 的锁文件。12.3.1 又修复了从 12.2 self-update 到 12.3 后，`node`、`npm`、`yarn` 等全局命令因 shim 迁移而无法启动的问题。12.3.2 继续修正 Windows 文件时间精度导致 `pnpm run` / `pnpm exec` 每次都触发重新安装，并继续优化大型 workspace 的解析和 lockfile 写入。
+
+这些问题多数已经修掉，因此结论不是“pnpm 12 不稳定”，而是从 11 升 12 时最好直接验证当前最新 12.x，不要把 12.0.0 当作目标版本。私有 registry、本地 `file:` dependency、Windows 开发机、全局 runtime 管理和复杂 peer dependency 都应该进入升级测试。大型 Monorepo 可以顺便记录安装耗时，因为 12.2/12.3 连续在 workspace discovery、resolution 和 lockfile 保存上做了性能优化，但官方 changelog 里的优化不能直接替代你自己仓库的基准。
+
+## Next.js 16.3：Turbopack 开始提供更细的分块控制，但仍属于实验能力
+
+Next.js 团队 9 月 3 日发布了 [Turbopack chunking 的设计说明](https://nextjs.org/blog/turbopack-chunking)，解释当前默认算法如何在请求数量、重复下载和跨页面缓存之间取舍，并介绍 Next.js 16.3 新增的两个实验方向。
+
+`experimental.turbopackChunking.generateComponentChunks` 会同时生成合并和未合并的 chunk，让运行时根据浏览器已经加载的内容选择更便宜的组合，减少页面跳转时因为 chunk 合并而重复下载代码。另一类实验能力允许进一步调整 module fragments 等分块行为。官方在 nextjs.org 的测试里展示了默认策略、完全不合并和更激进合并之间的请求数与下载量差异，但这些数字只对应其自身站点和导航路径，不能外推到其他应用。
+
+如果项目没有明确的 bundle 或导航性能问题，继续使用默认策略更合适。大型内容站、路由很多的 SaaS 或已经通过 RUM 发现客户端导航重复下载的项目，可以在独立实验里比较实际用户路径，而不是只看一次首页 Lighthouse。实验开关也要和 Next.js 升级分开提交，方便出现回归时快速撤回。
+
+本周新开的 GitHub issue 也给出了这个边界的反面例子。[#98128](https://github.com/vercel/next.js/issues/98128) 在一个很小的 Pages Router 复现项目中报告 `turbopackModuleFragments` 会触发 panic；[#98205](https://github.com/vercel/next.js/issues/98205) 则报告了另一个 Turbopack module graph panic。它们目前只是特定实验配置下的已报告问题，不能据此判断默认 Turbopack 构建存在同样风险，但足以说明这些新开关暂时不适合无目的地在生产项目全面启用。
+
+## Swift：本月社区信号集中在 Web、Windows 和更严格的内存安全
+
+Swift.org 9 月 4 日发布 [What's new in Swift: August 2026 Edition](https://www.swift.org/blog/whats-new-in-swift-august-2026/)。这一期不是新的 Swift 正式版本，而是官方社区摘要，内容跨度较大，其中几条对长期技术方向有参考价值：Swift + WebAssembly 的前端实验继续推进，Swift on Windows 仍在补工具链体验，安全敏感代码则继续利用 `Span`、non-copyable types 和 strict memory safety 缩小 `unsafe` 范围。
+
+这些内容目前不足以改变 iOS App 的技术选型。对移动团队更实际的是 Swift 的平台边界在继续扩大，未来共享业务代码或 CLI 工具不一定只能在 Apple 平台运行；但 ElementaryUI 这类 Swift Web UI 项目仍然年轻，适合作为技术观察，不适合作为 React/Vue 的替代方案进入正式选型。
+
+## Flutter：本周没有新的稳定版，3.47 的平台回归仍需按场景判断
+
+Flutter 本周没有新的 stable release。3.47 系列已经在前几期讨论过 Apple 最低版本、SwiftPM、桌面 Impeller 和 Web 相关回归，本周没有足够的新证据需要重新扩大这些结论。
+
+Flutter 团队近期发布的 [iOS 适配流程文章](https://flutter.dev/blog/how-flutter-stays-ahead-of-ios-releases) 补充了一个值得保留的工程细节：团队会在 WWDC 后按影响范围筛选 Apple 的平台变化，并把纯 UIKit 复现用于区分 Flutter 自身问题和系统行为。文章举出的 WebView 手势案例也说明，PlatformView 一类问题不能只靠 Flutter widget test 判断根因。对应用团队而言，这更像测试方法上的提醒：遇到 iOS 新版本的原生视图回归时，最小 Swift/UIKit 复现通常比继续在完整 Flutter 工程里试参数更快确定责任边界。
+
+本周没有必要仅因为零散 3.47 issue 暂缓整个 SDK 系列；使用 WebView、PlatformView、桌面纹理或较老 Windows GPU 的项目仍应保留专项回归。其他移动项目可以按已有升级计划推进。
+
+## 总结
+
+这周最明确的长期兼容任务来自 macOS：Rosetta 已经有清楚的退出时间，桌面项目应该开始盘点 Intel-only 原生依赖。React Native / Expo 团队则需要留意 Expo Go 的账号要求，如果团队仍高度依赖共享真机扫码调试，development build 会比共享账号更稳妥。
+
+pnpm 12 已经可以进入升级分支，但本周连续修复的本地依赖、registry token、shim 和 lockfile 问题说明升级验证不能只看一次安装成功。Next.js 16.3 的 Turbopack 分块能力值得性能敏感项目实验，现阶段仍应以真实导航数据驱动开启，而不是把实验开关当成默认优化项。
