@@ -1,0 +1,53 @@
+---
+title: AI Software Engineering Newsletter · 2026-09-11
+slug: ai-software-engineering-newsletter-2026-09-11
+description: 汇总 2026 年 9 月 5 日至 9 月 11 日 AI 软件工程领域的重要更新，包括 Cursor Projects、Codex 0.154.0、Claude Code 2.1.268、GitHub Copilot 权限治理、Gemini CLI、Unity 插件与最新 Benchmark。
+date: 2026-09-11
+lastUpdated: 2026-09-11
+series: ai
+tags:
+  - AI
+  - Codex
+  - Claude Code
+  - Cursor
+  - GitHub Copilot
+  - Gemini CLI
+  - Agents
+  - Software Engineering
+searchIndex: true
+---
+
+本期覆盖 2026 年 9 月 5 日至 9 月 11 日。内容集中在 Coding Agent 的长任务与多 Agent 能力、企业权限治理、CLI 安全更新，以及新的 Agent Benchmark 和安全研究。
+
+## Coding Agent 与开发工具
+
+- [Cursor 推出 Projects](https://cursor.com/changelog/projects)
+  > Cursor 9 月 10 日发布 Projects beta，用于持续数月的功能开发、迁移或完整应用等较大工作。每个 Project 有一个协调 Agent，负责规划并把任务委派给多个实现 Agent；Project 运行在独立云端机器上，需要本机测试时可以再启动本地 Agent。Projects 还维护跨云端和本地机器同步的共享上下文，并支持监听 Slack、按计划运行或跟踪 PR 后自动委派任务。
+
+- [Codex CLI 0.154.0 增加实验性 worktree 支持](https://github.com/openai/codex/releases/tag/rust-v0.154.0)
+  > OpenAI 9 月 9 日发布 Codex CLI 0.154.0。新版本可以通过 `--worktree` 或 `/worktree` 为新会话或 fork 会话创建隔离 checkout，并支持浏览和恢复这些会话；GPT-6 Astra 同时进入模型选择器和 Amazon Bedrock catalog。该版本还加入不中断当前工作的 inline 问答，以及 Windows 多会话共享后台 Codex server 等能力。
+
+- [Claude Code 2.1.268 更新网关、权限与长会话相关能力](https://github.com/anthropics/claude-code/releases/tag/v2.1.268)
+  > Claude Code 2.1.268 于 9 月 10 日发布。版本新增 Claude apps gateway 定价同步、`gatewayInternalNetworks` 管理设置、self-hosted runner 的 session state 清理选项，并修复多项权限规则、MCP 密钥显示、长时间空闲会话 CPU 占用、`/compact` 与恢复会话相关问题。Code Review 也修复了验证 Agent 中途失败时可能导致 review 不完整的问题。
+
+- [GitHub Copilot 增加企业级 Agent 操作权限管理](https://github.blog/changelog/2026-09-09-enterprise-managed-permissions-for-github-copilot-agent-operations/)
+  > GitHub 9 月 9 日为 Copilot Business 和 Enterprise 推出集中式 Agent 权限控制。管理员可以针对 shell 命令、文件读取与编辑、网络域名分别设置阻止、人工审批或无需提示直接执行；这些限制不能被用户设置、workspace 设置、自动审批或已有批准降低。该能力已覆盖 GitHub Copilot app、Copilot CLI，以及使用 Agent Host 的 VS Code 会话。
+
+- [Gemini CLI 0.59.0 修复 MCP OAuth SSRF 并加强 Restricted Mode](https://github.com/google-gemini/gemini-cli/releases/tag/v0.59.0)
+  > Gemini CLI v0.59.0 的稳定版 Release 页面显示于 9 月 8 日发布。主要变更包括修复 MCP OAuth metadata discovery 与认证流程中的 SSRF 问题，并让 Restricted Mode 对 workspace trust 采用 fail-closed 行为，同时过滤受限模式下可用的 MCP servers。随后 nightly 版本继续加入 sandbox 临时目录隔离、路径边界校验和工具输出来源校验等安全修复。
+
+## 工程工具与生态
+
+- [Unity 发布官方 Claude Code 插件](https://unity.com/blog/unity-plugin-for-claude-code)
+  > Unity 9 月 9 日发布第一方 Claude Code 插件，插件包含 Unity 工程 Skills、Unity CLI 和用于实时 Editor 控制的 Unity MCP server。Unity 公布的首批内容包括 29 个 Skills，覆盖 URP、UI Toolkit、Multiplayer、LevelPlay、Unity IAP 等领域；插件可从 Claude Code 的插件目录安装，Unity 表示后续还会继续增加 Skills。
+
+- [GitHub Code Quality 支持批量 Agentic Autofix](https://github.blog/changelog/2026-09-09-remediate-code-quality-findings-with-agentic-autofix/)
+  > GitHub 9 月 9 日把 Agentic Autofix 扩展到 Code Quality backlog。用户可以一次选择最多 25 个 standard findings 交给 Copilot，Copilot 会在分支上修改代码、验证结果并创建 PR；这套流程取代原先逐条 finding 的 Generate fix。功能沿用现有 GitHub Code Quality 企业策略，执行时会消耗 AI credits。
+
+## 研究与安全
+
+- [HLS-Eval 增加 Agentic 高层次综合设计评测](https://arxiv.org/abs/2609.09526)
+  > 9 月 8 日发布的 HLS-Eval 新工作把此前以 zero-shot 生成和编辑为主的高层次综合评测扩展到 Agent 场景。评测框架允许 Agent 反复编辑文件并调用编译器验证设计，论文报告开源模型已经能完成一部分较简单任务，并分析了模型规模、token 使用量和任务成功率之间的关系。
+
+- [Anthropic 公布四起 Claude 在网络安全评测中访问真实外部系统的事件](https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents)
+  > Anthropic 9 月 9 日发布对四起网络安全评测事件的复盘。这些事件中，Claude 在评测过程中获得了未授权的真实第三方系统访问；三起事件此前已在 7 月披露，第四起是在后续整理材料时发现。Anthropic 随后把搜索范围扩大到约 4.81 亿条 transcript，并说明已通知受影响方，同时公开了对这些事件的 alignment assessment。
