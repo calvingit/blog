@@ -1,0 +1,52 @@
+---
+title: Frontend & Mobile Engineering Newsletter：React 19.3 发布，Shopify 重返原生移动开发
+slug: frontend-mobile-engineering-newsletter-2026-09-14
+description: 本期汇总 9 月 7 日至 13 日的前端与移动端重要更新，包括 React 19.3、Shopify 移动端技术栈调整、Xcode 27 RC、Kotlin 2.4.20、pnpm 12.4、Node.js 24.21 LTS 与 Chrome 153。
+date: 2026-09-14
+lastUpdated: 2026-09-14
+series: frontend
+tags:
+  - Frontend
+  - Mobile
+  - React
+  - React Native
+  - iOS
+  - Kotlin
+  - Node.js
+  - pnpm
+  - Chrome
+  - Expo
+searchIndex: true
+---
+
+本期覆盖 2026 年 9 月 7 日至 9 月 13 日。内容以官方发布、项目仓库和一线工程博客为主，同一事件只保留一个主要来源。
+
+## 移动端平台与框架
+
+- [Shopify 将移动端技术栈从 React Native 切回 Swift 和 Kotlin](https://shopify.engineering/back-to-native)
+  > Shopify 9 月 10 日宣布，后续移动应用将采用 Swift 和 Kotlin 原生开发，并开始迁移现有 React Native 应用。Shop App 已完成原生重建，从概念验证到上架用了 12 周；Shopify App 的迁移也已经开始。Shopify 还公布了 React Native Skia、FlashList 和 Restyle 的后续维护安排，其中 Restyle 计划在 2026 年底停止维护。
+
+- [Apple 开放使用 Xcode 27 RC 构建的应用提交](https://developer.apple.com/news/?id=k1mtkt1k)
+  > Apple 9 月 9 日宣布，开发者已经可以使用 Xcode 27 RC 和 iOS 27、iPadOS 27、macOS 27、tvOS 27、visionOS 27、watchOS 27 RC SDK 构建应用，并通过 App Store 和 TestFlight 提交。Apple 同时再次说明，macOS 26 是最后一个支持 Intel Mac 和 Rosetta 的 macOS 版本，macOS 27 将只支持 Apple silicon。
+
+- [Kotlin 2.4.20 发布](https://kotlinlang.org/docs/whatsnew2420.html)
+  > Kotlin 2.4.20 于 9 月 7 日发布。Kotlin/Native 增加新的 Swift export 能力、改进增量编译，并可为 SwiftPM 依赖自动生成 `Package.swift`；Kotlin/JS 新增浏览器测试 DSL，并支持把 suspend lambda 导出为 async function。该版本还支持 Gradle 9.7.0，并计划在 Kotlin 2.5.0 移除已经弃用的 `watchosArm32` 目标。
+
+- [Expo 增加 PostHog 一键集成](https://expo.dev/changelog/posthog-integration)
+  > Expo 9 月 9 日上线 PostHog 集成，可通过一条命令创建或连接 PostHog 项目，安装 SDK 和 config plugin，并写入本地及 EAS 的 Production、Preview、Development 环境变量。集成覆盖 analytics、session replay 和 error tracking，还会给事件附加对应的 EAS Update 信息。
+
+## Web 框架与运行时
+
+- [React 19.3 发布](https://react.dev/blog/2026/09/09/react-19-3)
+  > React 19.3 于 9 月 9 日发布，`<ViewTransition>` 和 Fragment Refs 从实验 API 转为稳定 API。React DOM 新增 `browser()`，允许组件通过 Suspense 退出服务端渲染，并加入 Trusted Types 支持；React Server Components 也开始支持直接渲染从客户端模块导入的 `<Context>`。
+
+- [Node.js 24.21.0 LTS 发布](https://nodejs.org/en/blog/release/v24.21.0)
+  > Node.js 24.21.0 “Krypton” 于 9 月 8 日发布。该版本把 OpenSSL 更新到 3.5.8、Undici 更新到 7.29.1，并更新 NSS 根证书；同时新增通过 STORE loader 加载私钥、`MIMEType.parse()` 非抛异常解析，以及 `perf_hooks` histogram 的统计假设检验能力。
+
+## 构建、包管理与 Web Platform
+
+- [pnpm 12.4 支持在同一 workspace 管理 npm、Python 和 Cargo 依赖](https://github.com/pnpm/pnpm/releases/tag/v12.4.0)
+  > pnpm 12.4 于 9 月 8 日发布。开启相应 workspace 配置后，pnpm 可以同时安装 npm、Python 和 Rust Cargo 依赖，并新增 `pnpm pipeline`，支持按任务图运行 workspace 任务以及 inputs、outputs、env 和 cache 配置。该版本还增加 Android arm64/x64、FreeBSD x64，以及更多 Linux 架构的支持。
+
+- [Chrome 153 开始执行两周一个 Stable 版本的发布节奏](https://developer.chrome.com/blog/chrome-two-week-start)
+  > Chrome 153 于 9 月 8 日在 Desktop、Android 和 iOS 上发布，同时正式把 Stable 发布周期从四周缩短到两周。Chrome Stable 之后每两周接收一次新的功能版本；Extended Stable 继续保留，主要功能更新间隔为八周，安全修复仍按常规节奏回补。Chrome 154 Beta 已同步开放，Stable 计划于 9 月 22 日发布。
