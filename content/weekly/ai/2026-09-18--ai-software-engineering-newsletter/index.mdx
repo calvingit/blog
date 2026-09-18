@@ -1,0 +1,52 @@
+---
+title: AI Software Engineering Newsletter · 2026-09-18
+slug: ai-software-engineering-newsletter-2026-09-18
+description: 汇总 2026 年 9 月 12 日至 9 月 18 日 AI 软件工程领域的重要更新，包括 Claude Code、Gemini CLI、GitHub Copilot、Android Bench 2.0、Real-SWE 与 Copilot Runtime 的 Rust 迁移。
+date: 2026-09-18
+lastUpdated: 2026-09-18
+series: ai
+tags:
+  - AI
+  - Claude Code
+  - GitHub Copilot
+  - Gemini CLI
+  - Agents
+  - Benchmark
+  - Software Engineering
+searchIndex: true
+---
+
+本期覆盖 2026 年 9 月 12 日至 9 月 18 日。内容包括 Coding Agent 与 CLI 更新、Copilot 的模型与使用量管理，以及两个面向真实或长周期开发任务的新 Benchmark。
+
+## Coding Agent 与开发工具
+
+- [Claude Code 2.1.274 增加内存预警和 MCP 启动等待配置](https://github.com/anthropics/claude-code/releases/tag/v2.1.274)
+  > Anthropic 9 月 17 日发布 Claude Code 2.1.274。版本新增内存使用达到临界状态时的可见警告，并加入 `CLAUDE_CODE_MCP_STARTUP_WAIT_MS`，用于限制非交互模式首轮等待 MCP server 连接的时间。更新还修复了 session 重试卡住、MCP transport、Bash 权限检查，以及 Claude Code on the web、Slack 和 Code Review 等多处问题。
+
+- [Gemini CLI 0.60.0 集中加强 sandbox、路径和 MCP OAuth 安全](https://github.com/google-gemini/gemini-cli/releases/tag/v0.60.0)
+  > Google 9 月 15 日发布 Gemini CLI 0.60.0 稳定版。该版本隔离 sandbox 容器中的 settings 和临时目录，加强 workspace 边界、符号链接和 Windows NTFS 8.3 短文件名路径校验，并要求扩展修改环境变量前取得用户同意。MCP OAuth 流程加入 RFC 9207 issuer 校验，Web Fetch 也加强了目标地址验证和连接路由检查。
+
+- [GitHub Copilot 自动选模增加三档成本与质量配置](https://github.blog/changelog/2026-09-14-configure-cost-and-quality-in-copilot-auto-model-selection/)
+  > GitHub 9 月 14 日为 Copilot auto model selection 增加 efficiency、balance、intelligence 三档配置，用来调整每次请求对成本、质量和响应时间的权衡。三档使用相同的可用模型集合，Copilot 仍会逐条请求选择模型；功能正在 VS Code、Copilot CLI 和 GitHub Copilot app 中逐步推出，计费取决于实际选中的模型。
+
+- [GitHub Copilot 支持 AI credits 预算追加申请](https://github.blog/changelog/2026-09-16-copilot-budget-increase-requests-are-generally-available/)
+  > GitHub 9 月 16 日将 Copilot budget increase requests 推向 GA，适用于采用 usage-based billing 的 Copilot Business 和 Enterprise。成员用完可用 AI credits 后可以直接申请提高预算，申请会交给实际承担该预算的 organization 或 enterprise；管理员可在设置中批准、调整额度或拒绝申请。
+
+- [Copilot 使用量 API 增加 Skills、MCP 和插件统计](https://github.blog/changelog/2026-09-17-agentic-cli-customizations-now-in-the-usage-metrics-api/)
+  > GitHub 9 月 17 日扩展 Copilot CLI usage metrics，新增 Skills、custom agents、MCP servers、slash commands 和 plugins 的使用数据。企业和组织报告可查看各类自定义项的前五项活动及不同项目数量；为保护隐私，客户自定义名称不会直接显示，Skills、custom agents、MCP servers 和 plugins 会归入 `other`。
+
+- [Copilot Impact Dashboard 增加各 Agent 功能使用情况](https://github.blog/changelog/2026-09-17-copilot-impact-dashboard-now-shows-feature-engagement/)
+  > GitHub 9 月 17 日在 Copilot impact dashboard 和企业、组织级 28 天汇总 API 中加入 feature engagement。数据按 code completion、agent edit、主动或被动 Copilot code review、Copilot cloud agent、Copilot CLI 和 Copilot app 分类，统计 28 天内至少两天使用对应功能的活跃用户。
+
+## 工程实践与项目
+
+- [GitHub 用 Copilot 将 Agent Runtime 重写为 80 多万行 Rust](https://github.blog/ai-and-ml/generative-ai/migrating-the-github-copilot-runtime-to-rust-using-copilot/)
+  > GitHub 9 月 16 日公开 Copilot agent runtime 从 TypeScript / Node.js / V8 迁移到 Rust 的过程。新的 runtime 超过 80 万行生产 Rust 代码，AI Agent 编写了其中大部分代码；迁移拆成 128 个 PR 持续合入 main 并逐步上线，没有等待一次性切换。这个 runtime 同时支撑 Copilot CLI、Copilot app 和 Copilot SDK。
+
+## 研究与 Benchmark
+
+- [Android Bench 2.0 加入多日级 long-horizon tasks 和 Agent 评测](https://android-developers.googleblog.com/2026/09/android-bench-2-long-horizon-tasks.html)
+  > Google 9 月 16 日发布 Android Bench 2.0 的首批 long-horizon tasks，用于评估通常需要工程师数天甚至一周完成的任务，包括依赖升级、新功能、从零构建应用和跨平台应用迁移。新版本同时加入 Agent 评测和连续评分；官方公布的 LHT 最高 pass rate 约为 28%，原有任务约为 91%。首批 Agent 组合包括 GPT-5.6 Sol + Codex 和 Gemini 3.8 Flash + Google Antigravity。
+
+- [Real-SWE 用私有生产代码评测 Coding Agent](https://specific.dev/real-swe)
+  > Specific Labs 9 月 12 日发布 Real-SWE，任务来自获得授权的私有生产代码库，并以真实工程师已经合并的修复作为参考。首批公开结果覆盖 10 个任务，每种配置对每个任务运行 8 次；公开榜单中 Fable 5.1 + Claude Code 的 resolution rate 为 38.8%，GPT-6 Astra + Codex CLI 为 33.8%，Gemini 3.8 Flash + Gemini CLI 为 31.2%。这些成绩衡量的是模型与 Agent harness 的组合，而不是单独模型。
