@@ -55,7 +55,7 @@ Matt 的 [to-tickets](https://github.com/mattpocock/skills/blob/main/skills/engi
 
 图中的“平台已接收”不等于“买家已收到”，超时后是否已经发送也需要单独确认，这些状态应当由平台实际协议决定。第一轮可以先验证正常路径，但交付时仍要覆盖本次验收要求中的失败与不确定状态，不能因为主流程跑通就直接宣布完成。
 
-这里有两个目标需要分清：曳光弹式开发（Tracer Bullet）用最窄的真实端到端路径尽早验证技术连接与关键假设，而用于交付的纵向切片（Vertical Slice）则必须满足自己承诺的验收条件（Acceptance Criteria），所以前者证明路径可行，并不能自动证明功能已经可以交付。一个正常回复场景跑通后，失败提示、重试、重复提交等行为是否属于本次交付，仍要由已确认的范围决定。
+David Thomas 与 Andrew Hunt 在《程序员修炼之道》（The Pragmatic Programmer）中用“Tracer Bullets”专节讨论曳光弹方法。[^pragmatic-programmer] 放到这里的实践中，有两个目标需要分清：曳光弹式开发（Tracer Bullet）用最窄的真实端到端路径尽早验证技术连接与关键假设，而用于交付的纵向切片（Vertical Slice）则必须满足自己承诺的验收条件（Acceptance Criteria），所以前者证明路径可行，并不能自动证明功能已经可以交付。一个正常回复场景跑通后，失败提示、重试、重复提交等行为是否属于本次交付，仍要由已确认的范围决定。
 
 相比只让 Agent 生成计划再逐项执行，纵向切片（Vertical Slice）在我的任务中提供了更清楚的边界：这一次必须做到什么，怎样证明它做到了，后续工作依赖哪一部分结果。这是实际使用中的观察，还没有经过严格的对照实验，不能据此认定所有项目都会获得同样的收益。
 
@@ -66,6 +66,8 @@ Matt 的 [to-tickets](https://github.com/mattpocock/skills/blob/main/skills/engi
 ## 统一语言（Ubiquitous Language）要贯穿需求、设计和代码
 
 今天讨论得最多的另一个问题，是如何让领域内的统一语言（Ubiquitous Language）贯穿所有环节，使同一业务概念在需求、设计和代码中保持一致的含义。
+
+这个概念来自 Eric Evans 的《领域驱动设计》（Domain-Driven Design）。[^evans-ddd] 他在后来公开的 DDD Reference 中写道：“Use the model as the backbone of a language.”，即以模型作为语言的骨架。[^evans-reference] 我的理解是，术语表需要承载团队对业务的共同理解，并随着模型一起调整，单纯统一变量拼写还不够。
 
 在前面的客服例子里，如果需求中的“会话”表示买家与店铺的长期联系，而实现中的 `session` 表示一次短暂的 Agent 执行，那么“关闭会话”就存在两种完全不同的解释。即使每个模块都通过了自己的测试，整条业务流程仍然可能出错。
 
@@ -93,6 +95,8 @@ Matt 的 [domain-modeling](https://github.com/mattpocock/skills/blob/main/skills
 Agent 很容易生成结构整齐的代码，也容易生成大量接口、包装层和适配器，单看每个类，职责似乎都很明确，但真正调用时，却需要知道几个对象的创建顺序、状态同步方式和异常处理约定。
 
 Matt 的 [codebase-design](https://github.com/mattpocock/skills/blob/main/skills/engineering/codebase-design/SKILL.md) 将深模块（Deep Module）理解为：通过较小的接口（Interface）提供较多行为，同时把复杂度留在模块内部。这里的接口包括调用者必须理解的约束和错误语义，不只是方法签名。[^matt-design]
+
+深模块的讨论也可以回到 John Ousterhout 的《软件设计的哲学》（A Philosophy of Software Design）。他在第二版第 6 章讨论适度通用的模块时写道：“the module’s functionality should reflect your current needs, but its interface should not.”，即模块的功能应满足当前需求，但接口不应被当前场景的细节限定。[^ousterhout-design] 这一段同时强调，接口仍然要便于解决眼前的问题，过度追求通用性也会增加使用成本，因此我会用当前调用方是否更容易理解和使用来判断抽象的价值。
 
 例如，多平台消息发送模块可以在内部处理平台请求格式、鉴权和错误映射，让调用方围绕明确的发送意图及结果工作。但如果不同平台对“发送成功”的定义不同，接口就需要把这个差异表达出来，不能统一返回一个含义模糊的布尔值。信息隐藏（Information Hiding）成立的前提，是调用者仍然获得作出正确决定所需的信息。
 
@@ -211,6 +215,11 @@ Engineering Skills 不需要覆盖软件开发的每一个环节，才算有价�
 [^ng-agents]: Andrew Ng，[AI Engineering Skills Map: Using coding agents](https://www.linkedin.com/pulse/ai-engineering-skills-map-using-coding-agents-andrew-ng-h8yxc)，2026-09-04。
 [^ng-shaping]: Andrew Ng，[AI Engineering Skills Map: Shaping the build](https://www.linkedin.com/pulse/ai-engineering-skills-map-shaping-build-andrew-ng-td7uc)，2026-09-11。
 [^engineering-skills]: Calvin，[Engineering Skills](https://github.com/calvingit/skills)。本文涉及的个人工作流及职责划分。
+
+[^evans-ddd]: Eric Evans，*Domain-Driven Design: Tackling Complexity in the Heart of Software*（《领域驱动设计》），Addison-Wesley，2004。统一语言的原始书籍出处，另见作者提供的 [DDD Reference 与原书模式摘要说明](https://www.domainlanguage.com/ddd/reference/)。
+[^evans-reference]: Eric Evans，*Domain-Driven Design Reference: Definitions and Pattern Summaries*，2015，“Ubiquitous Language”，第 4 页。[官方页面](https://www.domainlanguage.com/ddd/reference/) · [免费 PDF](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)。本文英文引文出自这份参考手册，中文为本文译释；手册采用 CC BY 4.0 授权，是概念与模式摘要，不是原书全文。
+[^ousterhout-design]: John Ousterhout，*A Philosophy of Software Design*（《软件设计的哲学》），第 2 版，2021，第 6 章“General-Purpose Modules are Deeper”，§6.1，第 40 页。[作者官网](https://web.stanford.edu/~ouster/cgi-bin/book.php) · [官方节选 PDF](https://web.stanford.edu/~ouster/cgi-bin/aposd2ndEdExtract.pdf)。本文引文为该节原句中的片段，中文为本文译释；公开 PDF 仅包含部分章节及修订内容。
+[^pragmatic-programmer]: David Thomas、Andrew Hunt，*The Pragmatic Programmer: Your Journey to Mastery, 20th Anniversary Edition*（《程序员修炼之道》20 周年纪念版），2019，“Tracer Bullets”一节。[官方书籍页面](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/)。页面提供部分免费章节及示例源码，完整电子书需购买，本文对此概念采用转述。
 
 系列总览：[Andrew Ng — The AI Engineering Skills Map](https://www.linkedin.com/pulse/ai-engineering-skills-map-andrew-ng-m479c)，2026-08-14。
 
