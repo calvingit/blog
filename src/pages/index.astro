@@ -31,8 +31,8 @@ const OSS_PROJECTS: Array<{ name: string; url: string; description: string }> = 
 const POSTS_TO_SHOW = 10
 
 const entries = sortAsc(await getAllContentEntries())
-const featuredPosts = entries.filter(entry => entry.data.featured)
-const posts = entries.filter(entry => !entry.data.featured).slice(0, POSTS_TO_SHOW)
+const featuredPosts = entries.filter((entry) => entry.data.featured)
+const posts = entries.filter((entry) => !entry.data.featured).slice(0, POSTS_TO_SHOW)
 ---
 
 <Layout>
@@ -50,19 +50,17 @@ const posts = entries.filter(entry => !entry.data.featured).slice(0, POSTS_TO_SH
           </div>
           <Spacer axis="vertical" size={8} />
           <div class="flex gap-10 flex-col">
-            {
-              featuredPosts.map((entry) => (
-                <div>
-                  <Link variant="highlight" href={getContentUrl(entry)}>
-                    {entry.data.title}
-                  </Link>
-                  <Spacer axis="vertical" size={2} />
-                  <p class="text-sm text-faded leading-relaxed italic">{entry.data.description}</p>
-                  <Spacer axis="vertical" size={3} />
-                  <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
-                </div>
-              ))
-            }
+            {featuredPosts.map((entry) => (
+              <div>
+                <Link variant="highlight" href={getContentUrl(entry)}>
+                  {entry.data.title}
+                </Link>
+                <Spacer axis="vertical" size={2} />
+                <p class="text-sm text-faded leading-relaxed italic">{entry.data.description}</p>
+                <Spacer axis="vertical" size={3} />
+                <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
+              </div>
+            ))}
           </div>
         </section>
       )
