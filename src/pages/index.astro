@@ -44,25 +44,28 @@ const posts = entries.filter((entry) => !entry.data.featured).slice(0, POSTS_TO_
     </Prose>
     {
       featuredPosts.length > 0 && (
-        <section>
-          <div class="border-b border-border pb-4">
-            <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Featured</h2>
-          </div>
-          <Spacer axis="vertical" size={8} />
-          <div class="flex gap-10 flex-col">
-            {featuredPosts.map((entry) => (
-              <div>
-                <Link variant="highlight" href={getContentUrl(entry)}>
-                  {entry.data.title}
-                </Link>
-                <Spacer axis="vertical" size={2} />
-                <p class="text-sm text-faded leading-relaxed italic">{entry.data.description}</p>
-                <Spacer axis="vertical" size={3} />
-                <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
-              </div>
-            ))}
-          </div>
-        </section>
+        <>
+          <Spacer axis="vertical" size={32} />
+          <section>
+            <div class="border-b border-border pb-4">
+              <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Featured</h2>
+            </div>
+            <Spacer axis="vertical" size={8} />
+            <div class="flex gap-10 flex-col">
+              {featuredPosts.map((entry) => (
+                <div>
+                  <Link variant="highlight" href={getContentUrl(entry)}>
+                    {entry.data.title}
+                  </Link>
+                  <Spacer axis="vertical" size={2} />
+                  <p class="text-sm text-faded leading-relaxed italic">{entry.data.description}</p>
+                  <Spacer axis="vertical" size={3} />
+                  <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </>
       )
     }
     <Spacer axis="vertical" size={32} />
