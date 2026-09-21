@@ -45,13 +45,13 @@ Matt 的 [to-tickets](https://github.com/mattpocock/skills/blob/main/skills/engi
 
 假设要实现客服消息回复，如果先完成数据库，再完成全部接口，最后接入界面，前几个阶段可以产生大量代码，却很难判断用户是否真的能完成一次回复。我打算先让一个明确场景跑通：收到某个平台的一条文本消息，在会话界面看到它，提交回复，并看到真实发送结果，让消息标识、平台接口、状态更新和界面反馈之间的连接在这条路径里接受检验。
 
-**图 1：一次文本回复，就是一个可以跨层验证的切片。** 为了看清关键连接，下面从消息已经进入会话开始，省略接收消息的过程。
+为了看清关键连接，下面从消息已经进入会话开始，省略接收消息的过程。如下图所示，这就是一个可以跨层验证的切片：
 
 ![一次文本回复的纵向切片：平台接收与拒绝两种分支](../../../src/assets/blog/ai-era-software-engineering/illustrations/01-vertical-slice.svg)
 
 图中的“平台已接收”不等于“买家已收到”，超时后是否已经发送也需要单独确认，这些状态应当由平台实际协议决定。第一轮可以先验证正常路径，但交付时仍要覆盖本次验收要求中的失败与不确定状态，不能因为主流程跑通就直接宣布完成。
 
-David Thomas 与 Andrew Hunt 在《程序员修炼之道》（The Pragmatic Programmer）中用“Tracer Bullets”专节讨论曳光弹方法。[^pragmatic-programmer] 放到这里的实践中，有两个目标需要分清：曳光弹式开发（Tracer Bullet）用最窄的真实端到端路径尽早验证技术连接与关键假设，而用于交付的纵向切片（Vertical Slice）则必须满足自己承诺的验收条件（Acceptance Criteria），所以前者证明路径可行，并不能自动证明功能已经可以交付。一个正常回复场景跑通后，失败提示、重试、重复提交等行为是否属于本次交付，仍要由已确认的范围决定。
+David Thomas 与 Andrew Hunt 在《程序员修炼之道》（The Pragmatic Programmer）中用“Tracer Bullets”这一专门的章节节讨论了曳光弹方法。[^pragmatic-programmer] 放到这里的实践中，有两个目标需要分清：曳光弹式开发（Tracer Bullet）用最窄的真实端到端路径尽早验证技术连接与关键假设，而用于交付的纵向切片（Vertical Slice）则必须满足自己承诺的验收条件（Acceptance Criteria），所以前者证明路径可行，并不能自动证明功能已经可以交付。一个正常回复场景跑通后，失败提示、重试、重复提交等行为是否属于本次交付，仍要由已确认的范围决定。
 
 相比只让 Agent 生成计划再逐项执行，纵向切片（Vertical Slice）在我的任务中提供了更清楚的边界：这一次必须做到什么，怎样证明它做到了，后续工作依赖哪一部分结果。这是实际使用中的观察，还没有经过严格的对照实验，不能据此认定所有项目都会获得同样的收益。
 
@@ -61,7 +61,7 @@ David Thomas 与 Andrew Hunt 在《程序员修炼之道》（The Pragmatic Prog
 
 ## 统一语言（Ubiquitous Language）要贯穿需求、设计和代码
 
-今天讨论得最多的另一个问题，是如何让领域内的统一语言（Ubiquitous Language）贯穿所有环节，使同一业务概念在需求、设计和代码中保持一致的含义。
+今天我和ChatGPT来回交流了大几十轮对话，当中掰扯最多的一个问题，是如何让领域内的统一语言（Ubiquitous Language）贯穿所有环节，使同一业务概念在需求、设计和代码中保持一致的含义。
 
 这个概念来自 Eric Evans 的《领域驱动设计》（Domain-Driven Design）。[^evans-ddd] 他在后来公开的 DDD Reference 中写道：“Use the model as the backbone of a language.”，即以模型作为语言的骨架。[^evans-reference] 我的理解是，术语表需要承载团队对业务的共同理解，并随着模型一起调整，单纯统一变量拼写还不够。
 
@@ -74,7 +74,7 @@ David Thomas 与 Andrew Hunt 在《程序员修炼之道》（The Pragmatic Prog
 | 会话 | Conversation | 买家与店铺之间持续存在的沟通记录 | 结束一次 Agent 执行，不应删除或关闭会话 |
 | 消息 | Message | 平台接收或发送的一条内容 | 一条消息可能包含多个意图，不能直接等同于一个任务 |
 | 回复任务 | Reply Task | 一次需要跟踪状态的回复处理 | 重试同一任务时，要检查是否可能重复发送 |
-| 执行会话 | Agent Session | Agent 一次运行的上下文与执行过程 | 执行中断后，回复任务的进度仍需能够查回 |
+| 执行会话 | Agent Session | Agent 一次运行的上下文与执行过程 | 执行中断后，回复任务的进度仍需能够查找回来 |
 
 这样讨论“关闭会话”时，就能先问清楚关闭的是 Conversation 还是 Agent Session，再判断要改业务状态还是停止执行，避免带着同一个中文名称进入两套不同的实现。
 
@@ -92,7 +92,7 @@ Agent 很容易生成结构整齐的代码，也容易生成大量接口、包�
 
 Matt 的 [codebase-design](https://github.com/mattpocock/skills/blob/main/skills/engineering/codebase-design/SKILL.md) 将深模块（Deep Module）理解为：通过较小的接口（Interface）提供较多行为，同时把复杂度留在模块内部。这里的接口包括调用者必须理解的约束和错误语义，不只是方法签名。[^matt-design]
 
-深模块的讨论也可以回到 John Ousterhout 的《软件设计的哲学》（A Philosophy of Software Design）。他在第二版第 6 章讨论适度通用的模块时写道：“the module’s functionality should reflect your current needs, but its interface should not.”，即模块的功能应满足当前需求，但接口不应被当前场景的细节限定。[^ousterhout-design] 这一段同时强调，接口仍然要便于解决眼前的问题，过度追求通用性也会增加使用成本，因此我会用当前调用方是否更容易理解和使用来判断抽象的价值。
+深模块的讨论也可以回到 John Ousterhout 的《软件设计的哲学》（A Philosophy of Software Design），他在第二版第 6 章讨论适度通用的模块时写道：“the module’s functionality should reflect your current needs, but its interface should not.”，即模块的功能应满足当前需求，但接口不应被当前场景的细节限定。[^ousterhout-design] 这一段同时强调，接口仍然要便于解决眼前的问题，过度追求通用性也会增加使用成本，因此我会用当前调用方是否更容易理解和使用来判断抽象的价值。
 
 例如，多平台消息发送模块可以在内部处理平台请求格式、鉴权和错误映射，让调用方围绕明确的发送意图及结果工作。但如果不同平台对“发送成功”的定义不同，接口就需要把这个差异表达出来，不能统一返回一个含义模糊的布尔值。信息隐藏（Information Hiding）成立的前提，是调用者仍然获得作出正确决定所需的信息。
 
@@ -138,7 +138,7 @@ type SendResult =
 
 这也决定了我打算交给 Agent 多大的自治范围（Agent Autonomy）：边界明确、结果可检查、失败能够恢复的任务，适合让它连续推进，证据不足或下一步需要新的产品取舍时，就需要重新判断。长时间运行和大量消耗 token 都只是执行过程，不能代替交付价值。自治范围应随着验证能力扩大，而不能仅凭模型自报的信心扩大。
 
-图形用户界面（Graphical User Interface，GUI）是我目前最难稳定处理的部分，按钮能点击、接口返回成功、页面跳转正确，只覆盖了部分质量，至于信息层级是否清楚、加载时是否跳动、错误出现后用户是否知道怎样继续，都需要额外观察。
+GUI 是我目前最难稳定处理的部分，按钮能点击、接口返回成功、页面跳转正确，只覆盖了部分质量，至于信息层级是否清楚、加载时是否跳动、错误出现后Toast是否展示正确、弹窗层级是否有覆盖等等问题，都需要额外观察。
 
 接下来，我打算把界面验收拆成几类明确的检查，而不是继续增加笼统的“确保体验良好”：
 
@@ -150,19 +150,19 @@ type SendResult =
 
 仍以发送失败为例，一次 E2E 检查可以证明错误提示出现、输入内容保留、后续操作可触发，但截图可能暴露提示被软键盘遮挡，实际操作还可能发现用户根本分不清“重试”和“重新发送”的区别。三种检查观察的是同一场景的不同问题，即使第一项通过，后两项也不能直接写成合格。
 
-这是一条准备继续验证的方向，我还没有一套足够成熟、能够覆盖不同前端技术栈的 GUI 验收方案。当前能做的，是在任务开始时明确参考设计、关键状态和检查条件，交付时如实说明检查覆盖到哪里。
+这是一条准备继续验证的方向，我还没有一套足够成熟、能够覆盖不同前端技术栈的 GUI 验收方案（主要是执行太慢了，也许最近的`Jev`模型能帮忙？）。当前能做的，是在任务开始时明确参考设计、关键状态和检查条件，交付时如实说明检查覆盖到哪里。
 
 吴恩达在 [Building and Deploying AI Applications](https://www.linkedin.com/pulse/ai-engineering-skills-map-building-deploying-applications-andrew-ng-gyn5e) 中强调，通过评估（Evaluation）与错误分析（Error Analysis）决定下一步，并检查评估方法本身是否合适。[^ng-apps] 这给了我一个有用的参照：GUI 的质量判断虽不等同于模型评估，但同样需要选择与目标匹配的证据，不能让最容易自动化的检查代替全部质量要求。
 
 ## 工作流需要边界，也需要允许返回
 
-在[《我的 AI Coding 工作流（二）：Skills 篇》](/ai-coding-workflow-2/)里，我回顾过把开发画成固定流水线带来的问题：局部修改也要走完整流程，需求已经清楚还要重新探索，甚至在 Skill 中重复管理 Runtime 已有的能力。那时的调整是先判断任务缺什么，再选择需要的方法，现在我还需要处理另一个实际问题：执行中发现前提变了，应该退回哪一层，又能保留哪些已经有效的工作。
+在[《我的 AI Coding 工作流（二）：Skills 篇》](/ai-coding-workflow-2/)里，我曾经把开发工作做成固定的流水线，但这带来了的问题：局部修改也要走完整流程，需求已经清楚还要重新探索，甚至在 Skill 中重复管理 Runtime 已有的`/goal`能力。那时的调整是先判断任务缺什么，再选择需要的方法，现在我还需要处理另一个更加实际的问题：执行过程中发现前提需求变了，应该回到哪一层，又能保留哪些已经有效的工作。
 
-Engineering Skills 的持续改进中，一部分工作是拆清文档职责：需求写入需求规范（Specification，SPEC），跨多处实现共享的设计约定按需写入概要设计（High-Level Design，HLD），任务单（Ticket）描述可执行的交付任务，执行过程留下进度与证据。当前仓库明确区分这些职责，让问题出现时能够找到需要修正的那一层。[^engineering-skills]
+在 Engineering Skills 的持续改进中，一部分工作是拆分并理清文档职责：需求写入需求规范（SPEC.md），跨多处实现共享的设计约定按需写入概要设计（High-Level Design）的文档（HLD.md），任务单（Ticket）描述可执行的交付任务，执行过程留下进度和简短的验证证据。代码仓库里需要明确区分这些职责，让问题出现时能够找到需要修正的那一层。[^engineering-skills]
 
 上游决定变化后，已经完成且仍然有效的工作可以保留，但原有证据不能自动覆盖新的要求，返回的范围应由实际影响决定。
 
-**图 2：返回哪一步，取决于新问题改变了什么。** 这张图聚焦已有 ticket 的执行与反馈，不表示每个任务都要先走完整套流程。
+下面这张图聚焦已有 ticket 的执行与反馈，不表示每个任务都要先走完整套流程。返回哪一步，取决于新问题改变了什么。
 
 ![根据问题影响返回需求、设计或实现，并通过证据完成验收](../../../src/assets/blog/ai-era-software-engineering/illustrations/02-change-and-verification.svg)
 
@@ -180,7 +180,7 @@ Engineering Skills 的持续改进中，一部分工作是拆清文档职责：�
 
 在这些实践之上，我打算为 Engineering Skills 保留五条共同原则：统一语言（Ubiquitous Language）、纵向切片（Vertical Slice）与尽早验证、深模块（Deep Module）与信息隐藏（Information Hiding）、基于证据判断完成（Evidence-Based Completion），以及最小必要复杂度（Minimum Necessary Complexity）。它们应该在不同环节持续起作用，不必各自扩展成一个新的 Skill。
 
-具体落地时，我打算让用户级 `AGENTS.md` 表达跨项目的工程偏好，由项目级 `AGENTS.md` 和相关文档提供术语、架构、验证方法与权威来源，再由 Skill 描述解决某类问题的方法。`project-setup` 可以帮助确认并记录稳定入口，具体约定仍然应当留在项目里。
+具体落地时，我打算让用户级 `AGENTS.md` 表达跨项目的工程偏好，由项目级 `AGENTS.md` 和相关文档提供术语、架构、验证方法与上下文来源，再由 Skill 描述解决某类具体问题的方法。`project-setup` skill 可以帮助确认并记录稳定入口，具体约定仍然应当留在项目里。
 
 例如，通用原则可以要求完成声明必须有证据，前端项目则需要进一步说明哪些检查必须在目标浏览器或设备上完成、哪些平台暂时没有覆盖。同样，通用原则可以要求沿用领域术语，具体的“会话”“消息”“回复任务”如何定义，则必须由这个项目决定。把两类信息混在一个通用 Skill 里，会让它越来越难复用，也容易在别的项目中误用。
 
@@ -211,7 +211,6 @@ Engineering Skills 的持续改进中，一部分工作是拆清文档职责：�
 [^ng-agents]: Andrew Ng，[AI Engineering Skills Map: Using coding agents](https://www.linkedin.com/pulse/ai-engineering-skills-map-using-coding-agents-andrew-ng-h8yxc)，2026-09-04。
 [^ng-shaping]: Andrew Ng，[AI Engineering Skills Map: Shaping the build](https://www.linkedin.com/pulse/ai-engineering-skills-map-shaping-build-andrew-ng-td7uc)，2026-09-11。
 [^engineering-skills]: Calvin，[Engineering Skills](https://github.com/calvingit/skills)。本文涉及的个人工作流及职责划分。
-
 [^evans-ddd]: Eric Evans，*Domain-Driven Design: Tackling Complexity in the Heart of Software*（《领域驱动设计》），Addison-Wesley，2004。统一语言的原始书籍出处，另见作者提供的 [DDD Reference 与原书模式摘要说明](https://www.domainlanguage.com/ddd/reference/)。
 [^evans-reference]: Eric Evans，*Domain-Driven Design Reference: Definitions and Pattern Summaries*，2015，“Ubiquitous Language”，第 4 页。[官方页面](https://www.domainlanguage.com/ddd/reference/) · [免费 PDF](https://www.domainlanguage.com/wp-content/uploads/2016/05/DDD_Reference_2015-03.pdf)。本文英文引文出自这份参考手册，中文为本文译释；手册采用 CC BY 4.0 授权，是概念与模式摘要，不是原书全文。
 [^ousterhout-design]: John Ousterhout，*A Philosophy of Software Design*（《软件设计的哲学》），第 2 版，2021，第 6 章“General-Purpose Modules are Deeper”，§6.1，第 40 页。[作者官网](https://web.stanford.edu/~ouster/cgi-bin/book.php) · [官方节选 PDF](https://web.stanford.edu/~ouster/cgi-bin/aposd2ndEdExtract.pdf)。本文引文为该节原句中的片段，中文为本文译释；公开 PDF 仅包含部分章节及修订内容。
