@@ -12,6 +12,7 @@ const postSchema = z.object({
   tags: z.array(z.string()).min(1).transform(normalizeTags),
   image: z.string().optional(),
   searchIndex: z.boolean().optional().default(true),
+  featured: z.boolean().optional().default(false),
 })
 
 const blog = defineCollection({
