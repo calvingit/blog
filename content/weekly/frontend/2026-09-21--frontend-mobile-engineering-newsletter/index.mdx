@@ -1,0 +1,48 @@
+---
+title: Frontend & Mobile Engineering Newsletter：Expo SDK 58 Beta、Safari 27 与 pnpm 12.5
+slug: frontend-mobile-engineering-newsletter-2026-09-21
+description: 本期汇总 9 月 14 日至 20 日的前端与移动端重要更新，包括 Expo SDK 58 Beta、EAS Simulator、Apple 平台发布、Safari 27、Node.js 26.9、pnpm 12.5 与 ESLint 10.11。
+date: 2026-09-21
+lastUpdated: 2026-09-21
+series: frontend
+tags:
+  - Frontend
+  - Mobile
+  - React Native
+  - Expo
+  - iOS
+  - Safari
+  - Node.js
+  - pnpm
+  - ESLint
+searchIndex: true
+---
+
+本期覆盖 2026 年 9 月 14 日至 9 月 20 日，整理移动端平台、React Native 生态、Web Platform、运行时和工程工具的主要更新。
+
+## 移动端平台与框架
+
+- [Expo SDK 58 Beta 开放测试](https://expo.dev/changelog/sdk-58-beta)
+  > Expo 9 月 15 日开放 SDK 58 Beta，测试期预计持续三到四周。SDK 58 面向 iOS 27 构建，并采用 React Native 0.88 RC；Expo Router 的 data loaders、服务端渲染、middleware、native tabs 和 toolbars 等能力转为稳定。该版本还包含 Expo Modules 2.0 Beta、Android 主屏幕 widgets、实验性的 Rust 模块转换器，以及 Swift Package Manager 相关准备工作；CocoaPods 目前仍是默认且受支持的 iOS 依赖路径。
+
+- [EAS Simulator 提供云端 iOS Simulator](https://expo.dev/blog/build-ios-apps-on-windows-with-cloud-simulators)
+  > Expo 9 月 14 日介绍 EAS Simulator：远程运行 iOS Simulator 或 Android Emulator，并可通过 CLI、REST API、coding agent 或浏览器控制。iOS 会话支持浏览器实时预览，开发构建连接 Metro tunnel 后可使用 Fast Refresh；服务也允许上传 SwiftUI、Kotlin、Flutter 等非 Expo 应用的模拟器构建。目前 EAS Simulator 处于 limited-access preview，按 waitlist 分批开放。
+
+- [Apple 开放 Xcode 27 正式版应用提交](https://developer.apple.com/help/app-store-connect/release-notes/)
+  > App Store Connect 9 月 14 日开放使用 Xcode 27 和 iOS 27、iPadOS 27、macOS 27、tvOS 27、visionOS 27、watchOS 27 SDK 构建的应用提交，可用于 App Store 以及 TestFlight 内外部测试。9 月 16 日又开放 Apple-hosted asset packs 的本地化提交；本周的 TestFlight 更新也开始接受部分 Xcode 27.x Beta SDK 构建。
+
+## Web Platform 与运行时
+
+- [Safari 27.0 发布 WebKit 大规模功能更新](https://webkit.org/blog/18325/webkit-features-for-safari-27-0/)
+  > WebKit 9 月 17 日公布 Safari 27.0 的完整功能清单，正式版包含 83 项功能。新增内容包括 Safari MCP、可完整自定义样式的原生 `<select>`、scroll anchoring、更多 CSS、JavaScript、WebAssembly、WebGPU、WebRTC 与 WKWebView 能力。Safari MCP 通过本机 `safaridriver` 向 coding agent 提供 DOM、网络请求、截图、console、可访问性和性能信息，服务器自身不进行网络请求。
+
+- [Node.js 26.9.0 发布](https://nodejs.org/en/blog/release/v26.9.0)
+  > Node.js 26.9.0 Current 于 9 月 16 日发布。该版本加入实验性的 DTLS API、Web Workers 支持，并扩展 `perf_hooks` histogram 能力，包括 mean confidence interval 与 CBOR 导入导出；Single Executable Applications 也增加了虚拟文件系统相关能力。Node.js 官方当前仍将 24.21.0 标为 Latest LTS。
+
+## 构建与工程工具
+
+- [pnpm 12.5 扩展 Python、Cargo 与任务并发能力](https://github.com/pnpm/pnpm/releases/tag/v12.5.0)
+  > pnpm 12.5.0 于 9 月 18 日发布。`pnpm add` 开始接受 Package URL，可直接添加 npm、Cargo 和 PyPI package；registry 配置可声明 npm、cargo 或 pypi ecosystem。`supportedArchitectures` 新增平台列表写法，workspace task 可配置跨 pnpm 进程生效的 concurrency group；Node、Bun 和 Python 下载源也可通过 `tools` 配置镜像。同日发布的 12.5.1 继续修复 Python registry 路由、Cargo 配置符号链接和大型 lockfile 的重复安装路径。
+
+- [ESLint 10.11 优化启动和 lint 性能](https://eslint.org/blog/2026/09/eslint-v10.11.0-released/)
+  > ESLint 10.11.0 于 9 月 18 日发布，集中优化核心 lint pipeline 和默认 `stylish` formatter，规则结果与公开 API 保持不变。官方说明 `eslint` package 加载时不再提前初始化规则选项使用的 JSON Schema validator，可从初始依赖图中减少约 45 个模块，package load time 降低约 20%～25%；AST 遍历、问题报告和 directive processing 也加入了更短的执行路径。
