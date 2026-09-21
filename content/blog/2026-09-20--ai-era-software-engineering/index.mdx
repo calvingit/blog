@@ -3,7 +3,7 @@ title: AI 时代的软件工程实践
 slug: ai-era-software-engineering
 description: 结合 Engineering Skills 的持续改进，讨论纵向切片、统一语言、深模块与证据化验收如何应用于 AI 开发，以及工作流应该保留的边界。
 date: 2026-09-20
-lastUpdated: 2026-09-20
+lastUpdated: 2026-09-21
 tags:
   - AI
   - Agents
@@ -17,7 +17,7 @@ tags:
 
 结合 Matt Pocock 的 Skills 设计，以及吴恩达最近发表的 AI Engineering Skills Map 系列，我打算从软件工程本身重新梳理这套工作流：哪些判断应该由人明确，哪些方法适合交给 Agent 重复执行，哪些结果必须拿到证据，流程又应该在哪里停止扩张。
 
-本文记录的是这段实践形成的认识，其中有已经观察到的收益，也有下一步准备验证的方向，还不能把它们当成一套已经解决所有问题的方法。
+回看之前整理的[《Harness Engineering：Agent-First 时代的软件工程实践》](/harness-engineering-agent-first/)，我当时关注的是怎样把环境、文档、约束与反馈变成 Agent 可以使用的工程基础。继续维护自己的 Skills 后，我遇到的问题又具体了一层：这些规则本身也有维护成本，哪些值得保留，哪些应该交给项目环境或 Runtime，哪些已经可以删掉？本文记录的是这段实践形成的认识，其中有已经观察到的收益，也有下一步准备验证的方向，还不能把它们当成一套已经解决所有问题的方法。
 
 ## 写代码更快以后，工程判断影响了更多结果
 
@@ -134,7 +134,7 @@ type SendResult =
 
 ## 完成标准要与证据对应，GUI 尤其如此
 
-之前改进验证流程时，我最关心的问题逐渐从“有没有运行测试”变成了“这些测试究竟证明了什么”。实现者与验证者分开，可以减少相互影响，但如果两者共同接受了错误的验收前提，独立执行也无法让结论自动变得可靠。
+在[《我的 AI Coding 工作流（四）：感悟篇》](/ai-coding-workflow-4/)里，我已经写过，Agent 的自我汇报不能替代真实测试输出、构建、日志和实际运行结果。继续改进验证流程后，我最关心的问题又从“有没有拿到证据”推进到了“这些证据究竟证明了什么”，尤其是 GUI，行为测试通过以后，视觉与交互质量仍然可能没有得到检查。实现者与验证者分开，可以减少相互影响，但如果两者共同接受了错误的验收前提，独立执行也无法让结论自动变得可靠。
 
 我希望验证明确说明每项结论的依据：验收条件对应了什么检查，是否执行成功，证据是否足以支撑当前结论。测试被跳过、断言被削弱，或预期结果只是照着实现生成，都需要重新判断证据效力。失败与未验证也必须区分，环境无法启动，并不能证明产品行为错误，更不能写成验证通过。
 
@@ -159,6 +159,8 @@ type SendResult =
 吴恩达在 [Building and Deploying AI Applications](https://www.linkedin.com/pulse/ai-engineering-skills-map-building-deploying-applications-andrew-ng-gyn5e) 中强调，通过评估（Evaluation）与错误分析（Error Analysis）决定下一步，并检查评估方法本身是否合适。[^ng-apps] 这给了我一个有用的参照：GUI 的质量判断虽不等同于模型评估，但同样需要选择与目标匹配的证据，不能让最容易自动化的检查代替全部质量要求。
 
 ## 工作流需要边界，也需要允许返回
+
+在[《我的 AI Coding 工作流（二）：Skills 篇》](/ai-coding-workflow-2/)里，我回顾过把开发画成固定流水线带来的问题：局部修改也要走完整流程，需求已经清楚还要重新探索，甚至在 Skill 中重复管理 Runtime 已有的能力。那时的调整是先判断任务缺什么，再选择需要的方法，现在我还需要处理另一个实际问题：执行中发现前提变了，应该退回哪一层，又能保留哪些已经有效的工作。
 
 Engineering Skills 的持续改进中，一部分工作是拆清文档职责：需求写入需求规范（Specification，SPEC），跨多处实现共享的设计约定按需写入概要设计（High-Level Design，HLD），任务单（Ticket）描述可执行的交付任务，执行过程留下进度与证据。当前仓库明确区分这些职责，让问题出现时能够找到需要修正的那一层。[^engineering-skills]
 
@@ -223,4 +225,4 @@ Engineering Skills 不需要覆盖软件开发的每一个环节，才算有价�
 
 系列总览：[Andrew Ng — The AI Engineering Skills Map](https://www.linkedin.com/pulse/ai-engineering-skills-map-andrew-ng-m479c)，2026-08-14。
 
-相关旧文：[《我的 AI Coding 工作流（四）：感悟篇》](https://zhangwen.site/ai-coding-workflow-4/)、[《Harness Engineering：Agent-First 时代的软件工程实践》](https://zhangwen.site/harness-engineering-agent-first/)。
+相关旧文：[《我的 AI Coding 工作流（二）：Skills 篇》](https://zhangwen.site/ai-coding-workflow-2/)、[《我的 AI Coding 工作流（四）：感悟篇》](https://zhangwen.site/ai-coding-workflow-4/)、[《Harness Engineering：Agent-First 时代的软件工程实践》](https://zhangwen.site/harness-engineering-agent-first/)。
