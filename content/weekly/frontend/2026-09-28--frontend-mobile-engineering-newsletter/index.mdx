@@ -1,0 +1,47 @@
+---
+title: Frontend & Mobile Engineering Newsletter：Next.js 安全更新、Kotlin 2.5 Beta 与 Chrome 154
+slug: frontend-mobile-engineering-newsletter-2026-09-28
+description: 本期汇总 9 月 21 日至 27 日的前端与移动端重要更新，包括 Next.js 安全更新、Kotlin 2.5.0 Beta1、Android 17 QPR2 Beta 6、Chrome 154、Node.js 26.10 和 pnpm 12.6/12.7。
+date: 2026-09-28
+lastUpdated: 2026-09-28
+series: frontend
+tags:
+  - Frontend
+  - Mobile
+  - Next.js
+  - Kotlin
+  - Android
+  - Chrome
+  - Node.js
+  - pnpm
+searchIndex: true
+---
+
+本期覆盖 2026 年 9 月 21 日至 9 月 27 日，整理 Web 框架安全更新、Android/Kotlin、浏览器、JavaScript 运行时和包管理工具的主要动态。
+
+## Web 框架与浏览器
+
+- [Next.js 发布 9 月 22 日安全更新](https://nextjs.org/blog/nextjs-security-update-september-22-2026)
+  > Next.js 9 月 22 日发布 16.3.6（Active LTS）和 15.5.26（Maintenance LTS）安全更新。受影响范围为 Next.js `>=16.2.0 <16.3.6` 的 Node.js `ImageResponse` 实现，Edge `ImageResponse` 不受影响。15.5.26 包含相关加固，但 Next.js 15.x 不受该问题影响。
+
+- [Next.js 预告 9 月 30 日安全发布](https://nextjs.org/blog/upcoming-nextjs-security-release-september-2026)
+  > Next.js 9 月 23 日预告将在 9 月 30 日发布 16.3.7 和 15.5.27。官方披露这轮更新计划处理 9 个安全问题，其中 1 个 Critical、2 个 High、5 个 Medium、1 个 Low；具体细节将在补丁发布后公开。
+
+- [Chrome 154 开始推送](https://developer.chrome.com/blog/new-in-chrome-154)
+  > Chrome for Developers 9 月 22 日公布 Chrome 154 主要更新。新版本加入可根据嵌入文档内容自动调整尺寸的响应式 `<iframe>`；CSS `scroll-marker-group` 增加 `links` 和 `tabs` 模式，`text-decoration-inset` 可控制文本装饰线两端的缩进或延伸。
+
+## 移动端平台与语言
+
+- [Kotlin 2.5.0-Beta1 发布](https://kotlinlang.org/docs/whatsnew-eap.html)
+  > JetBrains 9 月 23 日发布 Kotlin 2.5.0-Beta1。该 EAP 包含 name-based destructuring 的稳定 `only-syntax` 模式，以及实验性的 companion extensions 和 companion blocks；Kotlin/JS 新增 `es2020` target，编译器也调整了 `.klib` 编译期间 inline function 的一致性。Kotlin 当前稳定版本仍为 2.4.20。
+
+- [Android 17 QPR2 Beta 6 发布](https://developer.android.com/about/versions/17/qpr2/release-notes)
+  > Google 9 月 24 日发布 Android 17 QPR2 Beta 6，build 为 `CP41.260831.007`，提供 x86_64 和 ARM v8-A 模拟器支持。同期发布的 GSI 包含 ARM64、ARM64+GMS、x86_64 和 x86_64+GMS 镜像，GSI 标注的安全补丁级别为 2026 年 9 月。
+
+## 运行时与工程工具
+
+- [Node.js 26.10.0 增加多项运行时 API](https://nodejs.org/en/blog/release/v26.10.0)
+  > Node.js 26.10.0 Current 于 9 月 22 日发布，新增 `crypto.parsePKCS12()`、`fs.openAsBlobSync()`、`util.throttle()` 和 `util.debounce()`，并允许将 `net.BoundSocket` 发送给 worker thread 和 child process。该版本还为 `perf_hooks` 增加 `SlidingWindowHistogram`，SQLite binding 则开始把 `undefined` 绑定为 `NULL`。9 月 23 日，Node.js 22 LTS 分支同步更新至 22.23.3。
+
+- [pnpm 12.6 与 12.7 连续发布](https://github.com/pnpm/pnpm/releases/tag/v12.7.0)
+  > pnpm 12.6 于 9 月 22 日发布，加入自动依赖去重、可移动的 `node_modules`、`--save-types`、`package.yaml` manifest 编辑，以及 catalog 中的 `file:` / `link:` 协议支持。9 月 25 日发布的 12.7 继续增加 `pnpm install --allow-build`，全局 Node shim 可读取 `.nvmrc` 和 `.node-version`，并可从 `package.json` 的 `workspaces` 字段生成 `pnpm-workspace.yaml`。
