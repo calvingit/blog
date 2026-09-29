@@ -1,0 +1,54 @@
+---
+title: AI Software Engineering Newsletter · 2026-09-25
+slug: ai-software-engineering-newsletter-2026-09-25
+description: 汇总 2026 年 9 月 19 日至 9 月 25 日 AI 软件工程领域的重要更新，包括 Claude Code、Codex、Gemini CLI、GitHub Copilot、Cursor、RRSI 与 Agent 安全实践。
+date: 2026-09-25
+lastUpdated: 2026-09-25
+series: ai
+tags:
+  - AI
+  - Claude Code
+  - Codex
+  - GitHub Copilot
+  - Gemini CLI
+  - Cursor
+  - Agents
+  - Benchmark
+  - Software Engineering
+searchIndex: true
+---
+
+本期覆盖 2026 年 9 月 19 日至 9 月 25 日。内容包括 Coding Agent 与 CLI 更新、Agent 运行与观测能力、Harness 成本优化、Agent 安全实验，以及新的 Harness 自改进研究。
+
+## Coding Agent 与开发工具
+
+- [Claude Code 2.1.281 补充网关、MCP 与会话恢复能力](https://github.com/anthropics/claude-code/releases/tag/v2.1.281)
+  > Anthropic 9 月 23 日发布 Claude Code 2.1.281。版本为 Claude apps gateway 的 Bedrock upstream 增加 `assume_role` 和 `guardrail` 配置，并为 MCP 2026-07-28 连接加入 URL-mode elicitation；`claude plugin validate` 也开始检查无效 MCP 配置、不安全 URL 和未声明的用户配置引用。该版本同时修复了大量 resume、prompt cache、流式响应、权限检查、sandbox、scheduled task 和 MCP 连接问题。
+
+- [Codex 0.156.1 加入 GPT-6 Sol 与 GPT-6 Luna](https://github.com/openai/codex/releases/tag/rust-v0.156.1)
+  > OpenAI 9 月 23 日发布 Codex 0.156.1。新版本把 GPT-6 Sol 和 GPT-6 Luna 加入模型选择器，并把触发 rate limit 后的切换提示调整为推荐 GPT-6 Luna。本次发布的功能改动集中在模型目录更新。
+
+- [Gemini CLI 0.61.0 加强 prompt injection 与 sandbox 防护](https://github.com/google-gemini/gemini-cli/releases/tag/v0.61.0)
+  > Google 9 月 23 日发布 Gemini CLI 0.61.0。版本修复了通过 build file 修改和不可信命令参数触发间接 prompt injection 的问题，并加强 filesystem boundary 与 runtime state 隔离。更新还修复了 `AgentLoopContext` 在对象展开时丢失状态的问题，并确保显式指定的版本化 Flash model ID 不会在路由过程中被覆盖。
+
+- [GitHub Copilot 本周加入新模型、本地 sandbox 与 OpenTelemetry](https://github.blog/changelog/2026-09-25-github-copilot-weekly-releases-september-21/)
+  > GitHub 9 月 25 日汇总了本周 Copilot 更新：Claude Opus 5.5、GPT-6 Sol、GPT-6 Luna 和 Grok 4.7 已进入不同 Copilot 套餐。Copilot app 的 local sandboxing 进入 public preview，并支持通过 enterprise-managed settings 配置 OpenTelemetry。Slack 与 Teams 增加会话内模型切换，JetBrains 加入 assisted approvals，VS Code 1.139 则开始支持在 SSH、Tunnel 和 WSL 主机上的 Dev Containers 中运行 Agent。
+
+- [Cursor 发布 Rollouts 与 Security Review](https://cursor.com/changelog/rollouts-and-security-reviewer)
+  > Cursor 9 月 23 日发布 Rollouts 和 Security Review，两项功能面向 Teams 与 Enterprise。Rollouts 会在 PR 创建后生成 monitoring plan，并在部署事件发生后根据日志、指标和 trace 判断各环境中的变更状态；检测到 regression 时可以创建 revert PR 或把问题交给 cloud agent。Security Review 会在 PR 上检查可利用的安全问题，并为 finding 提供严重级别、attack path 和修复建议。
+
+## 工程实践与博客
+
+- [Cursor 公布长任务 Agent 的 token 优化结果](https://cursor.com/blog/improved-token-efficiency)
+  > Cursor 9 月 23 日公开了 Agent harness 的一组 token 优化。官方称，缩短 system prompt、把部分内置工具改为按需加载、提高 prompt cache 复用、减少文件读取中的行号开销，并调整 subagent 使用策略后，在不降低 Agent 质量的前提下把用户 token 成本降低约 7%。其中 built-in tool 描述的静态 context token 减少 60%，cold cache miss 率降低 20%，文件行号调整又使 cache-read token 降低 1.6%。
+
+- [Anthropic 解释 Opus 5.5 在长 Claude Code 会话中的成本变化](https://claude.com/blog/claude-opus-5-5-built-for-coding-sessions-that-use-more-context)
+  > Anthropic 9 月 24 日发布文章，说明 Claude Opus 5.5 面向更长、上下文更多的 Coding session 做了定价和训练调整。Anthropic 估算，在按 token 计费的典型 workload 中，Opus 5.5 的运行成本比 Opus 5 低约 40%，长时间、高上下文的 Claude Code session 中差异更明显。文章主要讨论这些成本变化在实际 Coding session 中如何累积。
+
+- [SafeDep 用 Jev 与 Gryph 监控 AI Coding Agent 行为](https://safedep.io/ai-agent-security-jev-gryph/)
+  > SafeDep 9 月 25 日发布一项原型实验：Gryph 记录 Claude Code 的命令、文件读写和工具调用，再由 Jev 根据开发者画像与组织策略逐条判断。作者写入 14 个 synthetic attack，全部被标记为 alert；两名开发者的 5,398 条真实事件中有 5,225 条直接通过，整次运行成本为 0.81 美元。文章也明确列出误报、阈值、逐事件判断和 prompt injection 等限制，认为当前结果仍属于 prototype。
+
+## 研究与 Benchmark
+
+- [RRSI 研究用正则化方法自动改进 Agent Harness](https://arxiv.org/abs/2609.24972)
+  > Google Research 等团队 9 月 21 日发布 RRSI（Regularized Recursive Self-Improvement of Agent Harnesses）。方法允许修改 prompt、control flow、tool、memory、context management、skill 与 sub-agent，同时用 edit budget、critic、noise floor、cost rule 和 pruning 限制搜索过程中的过拟合。论文在 coding、agentic workspace 和 engineering design 的八个 benchmark 上评估，报告 evolve split 最高提升 14.1 个点、五个 OOD benchmark 最高提升 4.7 个点，并称最终 harness 相比未正则化的 evolution 使用少 30% 的 policy token。
