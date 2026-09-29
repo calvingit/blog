@@ -1,0 +1,64 @@
+---
+title: Frontend & Mobile Engineering Newsletter：Next.js 安全更新、Gradle 9.8 与 Chrome 154
+slug: frontend-mobile-engineering-newsletter-2026-09-28
+description: 本期汇总 9 月 21 日至 27 日的前端与移动端重要更新，包括 Next.js 安全更新、React-Redux Signals Alpha、Expo EAS Simulator 工作流、Kotlin 2.5 Beta、Android 17 QPR2 Beta 6、Gradle 9.8、Chrome 154、Node.js 26.10 与 pnpm 12.6/12.7。
+date: 2026-09-28
+lastUpdated: 2026-09-29
+series: frontend
+tags:
+  - Frontend
+  - Mobile
+  - Next.js
+  - React
+  - Redux
+  - React Native
+  - Expo
+  - Kotlin
+  - Android
+  - Gradle
+  - Chrome
+  - Node.js
+  - pnpm
+searchIndex: true
+---
+
+本期覆盖 2026 年 9 月 21 日至 9 月 27 日，整理 Web 框架安全更新、移动端平台与语言、浏览器、运行时和工程工具的主要动态。
+
+## 移动端平台与框架
+
+- [Expo 展示 EAS Workflows 与 EAS Simulator 的自动修复流程](https://expo.dev/blog/agent-fixes-bugs-on-eas-simulator)
+  > Expo 9 月 22 日发布一套基于 EAS Workflows 和 EAS Simulator 的示例流程：Agent 从 bug report 出发，在云端模拟器复现问题、修改代码，再用第二个模拟器会话验证修复，并创建包含前后截图、会话记录和测试结果的 Pull Request。官方示例中，修复完成后 22 个 Settings 测试、lint 和 typecheck 均通过。EAS Simulator 目前仍处于 early access，需要申请 waitlist。
+
+- [Kotlin 2.5.0-Beta1 发布](https://kotlinlang.org/docs/whatsnew-eap.html)
+  > JetBrains 9 月 23 日发布 Kotlin 2.5.0-Beta1。该 EAP 包含 name-based destructuring 的稳定 `only-syntax` 模式，以及实验性的 companion extensions 和 companion blocks；Kotlin/JS 新增 `es2020` target，编译器也调整了 `.klib` 编译期间 inline function 的一致性。Kotlin 当前稳定版本仍为 2.4.20。
+
+- [Android 17 QPR2 Beta 6 发布](https://developer.android.com/about/versions/17/qpr2/release-notes)
+  > Google 9 月 24 日发布 Android 17 QPR2 Beta 6，build 为 `CP41.260831.007`，支持 x86_64 和 ARM v8-A 模拟器。该 QPR 包含 minor SDK release，并新增针对程序化呼叫转移 USSD 的限制；Beta 6 同时修复了状态栏 letterbox 泄漏、部分设备相机初始化重启，以及第三方应用同时请求摄像头和麦克风时可能触发的系统崩溃等问题。
+
+## Web 框架与浏览器
+
+- [Next.js 发布 9 月 22 日安全更新](https://nextjs.org/blog/nextjs-security-update-september-22-2026)
+  > Next.js 9 月 22 日发布 16.3.6（Active LTS）和 15.5.26（Maintenance LTS）安全更新。远程代码执行问题影响 Next.js `>=16.2.0 <16.3.6` 的 Node.js `ImageResponse` 实现，Edge `ImageResponse` 不受影响。15.5.26 包含相关加固，但 Next.js 15.x 不受该远程代码执行问题影响。
+
+- [Next.js 预告 9 月 30 日安全发布](https://nextjs.org/blog/upcoming-nextjs-security-release-september-2026)
+  > Next.js 9 月 23 日预告将在 9 月 30 日发布 16.3.7 和 15.5.27，并同步公开完整安全公告。官方称这轮更新将处理 9 个安全问题，其中 1 个 Critical、2 个 High、5 个 Medium、1 个 Low；受影响版本和具体影响范围将在补丁发布时公布。
+
+- [React-Redux 9.4 Alpha 引入 Signals 选择器](https://github.com/reduxjs/react-redux/releases/tag/v9.4.0-alpha.0)
+  > React-Redux 9.4.0-alpha.0 于 9 月 22 日发布，新增可选的 `SignalProvider` 和 `useSignalSelector`，通过跟踪 selector 实际读取的 state path 来决定哪些 selector 需要在 dispatch 后重新运行。该版本还提供 `react-redux/signals` 入口，可将 Signals 实现映射到现有的 `Provider` 和 `useSelector` API。官方将其标记为 early alpha，并征集真实应用中的性能、selector 行为和 bundle size 反馈。
+
+- [Chrome 154 开始推送](https://developer.chrome.com/blog/new-in-chrome-154)
+  > Chrome 154 于 9 月 22 日进入 Stable rollout。新版本加入可根据嵌入文档内容自动调整尺寸的响应式 `<iframe>`；CSS `scroll-marker-group` 增加 `links` 和 `tabs` 模式，用于控制滚动标记的焦点顺序和可访问性语义；`text-decoration-inset` 可调整文本装饰线两端的位置。
+
+## 构建、运行时与工程工具
+
+- [Gradle 9.8 发布](https://docs.gradle.org/9.8.0/release-notes.html)
+  > Gradle 9.8.0 于 9 月 24 日发布，正式支持 Java 27 作为 Gradle daemon 和 toolchain。该版本可以复用 Maven 的 mirror 配置，构建脚本和 task action 可直接使用 Gradle 内置的文件、对象与进程服务，Maven Publish Plugin 也开始参与 up-to-date checks。官方同时列出了 Windows 性能改进和更多可供 tooling 使用的诊断信息。
+
+- [Node.js 26.10.0 发布](https://nodejs.org/en/blog/release/v26.10.0)
+  > Node.js 26.10.0 Current 于 9 月 22 日发布，新增 `crypto.parsePKCS12()`、`fs.openAsBlobSync()`、`util.throttle()` 和 `util.debounce()`，并允许将 `net.BoundSocket` 发送给 worker thread 和 child process。该版本还为 `perf_hooks` 增加 `SlidingWindowHistogram`，SQLite binding 则开始把 `undefined` 绑定为 `NULL`。
+
+- [pnpm 12.6 加入自动去重与可移动 node_modules](https://github.com/pnpm/pnpm/releases/tag/v12.6.0)
+  > pnpm 12.6.0 于 9 月 22 日发布，新增自动依赖去重、可随项目目录移动或复制的 `node_modules`、`pnpm add --save-types`，以及对 `package.yaml` manifest 的编辑支持。自动去重可通过 workspace 配置或 `--auto-dedupe` 启用，frozen install 不会修改 lockfile。
+
+- [pnpm 12.7 增加 allow-build 与 Node 版本文件支持](https://github.com/pnpm/pnpm/releases/tag/v12.7.0)
+  > pnpm 12.7.0 于 9 月 25 日发布，新增 `pnpm install --allow-build`、`pnpm publish --publish-wait-timeout`，并允许全局 Node shim 在项目未声明 runtime 时读取最近的 `.node-version` 或 `.nvmrc`。该版本还可以根据 `package.json` 的 `workspaces` 字段生成 `pnpm-workspace.yaml`，并包含与 Nix bin shim、workspace 内 store 生命周期脚本相关的安全修复。
