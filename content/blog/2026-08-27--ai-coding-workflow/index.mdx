@@ -14,11 +14,11 @@ tags:
 searchIndex: true
 ---
 
-最近在团队内部做了一次分享，主要是有关我个人是如何使用 AI Coding 的，供大家参考一下。
+最近在团队内部做了一次分享，主要是讲我个人是如何使用 AI Coding 的，供大家参考一下。
 
 一开始我只想整理一下自己现在用哪些工具，平时怎么让 Agent 写代码。写着写着才发现，工具只是表面，往后还有 Context、Skills、Runtime、本地产物、验证、多 Agent 和 Automation，一篇文章根本装不下，原稿也越写越长，最后拆成了四篇。
 
-回过头来看，自己的使用方式一直变个不停，紧跟着模型能力的升级而进化。早期用 AI，更多是问 API、解释报错、补一段代码。现在经常把完整任务交给 Coding Agent，让它读仓库、查调用关系、修改代码、跑测试、看浏览器或真机结果，再根据证据继续处理。
+回过头来看，自己的使用方式一直变个不停，紧跟着模型能力的升级走。早期用 AI，更多是问 API、解释报错、补一段代码。现在经常把完整任务交给 Coding Agent，让它读仓库、查调用关系、修改代码、跑测试、看浏览器或真机结果，再根据证据继续处理。
 
 任务一长，问题也跟着变了。模型会不会写代码当然重要，但平时更容易出错的地方，经常是上下文给错、工具拿不到真实状态、长任务中断后接不起来、Skill 用得太重，或者 Agent 说“完成了”，手上却没有足够证据。
 
@@ -32,21 +32,21 @@ searchIndex: true
 
 里面记录了我现在常用的 ChatGPT / Codex、Pi、CodeGraph、Context7、Chrome DevTools MCP、终端工具，以及哪些重复工作已经交给 Automation。
 
-我现在选工具时，越来越少比较“谁的功能更多”，更关心它能不能拿到当前任务的真实状态，包括代码、Git、测试、浏览器、真机和日志，这些信息能不能直接进入 Agent 的反馈循环。能解决这个问题的工具，我才会长期留下来。
+我现在选工具时，越来越少去比较“谁的功能更多”，更关心它能不能拿到当前任务的真实状态，包括代码、Git、测试、浏览器、真机和日志，这些信息能不能直接进入 Agent 的反馈循环。能解决这个问题的工具，我才会长期留下来。
 
 2. **Skills 篇**
 
 [Skills 日常工作流篇](/ai-coding-workflow-2/) 是这次调整最多的一篇。
 
-我以前很容易把 Skill 设计成一条完整流水线，`wayfinding -> grilling -> to-spec -> high-level-design -> quick-implement -> simplify -> code-review` 一路走到底。真实项目里用久以后，这种设计越来越别扭，一个很小的修改也被迫走流程，需求已经清楚还要重新探索，Runtime 已经有 Goal 和 resume，Skill 又套一层自己的生命周期。
+我以前很容易把 Skill 设计成一条完整流水线，`wayfinding -> grilling -> to-spec -> high-level-design -> quick-implement -> simplify -> code-review` 一路走到底。真实项目里用久了以后，这种设计越来越别扭，一个很小的修改也被迫走流程，需求已经清楚还要重新探索，Runtime 已经有 Goal 和 resume，Skill 又套一层自己的生命周期。
 
 现在的做法简单很多，先看当前还缺什么，再选负责这个阶段的 Workflow，`debug`、`tdd`、`simplify`、`code-review` 这些 Engineering Discipline 按实际问题叠加。长任务则靠 `MAP.md`、`SPEC.md`、按需的 `HLD.md`、tickets 和 evidence 这些本地产物保存关键事实，不把所有状态都堆在一条越来越长的聊天记录里。
 
 3. **Agent 学习篇**
 
-我学习的目的不是一定要成为Agent开发，只是遇到不懂的就问 AI，了解这些内在原理，对我使用 Agent 工具会更有帮助。所以，[Agent 学习篇](/ai-coding-workflow-3/) 记录的是这些概念怎么一点点补起来。
+我学习的目的不是一定要成为 Agent 开发，只是遇到不懂的就问 AI，了解这些内在原理，对我使用 Agent 工具会更有帮助。所以，[Agent 学习篇](/ai-coding-workflow-3/) 记录的是这些概念怎么一点点补起来。
 
-我的学习方式没有系统化，算是比较工程化吧，先在项目里碰到问题，再回头找对应机制。Agent 忘了前文，才认真研究 Context 和 Memory。长任务会中断，才去理解 Runtime、Goal 和 Harness，多个 Agent 一起得出错误结论，才开始关心 context isolation 和 independent review。
+我的学习方式谈不上系统，算是比较工程化吧，先在项目里碰到问题，再回头找对应机制。Agent 忘了前文，才认真研究 Context 和 Memory。长任务会中断，才去理解 Runtime、Goal 和 Harness。多个 Agent 一起得出错误结论，才开始关心 context isolation 和 independent review。
 
 最后串起来的大概是 Model、Context、Tool、Harness、Runtime、Skills、Memory、多 Agent 和 Automation。这个顺序谈不上课程大纲，只是实际踩坑以后留下的一条学习路径。
 

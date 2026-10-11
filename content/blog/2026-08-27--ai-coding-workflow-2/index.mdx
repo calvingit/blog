@@ -19,7 +19,7 @@ searchIndex: true
 
 我前几版 AI Coding 工作流最大的问题，是把开发想成了一条流水线。
 
-那时我会把 `wayfinding -> grilling -> to-spec -> high-level-design -> quick-implement -> simplify -> code-review` 画成一条主流程。实际用久以后发现，这种画法很容易让 Agent 机械执行，明明只是一个局部配置修改，也想先跑一遍 Skill，明明需求已经很清楚，还要从 `wayfinding` 开始，Runtime 已经有 Goal 和 resume，又在 Skill 里套一层自己的循环控制。
+那时我会把 `wayfinding -> grilling -> to-spec -> high-level-design -> quick-implement -> simplify -> code-review` 画成一条主流程。实际用久以后发现，这种画法很容易让 Agent 机械执行：明明只是一个局部配置修改，也想先跑一遍 Skill；明明需求已经很清楚，还要从 `wayfinding` 开始；Runtime 已经有 Goal 和 resume，又在 Skill 里套一层自己的循环控制。
 
 最近我把 [Engineering Skills](https://github.com/calvingit/skills#engineering-skills) 重新整理了一遍。现在的思路简单多了，先判断当前任务缺什么，再选负责这一阶段的 Workflow，遇到具体工程问题时按需叠加 Engineering Discipline。Skill 不负责接管完整的软件开发生命周期。
 
@@ -44,7 +44,7 @@ searchIndex: true
 
 Skill 也有成本，会增加上下文、步骤和约束。一个几分钟就能确认的问题，没必要强行塞进完整工作流。
 
-我现在把 Skill 看成一种“在特定工程问题上降低不确定性”的工具。它能明显减少错误率、帮助跨 session 保存关键事实，或者给复杂任务提供更稳定的方法时才值得用。
+我现在把 Skill 看成一种“在特定工程问题上降低不确定性”的工具。只有当它能明显减少错误率、帮助跨 session 保存关键事实，或者给复杂任务提供更稳定的方法时，才值得用。
 
 ## 三层上下文
 
@@ -120,11 +120,11 @@ Workflow 不再有固定起点。我通常先看当前工作卡在哪里。
 
 后续需求新增、修改或删除时，`to-spec` 在同一份 `SPEC.md` 上做 amendment：保留未受影响的 R/AC ID，记录受影响的需求、验收、边界与测试决策。它只评估下游影响，不直接改 ticket；SPEC 确认后，再由 `to-tickets` 协调执行图。
 
-范围明确、能在一个 fresh context 内可靠完成、且不需要执行图的任务，可以把 `SPEC.md` 直接交给 `quick-implement`。是否先写 SPEC 取决于任务是否需要可回读的规范契约；一旦已经有 SPEC，也不意味着必须继续拆 tickets。
+范围明确、能在一个 fresh context 内可靠完成且不需要执行图的任务，可以把 `SPEC.md` 直接交给 `quick-implement`。是否先写 SPEC 取决于任务是否需要可回读的规范契约；一旦已经有 SPEC，也不意味着必须继续拆 tickets。
 
 ### `high-level-design`
 
-`HLD.md` 不是每个任务都要补的一层文档。只有共享类型、模块职责、跨调用方接口、状态或错误语义、依赖方向，或集成迁移约束会让多处实现必须遵守同一份设计约定时，才进入 `high-level-design`。是否需要 HLD 取决于这些约定，而不是 ticket 数量。
+`HLD.md` 不是每个任务都要补的一层文档。只有当共享类型、模块职责、跨调用方接口、状态或错误语义、依赖方向，或集成迁移约束会让多处实现必须遵守同一份设计约定时，才进入 `high-level-design`。是否需要 HLD 取决于这些约定，而不是 ticket 数量。
 
 它先搜索现有仓库的调用链、相似实现和架构约束，优先复用或扩展已有结构；只有现有结构无法满足 SPEC 时，才采用新增或替换方案。`SPEC.md` 仍只回答需求、外部行为和验收；`HLD.md` 说明在当前代码库里怎样以最小架构偏离满足这些需求；tickets 只负责把工作拆成执行图。
 
@@ -279,7 +279,7 @@ Runtime 仍然拥有用户层面的 conversation、session、context recovery、
 
 ## Worktree 和多 Agent 仍然只是执行手段
 
-复杂功能或并行任务不自动等于需要独立 worktree。只有能证明任务之间需要文件隔离时才创建；默认串行推进一张 ready ticket。并行之前还必须确认 tickets 与 writable surfaces 足够隔离，避免把冲突从 Git 工作区搬到集成阶段。
+复杂功能或并行任务，不代表一定需要独立 worktree。只有能证明任务之间需要文件隔离时才创建；默认串行推进一张 ready ticket。并行之前还必须确认 tickets 与 writable surfaces 足够隔离，避免把冲突从 Git 工作区搬到集成阶段。
 
 但 worktree 只能隔离文件，不能隔离设计冲突。多个 Agent 同时修改共享类型、依赖注入、公共配置或同一条核心调用链，仍然可能互相打架。
 
