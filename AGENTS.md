@@ -8,7 +8,7 @@ Personal blog (https://zhangwen.site) built with [Astro](https://astro.build), c
 
 ## Writing
 
-生成、改写或审校博客、Newsletter、技术评论及其他中文长文时，遵循 [`.agents/writing-style.md`](./.agents/writing-style.md)。通用中文表达、AI 生成痕迹清理、事实保真和发布前检查由该文件统一维护；Automation、Skill 和单篇 Prompt 只保留当前栏目或任务特有的规则，不重复共享写作规范。
+生成、改写或审校博客、Newsletter、技术评论及其他中文长文时，遵循 [`.agents/writing-style.md`](./.agents/writing-style.md)。通用中文表达、AI 生成痕迹清理、事实保真和发布前检查由该文件统一维护；Automation、Skill 和单篇 Prompt 只保留当前栏目或任务特有的规则，不重复共享写作规范。weekly 栏目另有命名与标题约定，见 [`.agents/weekly-conventions.md`](./.agents/weekly-conventions.md)。
 
 ## Commands
 
