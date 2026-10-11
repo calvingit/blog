@@ -4,7 +4,7 @@ This file provides guidance to AI Agent when working with code in this repositor
 
 ## Project Overview
 
-Personal blog (https://zhangwen.site) built with [Astro](https://astro.build), customized from [astro-theme-minimal-blog](https://github.com/LekoArts/astro-theme-minimal-blog). Static output deployed to Netlify. Blog posts are written in MDX.
+Personal blog (https://zhangwen.site) built with [Astro](https://astro.build), customized from [astro-theme-minimal-blog](https://github.com/LekoArts/astro-theme-minimal-blog). Static output deployed to Cloudflare Pages. Blog posts are written in MDX.
 
 ## Writing
 

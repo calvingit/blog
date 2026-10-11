@@ -27,7 +27,7 @@
 
 ## 这个仓库
 
-本仓库保存博客源码和全部 MDX 文章。站点使用 Astro 构建并部署到 Netlify；如需提交勘误或改进文章，欢迎发起 Issue 或 Pull Request。
+本仓库保存博客源码和全部 MDX 文章。站点使用 Astro 构建并部署到 Cloudflare Pages；如需提交勘误或改进文章，欢迎发起 Issue 或 Pull Request。
 
 文章位于 `content/blog/`，每篇文章使用独立目录：
 
@@ -61,4 +61,4 @@ pnpm lint      # 检查代码风格
 pnpm lint:fix  # 自动修复可处理的问题
 ```
 
-部署由 Netlify 使用 `pnpm build` 生成 `dist/` 后完成。
+部署由 Cloudflare Pages 使用 `pnpm build` 生成 `dist/` 后完成。
