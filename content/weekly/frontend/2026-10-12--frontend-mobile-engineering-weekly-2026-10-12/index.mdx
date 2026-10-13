@@ -1,0 +1,47 @@
+---
+title: Frontend & Mobile Engineering Weekly：Next.js 16.4 推荐所有应用采用 Cache Components
+slug: frontend-mobile-engineering-weekly-2026-10-12
+description: 本期汇总 10 月 5 日至 10 月 11 日的前端与移动端更新，包括 Next.js 16.4、iPhone Duo 应用提交、Nuxt 4.6 与 Nuxt CLI v4、TanStack Charts 1.0、Playwright 1.64 和 pnpm 12.10 至 12.12。
+date: 2026-10-12
+lastUpdated: 2026-10-12
+series: frontend
+tags:
+  - Next.js
+  - Cache Components
+  - Turbopack
+  - iOS
+  - Xcode
+  - iPhone Duo
+  - Nuxt
+  - TanStack Charts
+  - Playwright
+  - WebMCP
+  - pnpm
+searchIndex: true
+---
+
+本期覆盖 2026 年 10 月 5 日 00\:00 至 10 月 11 日 23\:59（UTC+8），整理前端与移动端的官方公告、版本发布和项目更新。
+
+## 移动端平台
+
+- [Apple 开放 iPhone Duo 应用提交](https://developer.apple.com/news/?id=kkphp5qo)
+  > Apple 10 月 5 日宣布，iPhone Duo 将于 10 月 23 日开售，开发者即日起可在 App Store Connect 提交针对 iPhone Duo 优化的应用和游戏。Apple 要求用 Xcode 27.1 重新编译现有应用以获得 iPhone Duo 开发支持，并可在 Device Hub 中查看应用在各种姿态和方向下的表现。App Store Connect 同步提供新的截图与预览规格及产品页预览工具；从 2027 年 4 月起，提交的应用和游戏必须包含 iPhone Duo 截图。
+
+## Web 框架与组件库
+
+- [Next.js 16.4 推荐 Cache Components](https://nextjs.org/blog/next-16-4)
+  > Vercel 10 月 6 日发布 Next.js 16.4，官方从这一版开始向所有 Next.js 应用推荐 Cache Components，`create-next-app` 新建的项目默认启用，Next.js 17 将把它设为默认模型。新版本加入 `ensureStatic`，可在路由出现动态内容时让构建失败，并新增 `navigation()` 与 `prefetch()` 两个 API，用来把缓存内容排除出预取或 shell。`next upgrade --agent` 会为 Agent 准备迁移指南、codemod 和验证步骤，`experimental.agentUpgrade` 与 `experimental.agentFeedback` 则分别提供升级提醒和反馈报告草稿，后者需要启用 Telemetry 且不在 CI 中运行。所有应用还会获得 Turbopack 磁盘缓存体积减少 20–25%、按需的服务端 HMR、更小的生产包和 React 19.3；Rust 版 React Compiler、`turbopackGc`、worker threads 等仍为实验特性，worker threads 在 Node.js 24.13.1 及以上版本会因 Node.js 的 bug 回退到子进程。
+
+- [Nuxt 4.6 推出 `nuxt/server` 与 Nuxt CLI v4](https://github.com/nuxt/nuxt/releases/tag/v4.6.0)
+  > Nuxt 团队 10 月 6 日发布 Nuxt 4.6，新增 `nuxt/server` 导入入口，服务端处理器和工具函数基于可移植的 `RequestEvent` 类型，不再需要直接依赖 `h3` 或 `nitropack`，同一份代码可运行在 Nitro v2、Nitro v3 或实验性的 `@nuxt/vite-server` 上。团队表示 Nitro 仍是绝大多数项目的推荐选择，`@nuxt/vite-server` 基于 Vite Environment API，目前处于实验阶段。同时发布的 `@nuxt/cli` v4 为 `nuxt dev` 加入交互式终端界面和 `.nuxt/` 锁文件，安装体积从 13.1 MB 降到 3.5 MB，要求 Node.js v22.21+、v24.11+ 或 v26+，并移除 `nuxt init`，不再支持 Nuxt 2 与 `@nuxt/bridge`。
+
+- [TanStack Charts 1.0 发布](https://tanstack.com/blog/tanstack-charts-1-0)
+  > Tanner Linsley 10 月 5 日发布 TanStack Charts 1.0，这个图表库以 mark、scale、axis 和交互组合图表，默认使用 SVG 渲染，Canvas 渲染器需要单独引入。库支持自定义 mark、scale 和渲染器，也可以接入 D3 scale 或精简 scale 以控制体积。作者表示 1.0 意味着开始为基于这套 API 构建的用户提供支持，后续 API 变更需要提供从旧接口迁移到新接口的路径。
+
+## 测试与工程工具
+
+- [Playwright 1.64 支持测试 WebMCP 工具](https://github.com/microsoft/playwright/releases/tag/v1.64.0)
+  > Microsoft 10 月 8 日发布 Playwright 1.64，新增 `page.webmcp` 和 `frame.webmcp`，可读取并调用页面通过实验性 WebMCP 浏览器 API 注册的工具；Chromium 需以 `--enable-features=WebMCP` 启动，Playwright MCP 默认将这些工具以 `webmcp_<tool>` 形式提供给 Agent。视频录制新增 `fps` 和基于 CSS 的 `style` 选项，编码从 VP8 改为 VP9，Firefox 与 WebKit 目前最多采集每秒 25 帧。本版包含多项破坏性变更：设备描述符的 `screen` 属性会被转发，测试文件中的 JSX 按 `tsconfig.json` 编译，`--update-snapshots=missing` 模式下仅新建快照的测试改为通过，隐藏 iframe 内的元素被视为不可见。
+
+- [pnpm 12.10 至 12.12 加入 Agent skills 链接与远程缓存](https://github.com/pnpm/pnpm/releases/tag/v12.12.0)
+  > pnpm 在 10 月 6 日至 11 日间连续发布 12.10、12.11 和 12.12。12.10 加入实验性的 `nodeLinker: { type: loaded }`，并修复多项安全问题，包括阻止含路径穿越的依赖版本把文件写到全局虚拟存储之外。12.11 让 `pnpm install` 把直接依赖附带的 `skills/<name>/SKILL.md` 链接进 `.claude/skills` 等目录，链接前需要用 `pnpm approve` 批准，同时新增 `permissions` 设置和 Rust 工具链管理。12.12 让 `pnpm pipeline` 通过 pnpr 服务器或兼容 Turborepo Remote Cache API 的服务器共享签名任务结果，新增 `addMissingPeerTypes`，并修复 `dangerouslyAllowAllBuilds` 会运行被 `allowBuilds` 拒绝的构建脚本的问题。
