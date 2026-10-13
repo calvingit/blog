@@ -1,0 +1,44 @@
+---
+title: AI Software Engineering Weekly：MCP Server Cards 成为 Final 状态的扩展提案
+slug: ai-software-engineering-weekly-2026-10-12
+description: 汇总 2026 年 10 月 5 日至 10 月 11 日 AI 软件工程更新，涵盖 MCP Server Cards、GitHub MCP Server 2.0、MXC SDK 1.0、Claude Code、Codex 与 OpenCode。
+date: 2026-10-12
+lastUpdated: 2026-10-12
+series: ai
+tags:
+  - MCP
+  - GitHub MCP Server
+  - MXC
+  - Sandbox
+  - Claude Code
+  - Codex
+  - OpenCode
+  - Subagent
+searchIndex: true
+---
+
+本期覆盖 2026 年 10 月 5 日 00\:00 至 10 月 11 日 23\:59（UTC+8），上一期已收录的事件不再重复，本期整理 MCP 协议与工具、Agent 执行隔离和 Coding Agent 版本更新。
+
+## MCP 与工具调用
+
+- [MCP Server Cards 提案进入 Final 状态](https://modelcontextprotocol.io/seps/2127-mcp-server-cards)
+  > Model Context Protocol 规范仓库 10 月 6 日合并 SEP-2127「MCP Server Cards - HTTP Server Discovery」，该提案现为 Final 状态，属于 Extensions Track。Server Card 是描述远程 MCP 服务器身份、端点、传输方式和协议版本的静态元数据文档，客户端可以在建立连接前读取。提案本身只承担章程作用，具体 schema、发现机制和安全分析维护在 `experimental-ext-server-card` 仓库；提案还规定，Server Card 与 `server/discover` RPC 返回的信息不一致时，客户端应优先采用后者。
+
+- [GitHub MCP Server 2.0 支持结构化输出](https://github.com/github/github-mcp-server/releases/tag/v2.0.0)
+  > GitHub 10 月 7 日发布 GitHub MCP Server 2.0.0，为工具加入结构化输出和输出 schema，发布说明称这一改动面向越来越多支持 Code Mode 或 Programmatic Tool Calling 的 Agent。输出 schema 只会提供给声明支持 MCP 2026-07-28 或更新规范的客户端；部分组合工具的输出 schema 经过调整，对旧客户端无效，因此不会返回给它们。GitHub 随后在 10 月 7 日和 8 日发布了 2.0.1 和 2.0.2 两个补丁版本。
+
+## 执行隔离与基础设施
+
+- [Microsoft 发布 MXC SDK 1.0](https://github.com/microsoft/mxc/releases/tag/v1.0.0)
+  > Microsoft 10 月 7 日发布 MXC SDK v1.0.0，称其为 MXC SDK 接口的首个稳定版本，覆盖 Rust、.NET 和 Node.js。MXC 用于在 Windows、Linux 和 macOS 上运行模型输出、插件和工具等不受信任的代码，在统一配置下提供从操作系统原生进程沙箱到虚拟机的多种隔离后端。V1 入口为 `mxc_sdk::v1`、`Microsoft.Mxc.Sdk.V1` 和 `@microsoft/mxc-sdk/v1`，支持一次性执行、管道交互、PTY 和容器生命周期管理；PTY 只在所选后端能提供相应终端语义时可用，后续版本按 semver 2.0 管理兼容性。
+
+## Coding Agent 与开发工具
+
+- [Claude Code 2.1.296 允许子 Agent 单独设置压缩窗口](https://github.com/anthropics/claude-code/releases/tag/v2.1.296)
+  > Anthropic 10 月 10 日发布 Claude Code 2.1.296，子 Agent 的 frontmatter 和 `--agents` 定义新增 `autoCompactWindow`，可以让子 Agent 比主对话更早触发自动压缩。新增的 `CLAUDE_CODE_WORKFLOW_SUBAGENT_MODEL` 会让 Workflow 中的所有 Agent 使用同一个模型，其他子 Agent 保持原有模型；Read 工具新增 `allow_large` 选项，在上下文有余量时可一次读取超出常规大小限制的文本文件。修复项包括托管设置中 `PreToolUse` Hook 拒绝调用后未结束当前轮次，以及部分给 `BASH_ARGV0` 赋值后再使用的命令被 Bash 权限检查自动放行的问题，这类命令现在需要用户批准。
+
+- [Codex 推出 composer predictions Beta](https://help.openai.com/en/articles/20001601-composer-predictions-in-codex)
+  > OpenAI 10 月 10 日宣布 Codex 桌面应用的 composer predictions 进入 Beta，Codex 回复后可根据当前对话建议用户的下一条消息。该功能仅面向 18 岁以上的个人 ChatGPT Pro 用户，适用于使用 GPT-6 Astra 或 GPT-6.1 Sol 的本地和 SSH 线程；按 Tab 接受的建议不会自动发送，可在设置中关闭。OpenAI 表示 Beta 期间生成建议不额外收费，也不消耗 Codex 额度或 credits，预测只使用当前线程中已有的上下文。
+
+- [OpenCode 1.19 提供升级到 OpenCode 2 的入口](https://github.com/sst/opencode/releases/tag/v1.19.0)
+  > OpenCode 10 月 11 日发布 1.19.0，用户可运行 `opencode upgrade --major` 或在 TUI 中使用 `/update` 升级到 OpenCode 2。该版本起不再自动安装更新，需要用户手动触发。其他改动包括允许使用 OpenAI 的 `ultrafast` 服务层级，以及在检查 PTY 是否存在之前先校验 PTY 连接的来源和 ticket。
