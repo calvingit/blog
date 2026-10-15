@@ -81,3 +81,12 @@ Uses `@antfu/eslint-config` with: 2-space indent, single quotes, no semicolons. 
 ## Adding a blog post
 
 Use the interactive CLI: `pnpm assistant`. It prompts for title, slug, description, date, and tags, then creates `content/blog/YYYY-MM-DD--slug/index.mdx` with prefilled frontmatter. Tags are entered as comma-separated text and normalized through `src/tags.ts`. Extend the CLI at `scripts/assistant.ts` if needed.
+
+## Cursor Cloud specific instructions
+
+- Install dependencies with `pnpm install --frozen-lockfile`. `package.json` pins `pnpm@10.6.3` through the `packageManager` field.
+- Astro requires Node `>=22.12.0`. The Cloud Agent image exposes Node 22.14 at `/exec-daemon/node`, and that binary is first on `PATH`. `.nvmrc` requests Node 24; leave the daemon Node in place.
+- Start the site with `pnpm dev --host 0.0.0.0 --port 4321`. Astro defaults to port 4321, and binding `0.0.0.0` makes the dev server reachable in the VM.
+- Pagefind search during `pnpm dev` serves `dist/pagefind`. Run `pnpm build` once before expecting search results.
+- pnpm 10 skips the `esbuild` and `sharp` dependency build scripts. Their platform packages already include prebuilt binaries, and `pnpm build` completes without approving those scripts.
+- There is no automated test script. `pnpm lint` currently fails on pre-existing quote style in `.agents/skills/ian-xiaohei-illustrations/agents/openai.yaml`. `pnpm exec eslint src scripts` is clean.
