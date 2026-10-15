@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zhangwen.site/sitemap-index.xml
