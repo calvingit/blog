@@ -1,0 +1,46 @@
+---
+title: Frontend & Mobile Engineering Weekly：Next.js 安全更新修复 Critical RCE；Expo SDK 58
+slug: frontend-mobile-engineering-weekly-2026-10-19
+description: 本期汇总 10 月 12 日至 10 月 18 日的前端与移动端更新，包括 Next.js 安全补丁、Expo SDK 58、React Native 0.88、Apple 开发者协议与审核指南，以及 Chrome 155 安全修复。
+date: 2026-10-19
+lastUpdated: 2026-10-19
+series: frontend
+tags:
+  - Next.js
+  - Expo
+  - React Native
+  - iOS
+  - App Store
+  - Chrome
+  - Cache Components
+  - Server Actions
+  - sharp
+  - iPhone Duo
+searchIndex: true
+---
+
+本期覆盖 2026 年 10 月 12 日 00\:00 至 10 月 18 日 23\:59（UTC+8），整理前端与移动端的官方公告、版本发布和安全更新。
+
+## Web 框架与安全
+
+- [Next.js 发布上游漏洞安全更新](https://nextjs.org/blog/nextjs-security-update-october-14-2026)
+  > Vercel 10 月 14 日发布 Next.js 安全更新，修复已推迟自 9 月安全发布的上游依赖问题，补丁版本为 Active LTS 的 16.4.1 与 Maintenance LTS 的 15.5.28。更新包含三处漏洞：App Router 在启用 Cache Components 且 `use cache` 函数返回多个 typed arrays 时可导致未认证远程代码执行（Critical，GHSA-673q-mjm6-r5xr，无已知规避方法）；Image Optimization 在 glibc Linux 上处理 SVG 时，上游库内存问题可导致远程代码执行（Critical，CVE-2026-96889 / GHSA-2464-fhr4-w9xw，临时可确保 `sharp` 为 0.35.5 或更高）；App Router 且至少定义一个 Server Action 时，构造请求可造成过量 CPU 占用并阻断同进程其他请求（High，GHSA-p3m5-59mp-jv5r，Pages Router 或未使用 Server Actions 的应用不受影响）。
+
+## 移动端平台与框架
+
+- [Expo SDK 58 面向 iOS 27 发布](https://expo.dev/changelog/sdk-58)
+  > Expo 10 月 16 日发布 SDK 58，面向 iOS 27，并包含 React Native 0.88。本版应用在 iPhone Duo 发售当日即可适配折叠与分屏布局，导航侧推荐 Expo Router 的 `Stack`、`NativeTabs` 或 Expo UI 的 SwiftUI 视图；新增 `ArrangementView` 与实验性 `expo-hinge`，用于跟随铰链角度与开合状态。`expo-app-intents`（alpha）可将应用动作与内容暴露给 Siri、Shortcuts、Spotlight 和 Apple Intelligence。Android 干净构建在测试项目中约从 80 秒降到 39 秒，因 `expo-modules-core` 预编译；同步提供 Android 主屏小组件、稳定的 data loaders 与 native tabs，以及面向 Agent 的实验性 `@expo/agent-cli`。面向商店的 Expo Go 将在数周内发布，在此之前新建项目需使用 `npx create-expo-app --template default@sdk-58` 并采用 development build。
+
+- [React Native 0.88 发布](https://github.com/facebook/react-native/releases/tag/v0.88.0)
+  > React Native 团队 10 月 15 日发布 0.88.0，同步 React 19.3.0，并为 `Text` 与 `TextInput` 加入 `fontVariationSettings` 对象语法以支持可变字体。本版启用基于 Web 的事件分发重构，iOS 增加 SceneDelegate 生命周期支持，TurboModules 在 Android 与 iOS 上增加 `ArrayBuffer` 原生表示及字节所有权约定；React Native DevTools 提供实验性性能截图，并在 Canary 通道支持 Network 面板中的 WebSocket 检查。Metro 最低版本升至 0.87.1，Hermes 亦有对应升级。
+
+- [Apple 更新 Developer Program License Agreement](https://developer.apple.com/news?id=17mwd36z)
+  > Apple 10 月 13 日发布修订后的 Apple Developer Program License Agreement，开发者需登录账户接受新条款。修订涵盖第 3.2 节软件与服务安全要求、Live Assistance API 与 App Replacement Entitlement 的使用条款、iOS 小组件与 CarPlay 应用在 Apple HomeView 上的可用性，以及通过 Group Purchases 与 Volume Purchasing 提供多席位订阅的条款；另规定 Apple 向税务机关报送法定信息，并限制开发者仅可将客户税务信息用于法律要求的用途。协议译文将在一个月内上线。
+
+- [Apple 更新 App Review Guidelines](https://developer.apple.com/news?id=vvzx6cul)
+  > Apple 10 月 16 日更新 App Review Guidelines，并同步说明针对非自愿亲密影像与诱饵调包应用的强化。第 1.2 条明确内容审核须主动防止并移除非自愿亲密影像（含 AI 生成内容），未落实防护或未在通知后整改可能违反 Developer Code of Conduct 并被移出 App Store；新增或澄清 2.5.19，禁止在审核时隐瞒功能、通过后改行为；第 5 节写明涉及人口贩运或儿童剥削的应用将从 App Store 移除并阻断替代分发。同日另一则公告还补充了创意素材相关的 2.3.14，以及 StoreKit External Purchase Link Entitlements 等条款调整。
+
+## 浏览器
+
+- [Chrome 155 Stable 修复 37 项安全问题](https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_01668083673.html)
+  > Google 10 月 13 日将 Desktop Stable 更新至 Windows 与 Mac 的 155.0.8059.79/.80，以及 Linux 的 155.0.8059.79，并在随后数日到数周内逐步推送。本更新包含 37 项安全修复，其中 7 项为 Critical，包括 ANGLE 缓冲区溢出（CVE-2026-110152）以及 Browser、PDF、Network、Core、SVG、Media 等组件中的 Use-after-free；其余多为 High 严重级别的内存安全与权限类问题。公告未说明这些漏洞已遭在野利用。
