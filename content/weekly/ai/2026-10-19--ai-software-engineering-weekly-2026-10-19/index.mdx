@@ -1,0 +1,48 @@
+---
+title: AI Software Engineering Weekly：Cursor Origin App Marketplace；Gemini 4 Argon 进入 Copilot
+slug: ai-software-engineering-weekly-2026-10-19
+description: 汇总 2026 年 10 月 12 日至 10 月 18 日 AI 软件工程更新，涵盖 Cursor Origin App Marketplace、Gemini 4 Argon、Claude Code、HydraFusion、Agentic autofix 与 SWE-Stream。
+date: 2026-10-19
+lastUpdated: 2026-10-19
+series: ai
+tags:
+  - Cursor
+  - Origin
+  - GitHub Copilot
+  - Gemini 4 Argon
+  - Claude Code
+  - HydraFusion
+  - Agentic autofix
+  - SWE-Stream
+  - CodeQL
+searchIndex: true
+---
+
+本期覆盖 2026 年 10 月 12 日 00\:00 至 10 月 18 日 23\:59（UTC+8），上一期已收录的事件不再重复，本期整理 Coding Agent、Copilot 模型与企业托管，以及安全修复 Agent 和 SWE 训练数据研究。
+
+## Coding Agent 与开发工具
+
+- [Cursor 为 Origin 上线 App Marketplace](https://cursor.com/changelog/origin-app-marketplace)
+  > Cursor 10 月 13 日在 Changelog 宣布 Origin App Marketplace，Origin 现可对接超过 20 个应用，覆盖部署、CI、代码审查、安全、监控与项目管理，合作方包括 Cloudflare、Linear、Sentry 和 Socket Security。部署类含 Cloudflare、Netlify、Render、Spacelift、Vercel；CI 含 Buildkite、CircleCI、CloudBees、Depot、EngFlow、Namespace、RWX；代码审查含 CodeRabbit、Greptile、Tenki；安全含 Artemis Security、Semgrep、Socket Security、Upwind；监控为 Sentry；项目管理为 Linear。当日起 Marketplace 对公众开放提交，团队可在命名空间内创建应用、对接 Origin API，经审核后上架。
+
+- [GitHub Copilot 一般可用 Gemini 4 Argon](https://github.blog/changelog/2026-10-13-gemini-4-argon-in-github-copilot)
+  > GitHub 10 月 13 日宣布 Google 的 Gemini 4 Argon 在 GitHub Copilot 一般可用，面向复杂编码、Agent 与推理任务，按提供方列表价计入用量计费。该模型面向 Copilot Pro+、Max、Business 和 Enterprise 用户，可在 Visual Studio Code、Visual Studio、Copilot CLI、coding agent、Copilot app、JetBrains、Xcode 与 Eclipse 的模型选择器中选用；推送为逐步放开。Enterprise 与 Business 管理员可通过 Copilot 设置中的模型策略管理访问，默认模型启用策略下新模型会自动开启，除非管理员关闭全局默认或单独禁用。
+
+- [Claude Code 2.1.300 支持 AWS 上的 /advisor 与 GenAI 遥测属性](https://github.com/anthropics/claude-code/releases/tag/v2.1.300)
+  > Anthropic 10 月 14 日发布 Claude Code 2.1.300，在 Claude Platform on AWS 上增加 `/advisor`；未通过 `/advisor`、`advisorModel` 或 `--advisor` 选定前不会运行 advisor，可用 `CLAUDE_CODE_DISABLE_ADVISOR_TOOL=1` 关闭。本版为 OpenTelemetry 追踪补充 GenAI 语义约定属性（如 `gen_ai.provider.name`、`gen_ai.conversation.id`、`gen_ai.tool.name`、`error.type`），并在 `api_request` 事件中拆分 `cache_creation_5m_tokens` 与 `cache_creation_1h_tokens`。mods 新增 `virtualText`（写入提示框但不进入草稿或提交内容）、`$.ui.view({ agentId })` 查看子 Agent 转录，以及非键入编辑触发的 `prompt.change` hook。随后 10 月 15 日与 16 日发布了 2.1.301 与 2.1.302 补丁。
+
+- [HydraFusion 更新模型池并推出 HydraFusion Max](https://github.blog/changelog/2026-10-14-hydrafusion-updates-and-new-max-option)
+  > GitHub 10 月 14 日更新 HydraFusion，并引入 HydraFusion Max；二者仍为 research preview，可在 VS Code、GitHub Copilot app 与 Copilot CLI 使用。模型池现包含 Claude Opus 5.5、GPT-6 Astra、GPT-6.1 Sol 与 GPT-6 Luna，各任务所用模型随编排流程变化。此前各模型只用默认推理力度，现可按阶段设定：初稿用 medium、审查用 high。Cascade 可增加评判步骤，仅在需要时请求修复；Critique 更多直接用工具检查工作区，并并行运行多个 critic 模型。HydraFusion Max 使用相同架构与流程，在需要更深推理的任务上提高力度。二者面向已开启 experimental 或 preview 功能的 Copilot Pro、Pro+、Business、Enterprise，并受组织模型策略约束。
+
+## 工程实践与基础设施
+
+- [GitHub Copilot 企业托管设置强化启动时策略刷新](https://github.blog/changelog/2026-10-13-enterprise-managed-settings-enforcement-updates)
+  > GitHub 10 月 13 日更新企业托管设置执行方式：管理员可将 `forceRemoteSettingsRefresh` 设为 `true`，要求 Copilot CLI、VS Code 与 GitHub Copilot app 在启动时拉取当前服务端托管设置，而不依赖缓存策略。设置生效期间，缓存响应无法满足新鲜度要求；客户端若无法确认当前策略会 fail closed，不以过期或未确认策略继续运行。面向已一般可用的本地 sandbox，托管设置中的 `sandbox` 键开始强制最低客户端版本，固定在旧版客户端的用户需升级后才能继续使用 Copilot。
+
+- [Agentic autofix 修复 code scanning 告警进入一般可用](https://github.blog/changelog/2026-10-15-agentic-autofix-for-code-scanning-alerts-general-availability)
+  > GitHub 10 月 15 日宣布 code scanning 告警的 Agentic autofix 一般可用：将告警指派给 Copilot 后，它会跨代码库查看相关文件、提出修复、重跑 CodeQL 确认告警关闭，再开出供审查的草稿 PR。启用后，单条告警上的免费 Generate Fix 会替换为 Assign to Copilot；也可在仓库或安全活动列表中一次选最多 25 条告警合并到同一 PR，或通过 REST API 将 `assignees` 设为 `["copilot-swe-agent[bot]"]`。仅支持仓库默认分支上的 code scanning 告警；仅出现在 PR 或其他分支的告警不能指派。面向 GitHub Code Security 与 Advanced Security 的 Enterprise Cloud（含数据驻留）客户，需企业管理员在 Advanced Security 策略中开启「Agentic autofix」，并由组织或仓库管理员在 Code Security 设置中打开，同时需配置 Copilot 计费方式；用量计入 Code Security 预算中的 AI Credits 与 Actions 分钟。
+
+## 研究与 Benchmark
+
+- [SWE-Stream：用渐进构造与弹性流式执行扩展可执行 SWE 训练数据](https://arxiv.org/abs/2610.20193)
+  > Chengyang Liu 等人 10 月 14 日在 arXiv 发布 SWE-Stream（arXiv:2610.20193）。该系统从开发历史渐进校验与补全任务候选，并用弹性调度器在共享资源下异步协调各构造阶段。作者从 10,728 个仓库、六种编程语言的开发历史中构造 80,874 个已校验任务，并收集 118,688 条成功轨迹；在 SWE-bench Verified、Multilingual 与 Pro 上，基于该数据微调后的 resolve rate 分别为 69.0%、49.3% 与 45.42%。在训练 token 大致对齐的对照中，SWE-Stream 在四个数据源里取得最高的 SWE-bench Verified 表现；相对批量构造，流式构造的已接受任务吞吐约为 1.45 倍。
