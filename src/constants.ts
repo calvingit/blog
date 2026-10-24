@@ -98,6 +98,13 @@ export const HEADER: Header = {
         target: '_blank',
       },
     },
+    {
+      title: 'X',
+      url: 'https://x.com/calvin_cheung0',
+      props: {
+        target: '_blank',
+      },
+    },
   ],
 }
 
