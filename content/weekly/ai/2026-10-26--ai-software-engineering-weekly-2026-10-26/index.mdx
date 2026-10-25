@@ -1,0 +1,57 @@
+---
+title: AI Software Engineering Weekly：Claude API 2026-10-21；Codex CLI 0.164
+slug: ai-software-engineering-weekly-2026-10-26
+description: 汇总 2026 年 10 月 19 日至 10 月 25 日 AI 软件工程更新，涵盖 Claude API 2026-10-21、Codex CLI 0.164、Gemini API CLI、Copilot 模型与用量指标，以及 SWE-Residual。
+date: 2026-10-26
+lastUpdated: 2026-10-26
+series: ai
+tags:
+  - Claude API
+  - Codex
+  - Gemini API CLI
+  - Claude Code
+  - GitHub Copilot
+  - OpenCode
+  - MCP
+  - SWE-Residual
+  - SWE-DIVE
+searchIndex: true
+---
+
+本期覆盖 2026 年 10 月 19 日 00\:00 至 10 月 25 日 23\:59（UTC+8），上一期已收录的事件不再重复，本期整理 Coding Agent 与 Claude API、Copilot 模型与企业策略，以及 coding agent 评估相关论文。
+
+## Coding Agent 与开发工具
+
+- [OpenAI Codex CLI 0.164.0 增加 /presets 与企业 MCP 登录](https://github.com/openai/codex/releases/tag/rust-v0.164.0)
+  > OpenAI 于 10 月 23 日发布 Codex CLI 0.164.0（tag `rust-v0.164.0`）。本版可用十个编号 `/presets` 槽保存可复用提示与斜杠命令，并配键盘菜单快速选用；`/model` 与 `/permissions` 支持内联参数，直接设定模型、推理力度、速度与权限配置。企业 MCP 连接可用符合条件的 Codex 账户授权或独立登录，并覆盖需要 client secret 的 OAuth 客户端。同版在支持 Kitty 或 Sixel 的终端全屏 transcript 中预览查看与生成的图片，并在支持的远程 Bash 与 Zsh snapshot 会话中遮罩凭据（含自定义提供方）。另修复压缩失败后残留半截摘要、恢复会话找不到压缩历史、以及 Windows 下代理的 Negotiate/NTLM 认证等问题。
+
+- [Google 发布 Gemini API CLI 实验预览](https://aistudio.google.com/learn/introducing-the-gemini-api-cli)
+  > Google AI Studio 于 10 月 19 日发布 Gemini API CLI（`gemini-api`）的 experimental preview：这是一个零依赖二进制，把推理模型、媒体生成、多模态分析与 Managed Agents 接到终端与 coding agent。面向 agent，命令可通过 `--help`、`--usage`（KDL）、`--schema` 与 `--dry-run` 离线自描述；文档写明具备 shell 访问的 agent（含 Google Antigravity、Claude Code、Codex、Cursor 等）可直接调用。安装脚本覆盖 macOS、Linux 与 Windows，亦可用 `go install`；鉴权可设 `GEMINI_API_KEY`，或运行 `gemini-api configure`。公告标注当前为 experimental v0.4.x preview。
+
+- [Claude Code 2.1.304–2.1.310：/auto-mode-setup、API 迁移与 safety 遥测](https://github.com/anthropics/claude-code/releases/tag/v2.1.304)
+  > Anthropic 在 10 月 19 日至 23 日连续发布 Claude Code 2.1.304 至 2.1.310。2.1.304 新增 `/auto-mode-setup`（按项目与近期会话引导配置 auto mode，并扩展到 Bedrock、Vertex、Foundry、Claude apps gateway 与关闭遥测的会话），以及 mods 的 `tool.check` 中 `decider: "person"` 与 `e.isReadOnly`；Code Review 增加组织级 Quick / Standard / Deep，并可一键覆盖 GitHub 组织内全部仓库（含后续新增）。2.1.307 增加 `/claude-api api-version`，用于将 Claude API 代码迁到 `2026-10-21`，并新增 OpenTelemetry 事件 `claude_code.safety_event`，记录被权限规则、auto mode、安全检查、hook 或 sandbox 拦截、提示或回退的工具调用。2.1.310 在 Bedrock、Vertex、Foundry 以及关闭遥测或非必要流量时开放 Monitor 工具与 plugin monitors，并阻断过长的前台 sleep；同版为企业自定义角色补充 cloud sessions 与 Remote Control 权限控制。
+
+- [Microsoft Teams 中的 GitHub Copilot 可从通知直接改代码](https://github.blog/changelog/2026-10-23-turn-notifications-into-code-with-github-copilot-in-teams)
+  > GitHub 于 10 月 23 日说明，新的 Microsoft Teams GitHub 应用将仓库通知与 Copilot 合并：回复通知并 @mention GitHub，即可让 Copilot 依据通知中的 issue 或 PR 与线程上下文调查问题、跑测试并准备供审查的 PR。通知本身不需要 Copilot 许可；使用 Copilot 需要付费 Copilot 方案并启用 cloud sandboxes，组织或企业管理员可能还需打开 Copilot cloud agent 与 cloud sandboxes。旧版 GitHub 应用将改名为 “GitHub (deprecated)” 并于 11 月 16 日退役，需改用合并后的应用以继续在 Teams 中使用 Copilot。
+
+## 工程实践与基础设施
+
+- [Anthropic 发布 Claude API 版本 2026-10-21](https://platform.claude.com/docs/en/api/migration-2026-10-21)
+  > Anthropic 于 10 月 21 日推出 Claude API 版本 `2026-10-21`，为 2023 年以来首个正式 API 版本号更新；官方称将更频繁发布版本，以便在新模型强制破坏性变更前让集成方处理兼容性，旧版 `2023-06-01` 并未弃用。在 `2026-10-21` 上，Messages API 请求若仍发送 `temperature`、`top_p` 或 `top_k`（即使为默认值）会返回 400；assistant 消息中直接放置 `document` 块、以及 user 消息 text 上的非空 `citations` 也会返回 400。同日发布的新主版本 Anthropic SDK 与 `ant` CLI 默认发送该版本；未升级的请求可继续使用 `2023-06-01`。Claude Code 2.1.307 起可用 `/claude-api api-version` 协助迁移。
+
+- [GitHub Copilot 于 10 月 19 日停用一批旧模型并开放模型策略 API](https://github.blog/changelog/2026-10-19-github-copilot-models-deprecated-on-october-19-2026)
+  > GitHub 于 10 月 19 日按 9 月 18 日预告，在多数 Copilot 体验（Chat、inline edits、ask/agent 与补全等）中停用 Gemini 3.7 Flash、GPT-5.5、GPT-5.4、GPT-5.4 mini、GPT-5 mini 与 Grok 4.5，建议分别改用 Gemini 3.8 Flash、GPT-6.1 Sol、GPT-6 Luna 与 Grok 4.7；Enterprise 管理员可能需在模型策略中启用替代模型。同日，企业、企业团队、企业应用与组织四级的 Copilot 模型策略 REST API（GET/PATCH）一般可用，路径包括 `/enterprises/{enterprise}/copilot/model-policies` 与 `/orgs/{org}/copilot/model-policies` 等，可在 organization mode 或 enterprise teams mode 下委托模型控制。
+
+- [Copilot 功能全局默认策略开始强制执行](https://github.blog/changelog/2026-10-22-global-default-for-copilot-features-generally-available)
+  > GitHub 于 10 月 22 日起，对 Copilot Business 与 Enterprise 计划逐步强制执行此前公布的「新功能全局默认」策略，滚动至 10 月 26 日，不同企业与组织生效时间可能不同。未单独配置、且符合条件的一般可用功能与客户端能力，将按全局默认设为 Enabled、Disabled 或 Let organizations decide；该项为一次性写入，之后改全局默认不会回写已设定的功能策略。已显式启用或禁用的设置保留；preview 功能仍需主动选择，若曾选择 preview 并在其转正后保留选择，则不受默认策略覆盖。策略覆盖「Features & clients」与「MCP servers in Copilot」中的合格项，可在 AI Controls → Copilot → Default policy for new features 查看。
+
+- [Copilot 用量指标纳入 OpenCode 等客户端并具名展示自定义项](https://github.blog/changelog/2026-10-23-usage-metrics-api-adds-usage-from-tools-like-opencode)
+  > GitHub 于 10 月 23 日更新 Copilot usage metrics API：企业、组织及对应用户维度的 1 日与 28 日报告新增 `totals_by_client`，按客户端统计请求、会话与 token，客户端标识包括 `opencode`、`claude_code`、`codex`、`zed`、`copilot_cli`、`github_app`、`cloud_agent`、`code_review`、`vscode`、`jetbrains` 等，未识别归入 `other`。此前这类 IDE 外工具因缺少编辑器遥测，用量难计入 `totals_by_ide`。另于 10 月 22 日，`totals_by_skill`、`totals_by_custom_agent`、`totals_by_mcp`、`totals_by_slash_cmd` 与 `totals_by_plugin` 改为展示组织自建项的配置名称，而不再统一归入 `other`/`custom`，每类最多 25 条；名称上报依赖 Copilot CLI 1.0.97+ 或 Copilot SDK v1.0.21+ 等条件，来自客户端遥测，可能低估，且历史日期在发布前仍显示 `other`/`custom`。
+
+## 研究与 Benchmark
+
+- [SWE-Residual：评估 coding agent 在「继承未完成工作」起点上的稳健性](https://arxiv.org/abs/2610.25899)
+  > Jinze Li 等人 10 月 19 日在 arXiv 发布 SWE-Residual（arXiv:2610.25899）。该基准从 DeepSWE 与 Terminal-Bench 的 111 个任务构造 198 个 Residual State：前序 agent 已提交完成、但隐藏测试仍失败的仓库或整机环境；被测 agent 只得到原始请求与该状态，看不到前序轨迹，也不被告知失败。相对 Clean Start，五个前沿 agent 在 DeepSWE 上成功率下降 20.6–53.5 个百分点，在 Terminal-Bench 上下降 20.6–34.9 个百分点，且 DeepSWE 上的排名发生逆转。失败续跑中常见 acceptance bias：在 DeepSWE 失败运行的 58.9–88.2% 中，提交时失败的测试集合与继承状态完全相同。
+
+- [SWE-DIVE：用动态用户模拟做多轮 coding agent 评估](https://arxiv.org/abs/2610.30047)
+  > Lorenz Brehme、Benjamin Steenhoek 与 Ruth Breu 于 10 月 21 日在 arXiv 发布 SWE-DIVE（arXiv:2610.30047），并获 NeurIPS 2026 workshop “Grounded User Simulation for Model Evaluation and Training” 接收（非 archival）。框架将单轮基准任务转为多轮交互：用户模拟器按不同行为模式与 coding agent 对话，conversation validator 检查模拟器输出是否满足初始要求并引导任务完成；整体嵌入 Harbor，编排 agent、模拟器与校验器并执行测试环境判定成败。源码发布在 GitHub 仓库 lorenzbrehme/swe-dive_usersim。
