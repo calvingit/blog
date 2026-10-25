@@ -1,0 +1,50 @@
+---
+title: Frontend & Mobile Engineering Weekly：Node.js 安全更新修复 Brotli 越界写入；Safari 27.1
+slug: frontend-mobile-engineering-weekly-2026-10-26
+description: 本期汇总 10 月 19 日至 25 日更新，包括 Node.js 安全补丁、Safari 27.1、Chrome 156、React Native Windows 0.85 与多席位订阅。
+date: 2026-10-26
+lastUpdated: 2026-10-26
+series: frontend
+tags:
+  - Node.js
+  - Bun
+  - Safari
+  - WebKit
+  - Chrome
+  - React Native Windows
+  - App Store
+  - iPhone Duo
+  - Brotli
+  - Device Posture API
+  - Viewport Segments API
+searchIndex: true
+---
+
+本期覆盖 2026 年 10 月 19 日 00\:00 至 10 月 25 日 23\:59（UTC+8），整理前端与移动端的官方公告、版本发布和安全更新。
+
+## 运行时与安全
+
+- [Node.js 发布 10 月安全更新](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)
+  > Node.js 项目 10 月 21 日发布安全更新，补丁版本为 22.23.4、24.22.1 与 26.12.1，共修复 10 项漏洞，最高严重级别为 High。其中 CVE-2026-111497 为 Brotli 解码器越界写入，可导致远程代码执行，影响 26.x、24.x 与 22.x；另有三项 High 级别问题覆盖 `dns.resolve` 在含 NUL 字符时截断名称（CVE-2026-105482），以及 TLS 证书主机名校验在全角数字 IP 与宽松解析 IP 场景下的绕过（CVE-2026-105483、CVE-2026-106069）。同批还更新 c-ares、ca-cert（含 eMudhra 中间证书处理）、OpenSSL、SQLite 与 Undici 等依赖；公告注明已终止维护的版本同样受影响且不提供修复。
+
+- [Bun 1.4.4 修复捆绑 Brotli 并加入 bun fmt](https://bun.com/blog/bun-v1.4.4)
+  > Bun 10 月 22 日发布 1.4.4，将捆绑的 brotli 升级至 1.2.1，修复与 Node.js 同源的解码器越界写入（CVE-2026-111497 / GHSA-663w-cv8g-jj2p）；受影响范围为 1.0.21 起至 1.4.4 之前，`fetch()` 处理 `Content-Encoding: br` 响应以及 `node:zlib`、`DecompressionStream("brotli")` 会触达该解码器，公告要求升级后重建以 `bun build --compile` 生成的可执行文件。同版新增内置 `bun fmt`，可兼容既有 Prettier 或 oxfmt 配置，格式化 JavaScript、TypeScript、JSX、CSS、HTML、Vue、Svelte、JSON、Markdown 等文件类型。
+
+## 浏览器与 Web 平台
+
+- [Safari 27.1 随 iPhone Duo 提供折叠屏 Web API 预览](https://webkit.org/blog/18486/webkit-features-for-safari-27-1)
+  > Apple 与 WebKit 团队 10 月 23 日说明，iPhone Duo 发售当日起随附 Safari 27.1。面向用户，半折成书本姿势查看网页 PDF 时会自动双页并排显示，展平或合上后恢复单页。面向开发者，Safari 27.1 在 iPhone Duo 上以功能开关提供 Device Posture API 与 Viewport Segments API 预览：前者通过 `device-posture` 媒体查询与 `navigator.devicePosture` 报告 `folded` 或 `continuous`；后者提供 `horizontal-viewport-segments` / `vertical-viewport-segments` 媒体查询，以及 `viewport-segment-width` 等环境变量和 `window.viewport.segments`。需在「设置 → App → Safari → 高级 → 功能开关」中开启；可用 Xcode 27.1 或更高版本的 Device Hub 模拟 iPhone Duo。
+
+- [WebKit 在系统 27 中拦截身份解析基础设施](https://webkit.org/blog/18438/blocking-identity-resolution-infrastructure)
+  > WebKit 团队 10 月 19 日发文说明，在 iOS、iPadOS、macOS 与 visionOS 27 中，Safari 与 WebKit 按域名拦截指向身份解析（identity resolution）基础设施的网络访问，阻止第三方在登录或订阅场景中静默收集邮箱并回写跨站跟踪 ID。该机制针对 cookie 被全面拦截后兴起的「后 cookie」跟踪方式；文章同时提及 iCloud+ 的「隐藏我的邮件地址」可提供额外防护，并重申不阻止网站自身的第一方个性化。
+
+- [Chrome 156 进入 Desktop Stable](https://chromereleases.googleblog.com/2026/10/stable-channel-update-for-desktop_02018666648.html)
+  > Google 10 月 20 日将 Chrome 156 推入 Windows、Mac 与 Linux 的 Stable 通道，版本为 Linux 的 156.0.8078.47，以及 Windows/Mac 的 156.0.8078.47/.48，并在随后数日到数周内逐步推送。本更新包含 353 项安全修复，其中 Critical 包括 Skia、Accessibility、CSS、Paint、WebRTC 等组件中的内存损坏与 Use-after-free（如 CVE-2026-113341、CVE-2026-113279、CVE-2026-113072、CVE-2026-113280、CVE-2026-113271、CVE-2026-113303）；其余多为 High 与 Medium 严重级别。公告未说明这些漏洞已遭在野利用。
+
+## 移动端平台与框架
+
+- [App Store 开放组织与学校批量购买订阅席位](https://developer.apple.com/news?id=yfo21auu)
+  > Apple 10 月 22 日宣布，使用 Apple Business 或 Apple School Manager 的组织与教育机构，即日起可通过多席位购买（multiseat purchasing）批量获取应用的自动续期订阅：一次 In-App Purchase 购买所需席位，再用既有设备管理工具分配与增减。App Store Connect 默认启用该能力（除非此前改过设置），订阅可同时出现在 Apple Business、Apple School Manager 与 App Store。面向普通用户的群组购买自 10 月 28 日起可在 Sandbox 配置与测试，正式上线安排在今冬。
+
+- [React Native Windows 0.85 仅支持 New Architecture](https://devblogs.microsoft.com/react-native/react-native-windows-v0-85-is-here)
+  > Microsoft 10 月 21 日发布 React Native Windows 0.85.0，基于 React Native 0.85.3，完成向 New Architecture 的迁移并移除旧架构；仍在旧架构上的应用须先迁移到 Fabric 再升级，新建项目已默认使用 New Architecture。本版构建环境要求 Visual Studio 2026、.NET 10 与 Windows App SDK 1.8（`Microsoft.WindowsAppSDK` 1.8.260508005）；Modal 新增 `hideTitleBar` 与 `hideBorder`，View 实现 `outline` 样式，并提供可选的 TurboModule 急切初始化。Gallery 应用商店包 2.1.10.0 基于本版构建。
