@@ -22,6 +22,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# agent tooling artifacts
 .codex/hooks.json
 .memorix/hooks.json
+.zcode/
 local_cache/
