@@ -1,0 +1,82 @@
+---
+title: AI Software Engineering Weekly：Copilot Fusion 一般可用；Cursor 市场出现恶意 Claude Code 扩展
+slug: ai-software-engineering-weekly-2026-11-02
+description: 2026 年 10 月 26 日至 11 月 1 日，涵盖 Copilot Fusion、Agentic Workflows、GPT-6.1 Terra、Codex、Claude Code 与 Cursor 恶意扩展事件。
+date: 2026-11-02
+lastUpdated: 2026-11-02
+series: ai
+tags:
+  - GitHub Copilot
+  - Copilot Fusion
+  - GitHub Agentic Workflows
+  - Copilot Automations
+  - GPT-6.1 Terra
+  - Codex
+  - Claude Code
+  - Cursor
+  - MCP
+  - FeatureArc
+searchIndex: true
+---
+
+本期覆盖 2026 年 10 月 26 日 00\:00 至 11 月 1 日 23\:59（UTC+8），上一期已收录的事件不再重复，本期整理 GitHub Universe 期间的 Copilot 与 Agent 更新、Codex CLI 和 Claude Code 版本、一起编辑器扩展供应链事件，以及 coding agent 安全与评估论文。
+
+## Coding Agent 与开发工具
+
+- [OpenAI 发布 GPT-6.1 Terra，Codex 与 Copilot 同步接入](https://openai.com/index/introducing-gpt-6-1-terra)
+  > OpenAI 10 月 26 日发布 GPT-6.1 Terra，面向 ChatGPT Work 与 Codex 的 Plus、Pro、Enterprise、Edu 用户开放，API 模型名为 `gpt-6.1-terra`，标准价格为每百万输入 token 1 美元、缓存输入 0.05 美元、输出 5 美元。OpenAI 公布的数据中，GPT-6.1 Terra 在最高推理力度下解决 Terminal-Bench 4.0 中 50.3% 的任务，GPT-5.6 Terra 的公开成绩为 21.5%；OpenAI 同时说明最复杂的编码任务仍建议使用 GPT-6.1 Sol 或 GPT-6 Astra。GitHub 同日宣布该模型在 Copilot 一般可用，面向 Pro、Pro+、Max、Business 与 Enterprise 逐步推送，Codex CLI 0.165.0 起也把它加入模型目录。
+
+- [GitHub Copilot Fusion 一般可用](https://github.blog/changelog/2026-10-28-route-and-orchestrate-models-with-github-copilot-fusion)
+  > GitHub 10 月 28 日宣布 Copilot Fusion 一般可用，它合并了 Project HydraFusion 的多模型编排与 Copilot auto 模型选择，用户在模型选择器中选 Fusion 后只需设定 Standard、High 或 Max 三档力度，由 Copilot 按任务选择 Single、Cascade 或 Critique 流程。GitHub 称 Fusion Max 在 Artificial Analysis Coding Agent Index 得分 60，与 Claude Code 搭配 Opus 5.5 Max 相差两分以内，单任务平均 API 成本约为后者一半。Fusion 只调用企业与组织模型策略中已启用的模型，按实际使用的各模型标准价计费，付费方案限时享受模型费用 30% 折扣；同日 GitHub 还以 experimental preview 形式让 Fusion 在 Copilot CLI、Copilot app 与 VS Code 中路由到本地模型，路由决策仍在云端完成。
+
+- [Copilot 云端会话可跨端接续，cloud sandbox 一般可用](https://github.blog/changelog/2026-10-28-work-from-anywhere-with-a-new-connected-copilot-cloud-experience)
+  > GitHub 10 月 28 日起向付费 Copilot 方案推出统一的云端体验，同一会话可以在 github.com、GitHub Mobile、Copilot CLI、Copilot app、VS Code、Slack 和 Microsoft Teams 之间接续，各端显示同一份会话列表。会话默认运行在 GitHub 托管的 cloud sandbox 中，总运行时长不设一小时上限，关闭时保存快照以便之后恢复；也可用 Copilot CLI 的 `--environment-host` 把自有机器或 VM 注册为运行环境。Actions 的包含额度同时改为按美元计的共享计算额度，覆盖标准托管 runner、cloud sandbox 以及 Team 与 Enterprise Cloud 的大型 runner，cloud sandbox 用量从 2026 年 11 月开始计费。
+
+- [Copilot Automations 支持团队共享、API 触发与 MCP 工具](https://github.blog/changelog/2026-10-28-build-shared-workflows-for-your-team-with-copilot-automations)
+  > GitHub 10 月 28 日开始推出共享型 Copilot Automations，共享自动化归属仓库，有写权限的成员可编辑，操作以 Copilot 身份执行，AI credits 记在仓库所有者名下，组织仓库需管理员开启「Allow use of Copilot cloud agent billed to the organization」策略，推出期间各账号可用时间不同。同日 GitHub 为 Automations 增加 REST API 触发、24 个新的 GitHub 事件触发器、自动化之间的链式触发、20 个新 GitHub 工具和自定义 MCP 服务器工具。自动化还可以按单次运行、日、周、月设置 AI credits 上限，达到单次上限时运行停止，达到周期上限后新运行要等到周期重置。
+
+- [Copilot code review 增加 Max 档位，approvals 一般可用](https://github.blog/changelog/2026-10-28-copilot-code-review-merge-with-confidence-with-max-and-approvals)
+  > GitHub 10 月 28 日为 Copilot code review 推出 Max 审查力度（public preview），它与 Lite、Balanced 并列，会运行多个使用不同提供方模型的独立审查 agent，再由聚合 agent 合并结论，耗时和 AI credits 消耗都高于前两档。Copilot approvals 同日一般可用，开启后 Copilot 的批准计入仓库所需的批准人数，新提交推送后批准自动撤销。approvals 默认关闭，由企业、组织或仓库管理员开启，仓库管理员可以限定 Copilot 能批准的文件路径。
+
+- [Codex CLI 0.165.0 与 0.166.0：Vertex AI provider、memory v2 与网络诊断](https://github.com/openai/codex/releases/tag/rust-v0.166.0)
+  > OpenAI 于 10 月 28 日和 30 日发布 Codex CLI 0.165.0 与 0.166.0。0.165.0 内置 Google Cloud Vertex AI provider（`model_provider = "gcp"`），新配置默认启用 memory v2 并支持导入其他 agent 的记忆，app-server API 增加实验性的 attached thread forks，同版修补了 marketplace URL 校验漏洞，该漏洞可能让 Git 连接到与允许规则校验对象不同的主机。0.166.0 新增 `codex queue --resume`、`codex doctor --network-only`，在 TUI 中解释安全拦截原因并提供可选的改写后续提示，同时把 GPT-6.1 Terra 加入内置、Vertex AI 与 Amazon Bedrock 模型目录。
+
+- [Claude Code 2.1.311–2.1.316：写入目录限制、子 Agent 力度与 Opus 4.8 fast mode 弃用](https://github.com/anthropics/claude-code/releases/tag/v2.1.316)
+  > Anthropic 在 10 月 27 日至 31 日发布 Claude Code 2.1.311、2.1.312、2.1.314 与 2.1.316。2.1.312 将 prompt hook 与 agent hook 的并发限制为每会话最多 24 个（含子 Agent），并停止发送 2.1.307 加入的 `claude_code.safety_event` OpenTelemetry 事件；2.1.314 新增 `permissions.blockWritesOutsideWorkingDirectories`，让 Write、Edit 与 NotebookEdit 在任何权限模式下拒绝写入工作目录之外的路径，并修复 `claude -p --resume` 进入 worktree 后 sandbox 保护不生效的问题。2.1.316 新增 `CLAUDE_CODE_SUBAGENT_EFFORT`，用于设定子 Agent 默认推理力度，同时宣布 Opus 4.8 的 fast mode 自 10 月 30 日起弃用、11 月 30 日移除，移除后请求会直接报错，不回退到标准模式。
+
+## 工程实践与基础设施
+
+- [Cursor 扩展市场出现恶意 Claude Code 扩展 2.1.313](https://cursor.com/blog/claude-code-extension-security-notice)
+  > Cursor 10 月 29 日发布安全通告：太平洋时间当天约 2:27 至 13:35，Cursor VS Code 扩展市场分发了一个被篡改的 `Anthropic.claude-code` 2.1.313，Cursor 称该版本并非 Anthropic 开发，最多 5,000 名用户受影响。恶意代码会收集主机与用户信息，向 `authorized_keys` 写入标注为 `svc-telemetry` 的攻击者 SSH 公钥，尝试开启本地 SSH 服务和反向隧道，并通过 LaunchAgent 或计划任务驻留；Cursor 称在多数 macOS 与 Windows 主机上，开启 SSH 服务这一步会因缺少管理员权限而失败，攻击者服务器也已下线，但公钥写入、驻留与信息回传仍会发生。Cursor 已下架该版本、临时关闭并重建扩展市场、轮换密钥，并提供检测命令与修复脚本；Anthropic 工程师在 Hacker News 回复称 2.1.313 从未在 Open VSX、VS Code Marketplace 或官方渠道发布，下一个正式版本直接编号为 2.1.314。
+
+- [GitHub Agentic Workflows 一般可用](https://github.blog/changelog/2026-10-28-github-agentic-workflows-generally-available)
+  > GitHub 10 月 28 日宣布 GitHub Next 的开源项目 GitHub Agentic Workflows 一般可用，用户用自然语言 Markdown 描述自动化，再由工具编译成标准 GitHub Actions YAML，可选 Copilot 或其他 coding agent 执行。agent 默认只有只读权限，在 Agent Workflow Firewall 之后的沙箱容器中运行，输出经过 safe outputs 校验，并由单独的威胁检测 job 扫描所有拟议变更。GA 版本支持 ARC 自托管 runner 与 Docker-in-Docker，可在 Cloud Hypervisor 或 NVX micro-VM 中隔离 agent，`gh aw forecast` 也结束实验状态；该功能面向 GitHub Free、Team 与 Enterprise，使用默认的 Copilot CLI 引擎需要 Copilot 许可。
+
+- [Copilot assisted permissions 一般可用](https://github.blog/changelog/2026-10-26-github-copilot-assisted-permissions-generally-available)
+  > GitHub 10 月 26 日宣布 assisted permissions 在 Copilot CLI、Copilot app 与 VS Code 一般可用：Copilot 请求运行命令、访问文件路径或打开 URL 时，先由大模型评估请求，明确安全的请求自动放行，其余请求仍需用户批准。企业管理员可通过 enterprise-managed settings 在禁用 Allow All 的同时保留 Assisted，也可单独关闭 Assisted，并指定新会话的默认权限模式；默认模式不可用或被策略禁止时，会话以手动批准模式启动。Copilot CLI 1.0.104 起使用该模式不再需要开启 experimental mode。
+
+- [GitHub 推出经验证的 MCP 连接器](https://github.blog/changelog/2026-10-28-connect-your-tools-to-copilot-without-all-the-setup)
+  > GitHub 10 月 28 日开始以 public preview 推出 GitHub-verified MCP servers（connectors），首批 26 个服务包括 Slack、Figma、Notion、Sentry、Linear、Atlassian Rovo、Cloudflare、Vercel 和 Work IQ，用户登录一次即可在 Copilot app、Copilot CLI（`/mcp` 的 Connectors 标签）、VS Code、Copilot 云端会话与 GitHub Mobile 中使用，无需本地安装或自行管理凭据。Copilot Business 与 Enterprise 用户需管理员开启 Editor preview features 策略；企业若在托管设置中配置了 MCP allowlist，还需把这类服务器加入名单，部分服务也要求在服务方一侧由管理员授权。
+
+- [Copilot 仓库默认插件与企业插件管控一般可用](https://github.blog/changelog/2026-10-28-repository-plugin-defaults-and-enterprise-plugin-controls-generally-available)
+  > GitHub 10 月 28 日宣布，VS Code、Copilot CLI 与 Copilot app 中的仓库默认插件和企业插件管控一般可用。受信任的仓库可以定义插件 marketplace 与默认插件，贡献者在策略允许时可以关闭这些默认项；企业管理员可通过托管设置指定批准的 marketplace，并强制安装或屏蔽插件，强制插件会自动启用且用户无法关闭，托管设置优先于仓库和个人设置。企业管控只适用于 GitHub Enterprise Cloud 上由企业或其组织分配的 Copilot Business 与 Enterprise 许可。
+
+- [Copilot SDK 支持服务器间认证，并将改名为 Microsoft Copilot SDK](https://github.blog/changelog/2026-10-28-github-copilot-sdk-is-becoming-microsoft-copilot-sdk)
+  > GitHub 10 月 27 日以 public preview 推出 Copilot 的服务器间认证：开发者为 GitHub App 授予只读的 Copilot Requests 组织权限并安装到组织后，可把短期 installation access token 传给 Copilot SDK，以组织身份发起请求，用量计入该组织并受其模型策略、预算和支出控制约束。GitHub 10 月 28 日又宣布 GitHub Copilot SDK 将转为 Microsoft Copilot SDK，作为 Microsoft 与 GitHub 产品共用的 Copilot harness 编程接口，仓库会迁到 Microsoft 组织。迁移分阶段进行，过渡期内包名、命名空间和部分文档仍沿用 GitHub Copilot SDK 名称，GitHub 称现有用户暂时无需改动。
+
+- [GitHub code scanning 开始检测 AI 应用与 agent 漏洞](https://github.blog/changelog/2026-10-28-code-scanning-for-ai-applications-in-public-preview)
+  > GitHub 10 月 28 日以 public preview 推出面向 AI 应用的 code scanning，在 pull request 创建时与 CodeQL 一同运行，检测间接提示注入（XPIA）、敏感信息泄露和 excessive agency 等风险，并标出不可信内容可到达具备工具、数据或业务系统访问权限的模型的代码路径。该功能需要 GitHub Advanced Security 许可，目前不支持 GitHub Enterprise Server。同日 GitHub 还以 public preview 推出 AI Scan for repositories，用 agentic 扫描器在固定时间预算内扫描默认分支的最新提交，发现结果与 CodeQL 告警放在同一列表中。
+
+## 研究与 Benchmark
+
+- [研究测试恶意 CLAUDE.md 等记忆文件对 coding agent 的影响](https://arxiv.org/abs/2610.38521)
+  > Thiago Santos de Moura、Selma Güler 与 Yannic Noller 10 月 28 日在 arXiv 发布论文（arXiv:2610.38521），针对 12 类 CWE 各构造两份恶意记忆文件，在 36 个 SecRepoBench 任务上运行 Claude Code（Sonnet 5.5）与 OpenCode（Qwen 3.8 27B、DeepSeek V4.1 Flash）。作者报告，恶意文件使安全完成率变化在 -8 到 +6 个百分点之间，各 agent 与各变体之间没有一致规律。Claude Code 在约三分之二的最终回复中提到了该文件，OpenCode 几乎只在推理轨迹中提及；即使 agent 把文件识别为攻击，仍会生成有漏洞的代码，作者称需要更大规模的研究来量化这一风险。
+
+- [Hidden in Plain Sight：五个 coding agent 的指令栈纵向研究](https://arxiv.org/abs/2610.37332)
+  > Felipe de Sant'Anna Paixão 等人 10 月 27 日在 arXiv 发布论文（arXiv:2610.37332），采集 Claude Code、Codex、Gemini CLI、Qwen Code 与 OpenCode 共 1,886 个版本首次模型请求中的指令栈，即用户提示之外附加的指令、工具定义和环境上下文。作者发现其中三个 agent 的最新请求以工具定义为主，少数集中修订改动了工具使用、署名与编码风格相关指令。在四个开源 agent 中，只有 48% 的变更单元直接说明了修订动机，作者建议随版本发布记录指令栈及修订理由。
+
+- [FeatureArc：评估 coding agent 持续扩展同一功能的能力](https://arxiv.org/abs/2610.37434)
+  > Yunlong Wang 等人 10 月 27 日在 arXiv 发布 FeatureArc（arXiv:2610.37434），从仓库历史构造 2 到 10 个阶段的功能演进任务，覆盖四种编程语言，用 fail-to-pass 与 pass-to-pass 测试检验每个阶段。作者用 73 个人工复核任务评估 10 个 coding agent，每个 agent 在同一会话和工作区中完成全部阶段，过程中没有外部测试反馈或回滚；汇总成功率从首阶段的 62.7% 降到最终代码整体测试时的 28.5%。72.9% 的后续阶段失败存在继承缺陷，前一阶段失败后，agent 约 95% 的情况下没有发现先前的错误；论文称该流程已在腾讯用于扩展内部评估，并指导混元模型开发。
+
+- [CARI：通过运行时反馈向 coding agent 注入攻击](https://arxiv.org/abs/2610.38799)
+  > Jie Fu 等人 10 月 28 日在 arXiv 发布论文（arXiv:2610.38799），研究由其他开发角色控制的后端服务、测试 harness、CI job 等组件，在运行时反馈中嵌入恶意指令，诱导受害方 coding agent 在调试或恢复过程中执行越权操作。作者构造十种攻击，覆盖资源耗尽、信息泄露与开发状态篡改，在四种语言、五个模型上的 3,000 次试验中成功 2,845 次（94.8%），迁移到产品级 agent 时对 Codex 与 Claude Code 的成功率分别为 61.3% 与 58.7%。论文报告，通用警告类提示词防御无效，明确的策略提示能压制攻击，但会大量拒绝正常操作。
