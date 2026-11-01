@@ -1,0 +1,72 @@
+---
+title: Frontend & Mobile Engineering Weekly：Android Studio Rabbit 2 支持自带 Agent；Node.js 26 进入 LTS
+slug: frontend-mobile-engineering-weekly-2026-11-02
+description: 10 月 26 日至 11 月 1 日更新，包括 Android Dev Summit、Touch on Mac、Xcode 27.2、Safari 27.2、Chrome 157 HTML-in-Canvas、Node.js 26 LTS 与 Rspack 2.3。
+date: 2026-11-02
+lastUpdated: 2026-11-02
+series: frontend
+tags:
+  - Android Studio
+  - Jetpack Compose
+  - AGP
+  - Xcode
+  - macOS
+  - App Store
+  - Safari
+  - Chrome
+  - Node.js
+  - Rspack
+  - pnpm
+  - Nuxt
+searchIndex: true
+---
+
+本期覆盖 2026 年 10 月 26 日 00\:00 至 11 月 1 日 23\:59（UTC+8），整理前端与移动端的官方公告、版本发布和安全更新。
+
+## 移动端平台与框架
+
+- [Android Dev Summit 发布 Android Studio Rabbit 2 与多项 Jetpack 更新](https://developer.android.com/blog/posts/build-it-your-way-a-next-era-of-android-development)
+  > Google 10 月 28 日在 Android Dev Summit 上宣布 Android Studio Rabbit 2（2026.2.2）进入稳定版，开发者可在 IDE 内选用 Claude Agent、Codex、Antigravity 等 40 多个兼容 ACP 的编码 Agent；Android CLI 同时加入设备串流、Compose 预览渲染、Perfetto 系统追踪和 app bundle 质量分析。大会还宣布 Jetpack XR 的 SceneCore、ARCore for Jetpack XR 与 XR Runtime 等核心库进入稳定版、AppFunctions 进入 Beta，对应 Maven 构件已在 10 月 21 日发布；A2UI for Jetpack Compose 与 AppState 为 Alpha，Compose 1.13 稳定版尚未发布，届时 Grid 与 Flexbox 将转为稳定。Google 另表示明年 Google Play 会重点考察应用和游戏在折叠屏上的运行情况，具体要求另行公布。
+
+- [Apple 发布 Touch on Mac 开发资源](https://developer.apple.com/touch-on-mac)
+  > Apple 10 月 28 日上线「Get ready for Touch on Mac」页面，面向支持触控的 MacBook Pro 提供“Design for Touch on Mac”“Bring Touch to your Mac app”“Bring Live Activities to Mac”三个视频，并开放 11 月 18 日与 11 月 19 日（太平洋时间）两场线上 Group Labs 报名。页面列出的 Xcode 27.3 beta、文档与设计资源目前标注为“Coming soon”。Apple 的 AppKit 文档说明，系统会把单指点按和拖动模拟成鼠标事件，多指手势和单个触点（`NSTouch`）只能通过手势识别器获取，开发者可用 Sidecar 连接的 iPad 测试触控。
+
+- [Xcode 27.2 加入 JSON 项目格式 .xcproj](https://developer.apple.com/documentation/xcode-release-notes/xcode-27_2-release-notes)
+  > Apple 10 月 29 日发布 Xcode 27.2（27B52），新增 JSON 格式的项目文件 `.xcproj`，可在 File inspector 中启用，采用该格式的项目也能在更早的 Xcode 27 版本中打开。Device Hub 在通过 Sidecar 或支持触控的 MacBook 使用时，会把触控原样传给远程设备，可测试捏合、旋转等多指手势。已知问题包括 macOS、watchOS、tvOS 与 visionOS SDK 错误地把 27.1 列为有效部署目标。App Store Connect 自 10 月 30 日起接受以 Xcode 27.2 和 27.2 版 SDK 构建的 App Store 与 TestFlight 上传。
+
+- [App Store 台湾店面佣金降至 26%](https://developer.apple.com/news/?id=w9mxlhek)
+  > Apple 10 月 29 日宣布，经与台湾公平交易委员会讨论，自 10 月 31 日起，iOS 与 iPadOS 上 App Store 台湾店面的标准 In-App Purchase 和付费应用交易佣金由 30% 调整为 26%。开发者无需在 10 月 31 日前签署更新条款即可适用新费率；Apple Developer Program License Agreement 已同步修订，译本将在一个月内提供。
+
+## Web 框架与浏览器
+
+- [Safari 27.2 新增 ::field-content 并重命名 fit-tolerance](https://webkit.org/blog/18515/webkit-features-for-safari-27-2/)
+  > WebKit 团队 10 月 26 日介绍 Safari 27.2：Customizable Select 新增 `::field-content` 伪元素，不使用 `<selectedcontent>` 也能为页面上显示的选中项文字设置样式，同时调整了 `appearance: base-select` 的默认 UA 样式，并通过 safe 对齐让较大的选择列表保持在视口内。CSS Grid Lanes 按 CSS 工作组决定把 `flow-tolerance` 改名为 `fit-tolerance`，旧名暂时作为已弃用别名保留。本版另含 20 项缺陷修复，覆盖无障碍、媒体、WebCodecs、WebGPU 与 WebRTC 等领域；Safari 27.2 随 iOS、iPadOS、visionOS 与 macOS 27.2 提供，也可在 macOS Tahoe 和 Sequoia 上单独更新。
+
+- [Chrome 157 正式提供 HTML-in-Canvas API](https://developer.chrome.com/blog/html-in-canvas)
+  > Chrome 团队 10 月 26 日宣布，HTML-in-Canvas API 结束 origin trial，在 Chrome 157 进入稳定版，可把带 `drawable` 属性的 DOM 元素绘入 2D、WebGL 与 WebGPU canvas，2D 中使用 `drawElementImage()`，3D 场景需自行构造变换并传给 `updateElementGeometry()`。按 Chrome 的说明，绘入 canvas 的 HTML 内容会进入无障碍树，翻译、自动填充和页内查找等浏览器功能可以直接使用；Three.js 通过 `THREE.HTMLTexture` 提供实验性支持。Chrome Releases 博客 10 月 28 日称，Chrome 157.0.8103.26/.27 已作为早期稳定版推送给小比例 Windows 用户，Mac 版随后推出。
+
+- [Nuxt DevTools v4 改用 Devframe 与 Vite DevTools](https://nuxt.com/blog/devtools-v4)
+  > Nuxt 团队 10 月 28 日发布 Nuxt DevTools v4，底层改为 Devframe 与 Vite DevTools，不再内嵌 Vue DevTools 副本，直接继承完整的 Vue DevTools。应用代码无需改动，打开方式不变；团队把 v4 定为过渡版本，旧的 `@nuxt/devtools-kit` API 通过 shim 继续可用，开发模式下会输出 `NDT_DEP_0003` 至 `NDT_DEP_0006` 等弃用诊断码，提示模块作者迁移到 Devframe 或 Vite DevTools 的 API，例如用 `ctx.docks.register()` 替代 `addCustomTab()`。
+
+- [TanStack Redact 0.2.0 提供精简的 React 浏览器运行时](https://tanstack.com/blog/introducing-tanstack-redact)
+  > Tanner Linsley 10 月 26 日发文介绍 TanStack Redact 0.2.0，它在浏览器端替换 React 与 React DOM，现已为 TanStack Start、Vite、Vinext 和 Next.js（含 App Router 与 Pages Router）提供稳定的集成，应用代码无需修改。Redact 采用同步渲染，不包含 React 的时间切片和可中断渲染；在 Vinext 与 Next.js 中，服务端渲染和 Server Components 仍由 React 处理。TanStack 用同一个小型应用测得默认构建的客户端 JS 与 CSS（gzip）减少 20.4%（Next.js）到 70.5%（Vite）。
+
+## 构建、运行时与工程工具
+
+- [Node.js 26 进入 LTS](https://nodejs.org/en/blog/release/v26.13.0)
+  > Node.js 项目 10 月 28 日发布 26.13.0，Node.js 26.x 由此进入 Long Term Support，代号“Lithium”，维护期持续到 2029 年 4 月底。除 `process.release` 等元数据外，本版与 26.12.1 没有其他差异。发布说明提醒，从 Node.js 24、22 等更早 LTS 升级时需注意，自 Node.js 25 起 Linux 官方二进制链接 libatomic，部分发行版需要另行安装。
+
+- [Node.js 27 发布首个 Alpha 版本](https://nodejs.org/en/blog/release/v27.0.0-alpha.0.0.0)
+  > Node.js 项目 10 月 29 日发布 27.0.0-alpha.0.0.0，这是新发布计划下首个 Alpha 版本，版本号格式为 `vN.0.0-alpha.X.Y.Z`，新计划改为每年一个主版本。本版将 V8 升级到 15.6.75.13，默认启用 `Math.sumPrecise()`、`Iterator.zip()` 等特性；未设置 `--max-old-space-size` 时，默认堆上限改为物理内存的一半并限制在 256 MB 至 4 GB，`Buffer` 与 `ArrayBuffer` 占用也计入堆上限；`v8.serialize()`、`structuredClone()` 使用旧版本无法读取的新格式。其他 semver-major 变更包括升级到 OpenSSL 4.1.0 与 npm 12.1.0、`http` 的 `keepAliveTimeout` 默认值改为 65 秒、`domain` 模块进入运行时弃用，以及 Intel macOS 支持降为实验性。
+
+- [Rspack 2.3 接入 SWC Next 解析器](https://rspack.rs/blog/announcing-2-3)
+  > Rspack 团队 10 月 29 日发布 2.3，JavaScript 解析改用 SWC 与 Rstack 团队联合开发的 SWC Next 解析器，官方基准显示整体构建比 2.2.0 快约 5%，部分大型项目最高快 20%。生产模式默认启用新的 `splitChunks.dedupDepth: 1` 以减少跨入口重复模块，并支持 `splitChunks.minRemainingSize`。新的持久化缓存仍为实验性、默认关闭，需通过 `experiments.newCache` 开启，团队测得其磁盘占用降低约 79%、冷构建峰值内存降低约 16%，热构建略慢；该缓存还支持按 loader 缓存转换结果。
+
+- [pnpm 12.16 与 12.17 修复两项安全问题](https://github.com/pnpm/pnpm/releases/tag/v12.17.0)
+  > pnpm 10 月 27 日发布 12.16.0，修复 处理 zstd 压缩数据时的内存暴露与分配处理漏洞，以及签名运算可能通过时序泄露私钥的问题（RUSTSEC-2026-0387），并新增可重复使用的全局 `--env-file <path>` 参数和 `pnpm setup --no-modify-path`。10 月 30 日发布的 12.17.0 新增 `pnpm peers check --global`，`overrides` 支持 `:prod`、`:optional`、`:peer` 选择器与 `*` 通配符，`pnpm outdated` 与 `pnpm update` 可检查 `devEngines.packageManager`、`packageManager` 等字段中的包管理器和运行时版本。12.17.0 还让 pnpm 在项目中创建的文件按 umask 设置权限，修复以其他用户身份运行的 Docker 镜像无法读取这些文件的问题。
+
+- [JetBrains 修复 eMudhra 中间证书泄露影响](https://blog.jetbrains.com/security/2026/10/compromised-emudhra-certificates-ides/)
+  > JetBrains 10 月 30 日发布安全公告，eMudhra 的 8 张中间证书私钥于 10 月泄露，网络攻击者可借此冒充 JetBrains 工具连接的网站和服务。JetBrains IDE、Toolbox App、Gateway 与 ReSharper 使用内置 JetBrains Runtime 的信任库，更新操作系统无法规避；IDE 内嵌的 JCEF 浏览器同样受影响。已修复版本包括 WebStorm 与 IntelliJ IDEA 的 2026.3 RC、2026.2.4、2026.1.5.1、2025.3.6.2 等；公告发布时 JetBrains 未发现针对其用户的利用。
+
+- [Android 工具链新增 R8 配置分析与 Lightbuild 预览](https://developer.android.com/blog/posts/android-dev-summit-26-developer-tools-performance)
+  > Google 10 月 28 日在 Android Dev Summit 工具与性能汇总文章中介绍，AGP 9.3 内置 R8 Configuration Analyzer，运行 `./gradlew :app:analyzeReleaseR8Config` 可为 R8 配置评分并按代价排列 keep 规则，Jetpack Keep（Alpha）用类型安全的注解替代宽泛的 keep 规则。Jetpack Compose 1.13 加入 recomposition tracing，可追溯到触发重组的状态写入；androidx.tracing 2.0 可在追踪片段中记录源文件、行号和参数。Lightbuild 是以严格 YAML schema 描述构建配置的早期预览，需在 Android Studio Canary 中使用，Google 建议生产应用继续使用 Gradle 与 AGP。
