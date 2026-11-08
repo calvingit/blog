@@ -1,0 +1,58 @@
+---
+title: Frontend & Mobile Engineering Weekly：Safari 27.3 beta 加入 Adaptive Dark Mode；Playwright 1.65 支持用 Bun 运行测试
+slug: frontend-mobile-engineering-weekly-2026-11-09
+description: 11 月 2 日至 8 日，Siri AI 预览、Safari 27.3 beta、React Native 0.89 RC、Next.js 16.4.5、Playwright 1.65、Rolldown 1.3。
+date: 2026-11-09
+lastUpdated: 2026-11-09
+series: frontend
+tags:
+  - Siri AI
+  - App Store Connect
+  - Safari
+  - React Native
+  - Compose Multiplatform
+  - Next.js
+  - Playwright
+  - Vitest
+  - Rolldown
+  - pnpm
+searchIndex: true
+---
+
+本期覆盖 2026 年 11 月 2 日 00\:00 至 11 月 8 日 23\:59（UTC+8），整理前端与移动端的官方公告、版本发布和安全更新。
+
+## 移动端平台与框架
+
+- [Apple 开放 Siri AI Developer Preview](https://developer.apple.com/news/?id=gdk2umrf)
+  > Apple 11 月 3 日宣布，iOS 27.3、iPadOS 27.3、macOS 27.3 与 visionOS 27.3 beta 起，所有开发者都可以通过 App Intents 让应用接入 Siri AI，并新增 skills，用来把多个操作组合成一次完整的交互。Siri AI 目前为 beta，需要启用 Apple Intelligence 且语言受支持的设备，在 iOS、iPadOS 与 watchOS 的欧盟地区暂不可用；Apple 表示相关体验将在几个月后面向用户发布，App Store 提交通道在明年春季开放，使用条款与政策之后另行公布。
+
+- [App Store Connect 11 月 16 日起新增两项年龄分级声明](https://developer.apple.com/news/?id=yxkh08us)
+  > Apple 11 月 2 日通知，自 11 月 16 日起，App Store Connect 的年龄分级问卷新增“Shared Location”和“Dating and Relationships”两项内容描述，提交应用更新或修改问卷时必须填写，所有应用须在 2027 年 1 月 12 日前完成。包含 Dating and Relationships 的应用最低年龄分级为 18+；巴西法规要求 Shared Location 为 A16、Dating and Relationships 为 A18。
+
+- [React Native 0.89.0-rc.0 发布](https://github.com/react/react-native/releases/tag/v0.89.0-rc.0)
+  > React Native 团队 11 月 4 日发布 0.89.0-rc.0。新增 `useAppState()` hook，把 `structuredClone` 与 `DOMException` 作为全局 Web API 提供，并为 Android 的 `Text` 增加 `lineBreak` 与 `wordBreak` 属性。Breaking 项包括移除 `react-native/assets-registry`，`react-native/community-cli-plugin` 不再自动识别、必须写入 `devDependencies`，以及 Android 与 iOS 上废弃的 bridgeless 开关和相关初始化方法被移除，bridgeless 在 New Architecture 中始终启用。
+
+- [Compose Multiplatform 1.13.0-beta02 发布](https://github.com/JetBrains/compose-multiplatform/releases/tag/v1.13.0-beta02)
+  > JetBrains 11 月 4 日发布 Compose Multiplatform 1.13.0-beta02，基于 Jetpack Compose 1.13.0-beta02。本版修复 `Stroke(join = StrokeJoin.Round)` 与 `Stroke(miter = 0f)` 被忽略的问题，修复 Skiko 中原生调用与 GC 之间可能出现的死锁，并修复 iOS 上 Compose 内容忽略 Reduce Motion 辅助功能设置的问题。
+
+## Web 框架与浏览器
+
+- [Safari 27.3 beta 加入 Adaptive Dark Mode](https://webkit.org/blog/18541/introducing-adaptive-dark-mode/)
+  > WebKit 团队 11 月 3 日介绍 Safari 27.3 beta 中的 Adaptive Dark Mode：用户开启后，Safari 会把浅色网站转换为深色显示；已通过 `color-scheme: light dark` 或对应 meta 标签声明支持深色模式的网站不受影响。网页可用 `color-scheme: light only` 声明不被转换，但 `only` 关键字在 Safari 27.3 beta 1 中尚未支持。WebKit 说明，Safari 不允许网站检测该模式是否生效，JavaScript 读取到的仍是原始颜色，`<canvas>` 内容不做转换。
+
+- [Next.js 16.4.5 发布 7 项中危安全修复](https://github.com/vercel/next.js/releases/tag/v16.4.5)
+  > Vercel 11 月 4 日发布 Next.js 16.4.5，修复 7 项 Moderate 级别的安全公告，涉及 `use cache` 与 `unstable_cache` 的跨租户信息泄露、Cache Components 共享 fallback shell 的缓存投毒、图片优化的 SVG 拒绝规则绕过，以及 Edge runtime 路由通过内部响应头暴露 HttpOnly cookie。
+
+## 构建、运行时与工程工具
+
+- [Playwright 1.65 支持用 Bun 运行测试](https://github.com/microsoft/playwright/releases/tag/v1.65.0)
+  > Playwright 11 月 6 日发布 1.65.0，测试运行器可通过 `bunx --bun playwright test` 在 Bun 下运行，由 Bun 自行转译 TypeScript；该模式没有 watch mode，`--tsconfig` 与 `tsconfig.json` 中的 JSX 选项不生效。新增 `failures` reporter、HTML/JSON/JUnit reporter 的 `onlyFailures` 选项和内置的 `-exclusive-` 测试锁。Breaking 项包括 TypeScript class fields 遵循 `useDefineForClassFields`，点击、填写等操作会等待元素不再处于 `inert` 状态，以及 Cookie 匹配改为遵循 RFC 6265。
+
+- [Vitest 5.1.0 新增 --last-failed 与 --since-last-run](https://github.com/vitest-dev/vitest/releases/tag/v5.1.0)
+  > Vitest 11 月 3 日发布 5.1.0，新增 `--last-failed` 只运行上次失败的测试，以及 `--since-last-run` 参数；`vi.setSystemTime()` 支持 `Temporal.Instant` 与 `Temporal.ZonedDateTime`，fake timers 支持 `node:timers` 与 `node:timers/promise`。浏览器模式下，trace view 去掉实验标签，仅记录失败用例的 trace 成为默认行为，默认端口改为 23315。
+
+- [Rolldown 1.3.0 加入 import attributes 与构建报告](https://github.com/rolldown/rolldown/releases/tag/v1.3.0)
+  > Rolldown 团队 11 月 5 日发布 1.3.0，通过 `experimental.importAttributes` 提供实验性的 import attributes 支持，`type: 'json'`、`'text'` 与 `'bytes'` 无需插件；`devtools: { mode: 'report' }` 会把每次构建的 Markdown 与 JSON 报告写入 `node_modules/.rolldown/report/`，新包 `@rolldown/perf-kit` 为实验性。Breaking 项包括 `preserveModules` 的 `[name]` 保留非 JS 扩展名，以及 CLI 的 `--input` 不能与位置参数入口同时使用；Rolldown 提示 Vite 8.3.6 及更早版本尚不能配合 1.3.0，Vite 的正常安装不受影响。
+
+- [pnpm 12.18.0 支持平台变体包与 agent skills 审批](https://github.com/pnpm/pnpm/releases/tag/v12.18.0)
+  > pnpm 11 月 5 日发布 12.18.0，在声明 `serverType: pnpr` 的 registry 上支持 `pnpm pack`、`pnpm publish` 与安装带平台变体（`publishConfig.variants`）的包，并新增 `pnpm store add`，用于从下载好的 tarball 离线安装。`pnpm approve` 可按 skill 逐个批准依赖包附带的 agent skills；在一项含 787 个包的解析基准中，pnpr registry 的包文档由 30.3 MB 降到 2.5 MB（gzip）。
