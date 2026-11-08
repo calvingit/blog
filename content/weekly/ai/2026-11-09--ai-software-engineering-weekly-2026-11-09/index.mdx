@@ -1,0 +1,61 @@
+---
+title: AI Software Engineering Weekly：Terminal-Bench 2.1 修订 2.0 约 30% 的问题；Copilot 接入 Xcode 与 JetBrains Air
+slug: ai-software-engineering-weekly-2026-11-09
+description: 2026 年 11 月 2 日至 11 月 8 日，涵盖 Terminal-Bench 2.1、Copilot 接入 Xcode 与 JetBrains Air、Claude Code 2.1.317–2.1.319、Codex 0.167.0 与 Cursor Live Apps。
+date: 2026-11-09
+lastUpdated: 2026-11-09
+series: ai
+tags:
+  - Terminal-Bench
+  - GitHub Copilot
+  - Xcode
+  - JetBrains Air
+  - Claude Code
+  - Codex
+  - Cursor
+  - MCP
+  - Multi-step SWE
+  - pull_request_target
+searchIndex: true
+---
+
+本期覆盖 2026 年 11 月 2 日 00\:00 至 11 月 8 日 23\:59（UTC+8），上一期已收录的事件不再重复，本期整理 Copilot 的新集成、Claude Code 与 Codex 的版本更新、Cursor 的两项发布、一项 GitHub Actions 安全变更，以及三篇 coding agent 评测论文。
+
+## Coding Agent 与开发工具
+
+- [GitHub Copilot 以 public preview 接入 Xcode 的 coding assistant](https://github.blog/changelog/2026-11-04-github-copilot-is-now-available-in-xcodes-coding-assistant)
+  > GitHub 11 月 4 日宣布，Copilot 可在 Xcode 内置的 coding assistant 中使用，目前为 public preview，需要 Xcode 27.3 beta 与 macOS Tahoe 26.6 或更高版本。所有 Copilot 方案均受支持，在 Xcode > Settings > Intelligence 中设置，原有的 GitHub Copilot for Xcode 扩展继续保留。
+
+- [GitHub Copilot 通过 ACP 接入 JetBrains Air](https://github.blog/changelog/2026-11-03-github-copilot-is-now-available-in-jetbrains-air)
+  > GitHub 11 月 3 日宣布，用户可在 JetBrains Air 的 agent 选择器中选用 GitHub Copilot，集成基于 Agent Client Protocol（ACP），任务可在 JetBrains IDE 或云端运行。云端任务通过 Air Teams 在全新虚拟机上的 Docker 容器中执行，流量经过代理，任务之间不保留状态，并使用用户的 Copilot 方案而非 JetBrains AI credits。Air 管理员可通过治理策略禁用 Copilot，但无法在 Air 内设置 Copilot 的支出上限。
+
+- [Claude Code 2.1.317–2.1.319：邮箱外发检查、MCP tasks 与 denyInsteadOfPrompting](https://github.com/anthropics/claude-code/releases/tag/v2.1.319)
+  > Anthropic 在 11 月 3 日、4 日和 7 日发布 Claude Code 2.1.317、2.1.318 与 2.1.319。2.1.317 新增检查，在 web 或 shell 工具调用要把账号邮箱发送到网络前先询问，并为 Agent SDK 的 hook 回调增加 `onFailure: "block"`；2.1.319 支持终端中的 MCP tasks，把以 task 方式运行的 MCP 工具调用转入后台，同时新增 `permissions.denyInsteadOfPrompting`，让原本等待权限提示的工具调用直接被拒绝，终端会话、子 Agent 与 teammate 均适用。2.1.319 还调整了 auto mode：在关闭遥测或 feature flags 的情况下，服务端无法检查的调用会被询问或拒绝，不再回退到内置分类器，可设置 `CLAUDE_CODE_AUTO_MODE_SERVER=0` 保留旧行为。
+
+- [Codex CLI 0.167.0：agent command center 与 Vertex AI 设置向导](https://github.com/openai/codex/releases/tag/rust-v0.167.0)
+  > OpenAI 11 月 6 日发布 Codex CLI 0.167.0，新增 `codex agents --no-daemon` 打开 agent command center，命令中心与会话选择器会标记未读结果。该版本还可在终端会话选择器中切换已连接的后端并保留草稿，启用 `gcp_setup_wizard` 后可用 Application Default Credentials 或凭据文件设置 Google Cloud Vertex AI；并发的同一端点网络请求改为逐个弹出审批提示。
+
+- [Cursor 推出 Live Apps，云端 agent 可构建并发布应用](https://cursor.com/changelog/build-live-apps)
+  > Cursor 11 月 5 日发布 Build Live Apps，向启用 cloud agents 的所有付费方案开放：云端 agent 会搭建 web 应用，按需创建 Postgres 数据库，配置 Cursor SSO 之后的认证并提供托管，用户选定唯一域名后得到可分享的链接。发布前会运行确定性与 agentic 的安全检查，检查未通过不会上线；团队管理员可查看所有应用与密钥、增加审查规则、批准被拦截的发布并取消发布。应用可从 Cursor Origin 与 GitHub 的新建或已有仓库部署，GitLab 等其他 Git 提供方的支持标注为即将推出。
+
+- [Cursor 推出基于 Grok Voice 的 agent 语音对话](https://cursor.com/changelog/voice-chat)
+  > Cursor 11 月 6 日发布 Voice Chat with Agents，可在 Agents Window、IDE、web 与 Cursor for iOS 中与 agent 进行实时语音通话。语音 agent 把编码工作交给对话中的 coding agent，通话期间用户可以询问 diff 改动、查看运行状态或搜索此前的消息；该功能运行在 Grok Voice 上，开启 Privacy Mode 时按零数据留存运行。
+
+## 工程实践与基础设施
+
+- [Claude Code 用户报告账号邮箱出现在 User-Agent 请求头中](https://github.com/anthropics/claude-code/issues/107757)
+  > GitHub 用户 taylor-edwards 在 UTC 时间 11 月 5 日 22:13 提交 issue #107757，称 Claude Code 2.1.318 在 macOS 上做网页搜索时，把其邮箱放入 `User-Agent` 请求头发给第三方站点，并称此后每天收到数十封诈骗邮件。issue 未附原始请求或复现步骤，截至本期整理时仍为 open；Anthropic 的 poteat 在评论中称，2.1.317 及之后版本内置名为 `cc-plugin-privacy` 的 mod，用于确定性地阻止这一行为，并请用户反馈检查中的遗漏。
+
+- [GitHub Actions 将于 12 月 2 日默认拦截公共仓库的 pull_request_target](https://github.blog/changelog/2026-11-02-pull_request_target-blocked-by-default-december-2)
+  > GitHub 11 月 2 日更新公告，把公共仓库默认拦截 `pull_request_target` 事件的强制执行日期从 11 月 2 日改为 2026 年 12 月 2 日，除非适用的 Actions event policy 明确允许。正式执行前设有两次 brownout，时间为 11 月 9 日与 11 月 16 日的 UTC 16:00–18:00，期间被拦截的工作流会产生带错误注解的失败运行。该规则适用于 GitHub Free、Team 与 Enterprise Cloud 的公共仓库，私有与内部仓库以及 Enterprise Server 不受影响。
+
+## 研究与 Benchmark
+
+- [Terminal-Bench 2.1：持续验证流程修复 Terminal-Bench 2.0 约 30% 的任务问题](https://arxiv.org/abs/2611.08417)
+  > E. Kelly Buchanan 等人 11 月 5 日在 arXiv 发布论文（arXiv:2611.08417），提出结合社区报告、任务产物、agent 轨迹、自动化 oracle 检查和人工把关修复的持续验证流程。作者审计 Terminal-Bench 2.0，在约 30% 的任务中发现问题，并发布修复后的 Terminal-Bench 2.1；修复后准确率提高超过 10 个百分点，排行榜位置最多变动三位，整体排名仍高度相关（Spearman rho = 0.958）。论文还报告，延长时间限制后，GPT 5.4 的 20 个百分点 harness 差距缩小，GPT 5.4 mini 的 30 个百分点差距缩小到 5 个百分点。
+
+- [Multi-step SWE：让 coding agent 在自己写的代码上连续推进 5 到 15 步](https://arxiv.org/abs/2611.07166)
+  > Xiangkai Zeng 等人 11 月 4 日在 arXiv 发布 Multi-step SWE（arXiv:2611.07166），包含 69 个软件工程任务，每个任务是同一代码库上 5 至 15 个相互依赖的步骤，每步都是耗时数小时的完整工程请求，覆盖四类工程工作与九种语言。作者评估九个前沿模型，最强模型的解决率为 18.5%，69 个任务中有 38 个没有任何模型解出。
+
+- [论文分析九个 agentic coding benchmark 的构念效度](https://arxiv.org/abs/2611.05665)
+  > Alexander Berndt 等人 11 月 3 日在 arXiv 发布论文（arXiv:2611.05665），分析九个常用 agentic coding 工具评测基准声称测量的构念、用于操作化的指标以及可能的混杂因素。作者报告，这些基准通常只用少量指标衡量编码能力这类宽泛概念，各基准列出的混杂因素差异较大，说明缺乏统一标准，并给出提高构念效度的建议。
