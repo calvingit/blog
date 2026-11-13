@@ -68,7 +68,11 @@ const AREAS = [
       aria-labelledby="intro-title"
     >
       <div class="relative z-10 max-w-xl">
-        <h1 id="intro-title" class="text-4xl font-semibold tracking-tight text-highlight md:text-5xl lg:max-w-[26rem]">
+        <!-- 22rem stays clear of the 58% illustration and lets the title balance around AI. -->
+        <h1
+          id="intro-title"
+          class="text-4xl font-semibold tracking-tight text-balance break-keep text-highlight md:text-5xl lg:max-w-[22rem]"
+        >
           软件开发与 AI 工程实践
         </h1>
         <p class="mt-3 text-base font-medium text-subtle md:text-lg">Software Engineer · AI Engineering</p>
