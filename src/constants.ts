@@ -7,15 +7,15 @@ export const SITE: Record<string, string> = {
   /**
    * Site-wide title
    */
-  title: 'Calvin\'s Blog',
+  title: 'Calvin',
   /**
-   * Used on index page and as a fallback if no title is set
+   * Fallback brand title. The homepage sets its own document title.
    */
-  titleDefault: 'Calvin\'s Blog',
+  titleDefault: 'Calvin',
   /**
    * Used in meta tags, RSS feed, and other places
    */
-  description: 'Calvin\'s Blog - Focus on Technology Sharing and Life Thoughts',
+  description: 'Calvin - Focus on Technology Sharing and Life Thoughts',
   /**
    * Language used in the <html> tag
    */

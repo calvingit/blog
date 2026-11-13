@@ -5,7 +5,8 @@ import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import { getAllContentEntries, getContentUrl } from '@content'
 import { sortAsc } from '@utils'
 
-const HOME_DESCRIPTION = 'Calvin 的个人技术主页，记录 AI Coding、Agent 工程与软件工程实践。'
+const HOME_TITLE = 'Calvin｜软件开发与 AI 工程实践'
+const HOME_DESCRIPTION = '记录 AI Coding、Agent 工程与日常开发中的尝试和思考。'
 
 const featuredPosts = sortAsc((await getAllContentEntries()).filter((entry) => entry.data.featured))
 
@@ -59,7 +60,7 @@ const AREAS = [
 ---
 
 <Layout>
-  <Seo slot="seo" description={HOME_DESCRIPTION} />
+  <Seo slot="seo" forceTitle={HOME_TITLE} description={HOME_DESCRIPTION} />
   <SkipNavContent>
     <!-- Phone: the header spacer is 40px; -mt-2 leaves 32px under its rule. Desktop hero padding stays pt-12 / pb-24. -->
     <section
@@ -67,10 +68,12 @@ const AREAS = [
       aria-labelledby="intro-title"
     >
       <div class="relative z-10 max-w-xl">
-        <h1 id="intro-title" class="text-4xl font-semibold tracking-tight text-highlight md:text-5xl">Calvin</h1>
+        <h1 id="intro-title" class="text-4xl font-semibold tracking-tight text-highlight md:text-5xl lg:max-w-[26rem]">
+          软件开发与 AI 工程实践
+        </h1>
         <p class="mt-3 text-base font-medium text-subtle md:text-lg">Software Engineer · AI Engineering</p>
         <p class="mt-7 max-w-lg text-base leading-8 text-text md:text-lg">
-          长期关注 AI Coding、Agent 工程与软件工程实践，记录学习、实践与思考。
+          {HOME_DESCRIPTION}
         </p>
       </div>
       <svg
