@@ -1,115 +1,168 @@
 ---
 import Layout from '@layouts/layout.astro'
 import Seo from '@components/seo.astro'
-import { Content as Hero } from '@assets/hero.mdx'
 import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import { getAllContentEntries, getContentUrl } from '@content'
-import { defaultDateFormat, sortAsc } from '@utils'
-import Link from '@components/link.astro'
-import Prose from '@components/prose.astro'
-import Spacer from '@components/spacer.astro'
-import { SITE } from '@constants'
+import { sortAsc } from '@utils'
 
-const OSS_PROJECTS: Array<{ name: string; url: string; description: string }> = [
+const HOME_DESCRIPTION = '张文的个人技术主页，记录 AI Coding、Agent 工程与软件工程实践。'
+
+const featuredPosts = sortAsc((await getAllContentEntries()).filter(entry => entry.data.featured))
+
+const PROJECTS = [
   {
-    name: 'secco',
-    url: 'https://github.com/LekoArts/secco',
-    description: 'Local package testing made easy',
+    name: 'cstack',
+    description: '小而有据、按风险调整的 AI 编码工程技能原型。',
+    url: 'https://github.com/calvingit/cstack',
+    type: 'GitHub',
   },
   {
-    name: 'astro-loaders',
-    url: 'https://github.com/LekoArts/astro-loaders',
-    description: "Loaders for Astro's Content Layer",
+    name: 'SimDeck',
+    description: '管理 Android 和 iOS 模拟器的 macOS 菜单栏应用。',
+    url: 'https://github.com/calvingit/SimDeck',
+    type: 'GitHub',
   },
   {
-    name: 'annum',
-    url: 'https://github.com/LekoArts/annum',
-    description: 'Visualize your Trakt.tv history',
+    name: 'Jev 多目标框选 Demo',
+    description: '用 Jev 识别并框出图中同类物体的演示。',
+    url: 'https://bbox-demo.zhangwen.site/',
+    type: 'Demo',
   },
-]
+  {
+    name: '每日早间资讯',
+    description: '每天汇总 AI、X、HN、Reddit、GitHub Trending 的中文早报。',
+    url: 'https://daily-news.zhangwen.site/',
+    type: 'Demo',
+  },
+  {
+    name: 'pstack 中文课程',
+    description: '系统学习 poteto/pstack 的中文课程。',
+    url: 'https://pstack-learn.zhangwen.site/',
+    type: 'Demo',
+  },
+] as const
 
-const POSTS_TO_SHOW = 10
-
-const entries = sortAsc(await getAllContentEntries())
-const featuredPosts = entries.filter((entry) => entry.data.featured)
-const posts = entries.filter((entry) => !entry.data.featured).slice(0, POSTS_TO_SHOW)
+const AREAS = [
+  {
+    title: 'Client & Full Stack',
+    description: 'iOS、Swift、Flutter、Web、Node.js',
+  },
+  {
+    title: 'AI Software Engineering',
+    description: 'AI Coding、Coding Agents、项目上下文与自动化',
+  },
+  {
+    title: 'Engineering Practices',
+    description: '软件工程、验证与审查、工程效率与工具链',
+  },
+] as const
 ---
 
 <Layout>
-  <Seo slot="seo" />
+  <Seo slot="seo" description={HOME_DESCRIPTION} />
   <SkipNavContent>
-    <h1 class="sr-only">{SITE.title}</h1>
-    <Prose>
-      <Hero />
-    </Prose>
+    <section class="relative isolate overflow-hidden pb-16 pt-8 md:pb-24 md:pt-12" aria-labelledby="intro-title">
+      <div class="relative z-10 max-w-xl">
+        <h1 id="intro-title" class="text-4xl font-semibold tracking-tight text-highlight md:text-5xl">张文</h1>
+        <p class="mt-3 text-base font-medium text-subtle md:text-lg">Software Engineer · AI Engineering</p>
+        <p class="mt-7 max-w-lg text-base leading-8 text-text md:text-lg">
+          长期关注 AI Coding、Agent 工程与软件工程实践，记录学习、实践与思考。
+        </p>
+      </div>
+      <svg
+        aria-hidden="true"
+        class="pointer-events-none absolute bottom-3 right-0 hidden h-56 w-[58%] text-stone-400/40 lg:block dark:text-stone-500/30"
+        viewBox="0 0 600 220"
+        fill="none"
+      >
+        <circle cx="480" cy="42" r="17" fill="currentColor" opacity=".26" />
+        <path d="M0 181 C90 147 130 167 205 115 S295 137 380 72 S481 87 600 126" stroke="currentColor" stroke-width="1.2" />
+        <path d="M0 193 C100 162 173 205 252 152 S387 96 463 133 S542 128 600 139" stroke="currentColor" stroke-width="1" opacity=".85" />
+        <path d="M0 204 C96 187 162 194 254 186 S391 144 481 153 S553 162 600 166" stroke="currentColor" stroke-width="1" opacity=".65" />
+      </svg>
+    </section>
+
     {
       featuredPosts.length > 0 && (
-        <>
-          <Spacer axis="vertical" size={32} />
-          <section>
-            <div class="border-b border-border pb-4">
-              <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Featured</h2>
+        <section class="border-t border-border py-10 md:py-12" aria-labelledby="featured-heading">
+          <div class="mb-5 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span aria-hidden="true" class="h-5 w-1 rounded-sm bg-stone-400 dark:bg-stone-500" />
+              <h2 id="featured-heading" class="text-xl font-semibold text-highlight md:text-2xl">精选文章</h2>
             </div>
-            <Spacer axis="vertical" size={8} />
-            <div class="flex gap-10 flex-col">
-              {featuredPosts.map((entry) => (
-                <div>
-                  <Link variant="highlight" href={getContentUrl(entry)}>
+            <a href="/blog/" class="text-sm text-subtle hover:text-highlight hover:underline">查看更多文章 ↗</a>
+          </div>
+          <div>
+            {featuredPosts.map(entry => (
+              <a
+                href={getContentUrl(entry)}
+                class="group grid gap-x-6 gap-y-2 border-b border-border py-5 first:pt-3 md:grid-cols-[6.5rem_minmax(0,1.1fr)_minmax(0,1fr)] md:items-start"
+              >
+                <time datetime={entry.data.date.toISOString().slice(0, 10)} class="text-sm tabular-nums text-faded">
+                  {entry.data.date.toISOString().slice(0, 10).replace(/-/g, '.')}
+                </time>
+                <div class="space-y-2">
+                  <h3 class="font-medium leading-6 text-highlight transition-colors group-hover:text-primary">
                     {entry.data.title}
-                  </Link>
-                  <Spacer axis="vertical" size={2} />
-                  <p class="text-sm text-faded leading-relaxed italic">{entry.data.description}</p>
-                  <Spacer axis="vertical" size={3} />
-                  <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
+                  </h3>
+                  <span class="text-xs text-faded">{entry.data.tags.slice(0, 2).join(' / ')}</span>
                 </div>
-              ))}
-            </div>
-          </section>
-        </>
+                <p class="text-sm leading-6 text-subtle">{entry.data.description}</p>
+              </a>
+            ))}
+          </div>
+        </section>
       )
     }
-    <Spacer axis="vertical" size={32} />
-    <section>
-      <div class="border-b border-border pb-4 flex justify-between items-center">
-        <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Latest Posts</h2>
-        <div><Link href="/blog/">Browse blog</Link></div>
+
+    <section class="border-t border-border py-10 md:py-12" aria-labelledby="projects-heading">
+      <div class="mb-5 flex items-center gap-3">
+        <span aria-hidden="true" class="h-5 w-1 rounded-sm bg-stone-400 dark:bg-stone-500" />
+        <h2 id="projects-heading" class="text-xl font-semibold text-highlight md:text-2xl">精选项目</h2>
       </div>
-      <Spacer axis="vertical" size={8} />
-      <div class="flex gap-10 flex-col">
-        {
-          posts.map((entry) => (
-            <div>
-              <Link variant="highlight" href={getContentUrl(entry)}>
-                {entry.data.title}
-              </Link>
-              <Spacer axis="vertical" size={2} />
-              <p class="text-sm text-faded leading-relaxed italic">{entry.data.description}</p>
-              <Spacer axis="vertical" size={3} />
-              <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
-            </div>
-          ))
-        }
+      <ul>
+        {PROJECTS.map(project => (
+          <li class="grid gap-x-6 gap-y-1 border-b border-border py-4 first:pt-3 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_5rem] md:items-baseline">
+            <h3 class="font-medium text-highlight">{project.name}</h3>
+            <p class="text-sm leading-6 text-subtle">{project.description}</p>
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm text-subtle hover:text-highlight hover:underline md:text-right"
+              aria-label={project.name + ' — ' + project.type + '（新窗口打开）'}
+            >
+              {project.type} ↗
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="border-t border-border py-10 md:py-12" aria-labelledby="areas-heading">
+      <div class="mb-7 flex items-center gap-3">
+        <span aria-hidden="true" class="h-5 w-1 rounded-sm bg-stone-400 dark:bg-stone-500" />
+        <h2 id="areas-heading" class="text-xl font-semibold text-highlight md:text-2xl">关注领域</h2>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3 md:gap-0 md:divide-x md:divide-border">
+        {AREAS.map(area => (
+          <div class="space-y-3 md:px-6 md:first:pl-0 md:last:pr-0">
+            <h3 class="text-base font-medium text-highlight">{area.title}</h3>
+            <p class="text-sm leading-6 text-subtle">{area.description}</p>
+          </div>
+        ))}
       </div>
     </section>
-    <!-- <Spacer axis="vertical" size={32} />
-    <section>
-      <div class="border-b border-border pb-4">
-        <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Open Source Projects</h2>
+
+    <section class="grid gap-4 border-t border-border py-10 md:grid-cols-[7rem_minmax(0,1fr)_auto] md:items-start md:gap-6 md:py-12" aria-labelledby="about-heading">
+      <div class="flex items-center gap-3">
+        <span aria-hidden="true" class="h-5 w-1 rounded-sm bg-stone-400 dark:bg-stone-500" />
+        <h2 id="about-heading" class="text-xl font-semibold text-highlight md:text-2xl">关于我</h2>
       </div>
-      <Spacer axis="vertical" size={8} />
-      <div class="flex gap-10 flex-col">
-        {
-          OSS_PROJECTS.map((oss) => (
-            <div>
-              <Link variant="highlight" href={oss.url}>
-                {oss.name}
-              </Link>
-              <Spacer axis="vertical" size={2} />
-              <div class="text-faded">{oss.description}</div>
-            </div>
-          ))
-        }
-      </div>
-    </section> -->
+      <p class="text-sm leading-7 text-subtle">
+        一名有十余年经验的全栈工程师，技术路径从 C/C++ 到 iOS，再到 Flutter 和 AI Coding。
+      </p>
+      <a href="/about/" class="text-sm text-subtle hover:text-highlight hover:underline">了解更多 ↗</a>
+    </section>
   </SkipNavContent>
 </Layout>
