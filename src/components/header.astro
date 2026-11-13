@@ -9,7 +9,7 @@ const isActive = (url: string) => pathname === url
 const isWeeklyRoute = pathname.startsWith('/blog/weekly/')
 ---
 
-<header class="container">
+<header class="container relative">
   <Spacer axis="vertical" size={8} />
   <div class="flex flex-row justify-between items-center">
     <div>
@@ -29,7 +29,7 @@ const isWeeklyRoute = pathname.startsWith('/blog/weekly/')
       {
         HEADER.internal.map((link) =>
           'links' in link ? (
-            <div class="group relative">
+            <div class="group relative max-sm:static">
               <button
                 type="button"
                 class:list={[
@@ -50,13 +50,13 @@ const isWeeklyRoute = pathname.startsWith('/blog/weekly/')
                   <path d="m4 6 4 4 4-4" />
                 </svg>
               </button>
-              <div class="invisible pointer-events-none absolute top-full left-0 z-10 pt-2 opacity-0 transition-opacity group-hover:visible group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto group-focus-within:opacity-100">
-                <div class="min-w-64 border border-border bg-bg py-2 shadow-lg">
+              <div class="absolute top-full left-0 z-10 hidden pt-2 group-hover:block group-focus-within:block max-sm:right-0">
+                <div class="min-w-64 border border-border bg-bg py-2 shadow-lg max-sm:min-w-0">
                   {link.links.map((item) => (
                     <Link
                       href={item.url}
                       class:list={[
-                        'block px-4 py-2 whitespace-nowrap hover:no-underline hover:bg-border',
+                        'block px-4 py-2 whitespace-nowrap hover:no-underline hover:bg-border max-sm:whitespace-normal',
                         isActive(item.url) && 'active',
                       ]}
                       aria-current={isActive(item.url) ? 'page' : 'false'}
