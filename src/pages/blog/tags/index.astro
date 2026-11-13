@@ -4,23 +4,39 @@ import Link from '@components/link.astro'
 import Seo from '@components/seo.astro'
 import Spacer from '@components/spacer.astro'
 import Layout from '@layouts/layout.astro'
+import JsonLd from '@components/json-ld.astro'
 import { getAllContentEntries } from '@content'
+import { collectionGraph } from '../../../schema'
 import { getTags } from '@utils'
 
 const entries = await getAllContentEntries()
 
 const tags = getTags(entries)
+const description = '按标签浏览文章。'
 ---
 
 <Layout>
-  <Seo slot="seo" title="Tags" />
+  <Seo slot="seo" title="标签" description={description}>
+    <JsonLd
+      data={collectionGraph({
+        name: '标签',
+        description,
+        path: '/blog/tags/',
+        crumbs: [
+          { name: '首页', path: '/' },
+          { name: '博客', path: '/blog/' },
+          { name: '标签', path: '/blog/tags/' },
+        ],
+      })}
+    />
+  </Seo>
   <SkipNavContent>
     <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">All tags</h2>
     <Spacer axis="vertical" size={12} />
     <div class="flex gap-6 flex-col">
       {
         tags.map(({ tag, slug, count }) => (
-          <Link variant="highlight" href={`/tags/${slug}/`}>
+          <Link variant="highlight" href={`/blog/tags/${slug}/`}>
             {tag} ({count})
           </Link>
         ))

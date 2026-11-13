@@ -1,5 +1,6 @@
 import type { Options as AutolinkHeadingsOptions } from 'rehype-autolink-headings'
 import type { Options as ExternalLinkOptions } from 'rehype-external-links'
+import { readFileSync } from 'node:fs'
 import { unified } from '@astrojs/markdown-remark'
 import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
@@ -19,11 +20,40 @@ import { SITE } from './src/constants'
 import { remarkAsides, remarkMermaid } from './src/remark'
 import { pagefindIntegration } from './src/utils'
 
+function loadLastmod(): Record<string, string> {
+  try {
+    return JSON.parse(readFileSync(new URL('./src/generated/lastmod.json', import.meta.url), 'utf8')) as Record<string, string>
+  }
+  catch {
+    return {}
+  }
+}
+
+const lastmodByUrl = loadLastmod()
+
 export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   site: SITE.url,
-  integrations: [expressiveCode(), mdx({ gfm: true }), sitemap(), pagefindIntegration(), react()],
+  integrations: [
+    expressiveCode(),
+    mdx({ gfm: true }),
+    sitemap({
+      filter: (page) => {
+        const { pathname } = new URL(page)
+        return pathname !== '/404' && pathname !== '/404/'
+      },
+      serialize(item) {
+        const lastmod = lastmodByUrl[item.url]
+        if (lastmod) {
+          item.lastmod = lastmod
+        }
+        return item
+      },
+    }),
+    pagefindIntegration(),
+    react(),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },

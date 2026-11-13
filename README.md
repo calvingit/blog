@@ -13,15 +13,15 @@
 
 文章从具体问题出发，尽量写清楚过程、依据和限制，而不是只给结论。最近的内容可以从 [全部文章](https://zhangwen.site/blog/) 浏览，也可以直接阅读：
 
-- [我的 AI Coding 工作流：从 Context、Skills 到 Automation](https://zhangwen.site/ai-coding-workflow/)
-- [AI Software Engineering Weekly](https://zhangwen.site/ai-software-engineering-weekly-2026-08-28/)
-- [如何解决长期 AI Coding 产生的代码屎山？](https://zhangwen.site/ai-coding-created-a-code-mountain/)
+- [我的 AI Coding 工作流：从 Context、Skills 到 Automation](https://zhangwen.site/blog/ai-coding-workflow/)
+- [AI Software Engineering Weekly](https://zhangwen.site/blog/weekly/ai/ai-software-engineering-weekly-2026-08-28/)
+- [如何解决长期 AI Coding 产生的代码屎山？](https://zhangwen.site/blog/ai-coding-created-a-code-mountain/)
 
 ## 阅读入口
 
 - [博客首页](https://zhangwen.site/)：查看最新发布的文章。
 - [文章归档](https://zhangwen.site/blog/)：按时间浏览全部内容。
-- [标签页](https://zhangwen.site/tags/)：按主题筛选文章。
+- [标签页](https://zhangwen.site/blog/tags/)：按主题筛选文章。
 - [RSS](https://zhangwen.site/rss.xml)：通过阅读器订阅更新。
 - [关于我](https://zhangwen.site/about/)：了解作者与这个站点。
 

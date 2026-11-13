@@ -4,7 +4,9 @@ import Link from '@components/link.astro'
 import Seo from '@components/seo.astro'
 import Spacer from '@components/spacer.astro'
 import Layout from '@layouts/layout.astro'
+import JsonLd from '@components/json-ld.astro'
 import { getAllContentEntries, getContentUrl } from '@content'
+import { collectionGraph } from '../../../schema'
 import { defaultDateFormat, getTags } from '@utils'
 
 /**
@@ -27,14 +29,30 @@ export async function getStaticPaths() {
 }
 
 const { tagName, postsWithTag } = Astro.props
+const pageName = `标签：${tagName}`
+const description = `「${tagName}」标签下的文章。`
 ---
 
 <Layout>
-  <Seo slot="seo" title={`Tag: ${tagName}`} />
+  <Seo slot="seo" title={pageName} description={description}>
+    <JsonLd
+      data={collectionGraph({
+        name: pageName,
+        description,
+        path: Astro.url.pathname,
+        crumbs: [
+          { name: '首页', path: '/' },
+          { name: '博客', path: '/blog/' },
+          { name: '标签', path: '/blog/tags/' },
+          { name: tagName, path: Astro.url.pathname },
+        ],
+      })}
+    />
+  </Seo>
   <SkipNavContent>
     <div class="border-b border-border pb-4 flex justify-between items-center">
       <h1 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Tag: {tagName}</h1>
-      <div><Link href="/tags/">See all tags</Link></div>
+      <div><Link href="/blog/tags/">See all tags</Link></div>
     </div>
     <Spacer axis="vertical" size={8} />
     <div class="flex gap-10 flex-col">

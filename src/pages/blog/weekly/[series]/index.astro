@@ -3,8 +3,10 @@ import Link from '@components/link.astro'
 import Seo from '@components/seo.astro'
 import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import Spacer from '@components/spacer.astro'
+import JsonLd from '@components/json-ld.astro'
 import { getContentUrl, getWeeklyEntries, getWeeklySeries, type WeeklySeries, WEEKLY_SERIES } from '@content'
 import Layout from '@layouts/layout.astro'
+import { collectionGraph } from '../../../../schema'
 import { defaultDateFormat, sortAsc } from '@utils'
 
 export function getStaticPaths() {
@@ -20,7 +22,21 @@ const posts = sortAsc((await getWeeklyEntries()).filter((entry) => getWeeklySeri
 ---
 
 <Layout>
-  <Seo slot="seo" title={title} description={description} />
+  <Seo slot="seo" title={`周报：${title}`} description={description}>
+    <JsonLd
+      data={collectionGraph({
+        name: `周报：${title}`,
+        description,
+        path: `/blog/weekly/${series}/`,
+        crumbs: [
+          { name: '首页', path: '/' },
+          { name: '博客', path: '/blog/' },
+          { name: '周报', path: '/blog/weekly/' },
+          { name: title, path: `/blog/weekly/${series}/` },
+        ],
+      })}
+    />
+  </Seo>
   <SkipNavContent>
     <div class="border-b border-border pb-4">
       <h1 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">{title}</h1>

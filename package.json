@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "astro dev",
     "build:pagefind": "pagefind",
-    "build:astro": "astro build",
+    "build:astro": "tsx scripts/generate-redirects.ts && astro build",
+    "redirects": "tsx scripts/generate-redirects.ts",
+    "verify:preview": "tsx scripts/verify-preview.ts",
     "build": "pnpm run build:astro && pnpm run build:pagefind",
     "preview": "astro preview",
     "astro": "astro",

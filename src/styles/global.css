@@ -141,3 +141,75 @@ select option {
   background-color: var(--color-bg);
   color: var(--color-text);
 }
+
+/* Keep long code, tables, and diagrams inside the viewport. */
+.prose {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.prose pre,
+.prose figure,
+.expressive-code,
+.mermaid {
+  max-width: 100%;
+}
+
+.prose :not(pre) > code {
+  overflow-wrap: anywhere;
+}
+
+.prose table,
+.mermaid {
+  display: block;
+  overflow-x: auto;
+}
+
+@media (width < 40rem) {
+  .markdown-heading .anchor {
+    position: relative;
+    top: auto;
+    left: auto;
+    display: inline-flex;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: 0.25rem;
+    padding: 0;
+    transform: none;
+    vertical-align: middle;
+  }
+
+  /*
+   * Closed weekly menu is visibility:hidden but still widens the page.
+   * Hide it until hover, and pin the open menu to the header.
+   * Selectors use the current `invisible` menu so they do not fight PR #8,
+   * which removes that class.
+   */
+  header.container {
+    position: relative;
+  }
+
+  header nav .group {
+    position: static;
+  }
+
+  header nav .group > .invisible.absolute {
+    display: none;
+    right: 0;
+    left: 0;
+  }
+
+  header nav .group:hover > .invisible.absolute,
+  header nav .group:focus-within > .invisible.absolute {
+    display: block;
+  }
+
+  header nav .group .min-w-64 {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  header nav .group .whitespace-nowrap {
+    white-space: normal;
+  }
+}

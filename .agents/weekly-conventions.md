@@ -20,4 +20,4 @@
 
 ## slug 稳定性
 
-文章 URL 由 slug 决定，形式为 `/weekly/{series}/{slug}/`。站点当前没有 redirects 配置，改 slug 等于让旧链接失效，因此 slug 一经确定不再修改；确需调整时先补跳转规则。
+文章 URL 由 slug 决定，形式为 `/blog/weekly/{series}/{slug}/`。旧地址 `/weekly/{series}/{slug}/` 由 `public/_redirects` 301 到新地址。slug 一经确定不再修改；确需调整时先补跳转规则。

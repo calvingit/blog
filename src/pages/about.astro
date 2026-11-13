@@ -4,10 +4,12 @@ import Seo from '@components/seo.astro'
 import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import { Content } from '@assets/about.mdx'
 import Prose from '@components/prose.astro'
+
+const description = '关于张文：十余年全栈工程师，从 C/C++ 到 iOS，再到 Flutter 与 AI Coding。'
 ---
 
 <Layout>
-  <Seo slot="seo" title="About" />
+  <Seo slot="seo" title="关于" description={description} />
   <SkipNavContent>
     <h1 class="sr-only">About</h1>
     <Prose>

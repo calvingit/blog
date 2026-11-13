@@ -4,7 +4,9 @@ import Seo from '@components/seo.astro'
 import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import Spacer from '@components/spacer.astro'
 import Layout from '@layouts/layout.astro'
+import JsonLd from '@components/json-ld.astro'
 import { getContentUrl, getWeeklyEntries, getWeeklySeries, type WeeklySeries, WEEKLY_SERIES } from '@content'
+import { collectionGraph } from '../../../schema'
 import { defaultDateFormat, sortAsc } from '@utils'
 
 const weeklyEntries = await getWeeklyEntries()
@@ -16,7 +18,20 @@ const series = (Object.keys(WEEKLY_SERIES) as WeeklySeries[]).map((slug) => ({
 ---
 
 <Layout>
-  <Seo slot="seo" title="Weekly" description="每周技术工程观察。" />
+  <Seo slot="seo" title="周报" description="每周技术工程观察。">
+    <JsonLd
+      data={collectionGraph({
+        name: '周报',
+        description: '每周技术工程观察。',
+        path: '/blog/weekly/',
+        crumbs: [
+          { name: '首页', path: '/' },
+          { name: '博客', path: '/blog/' },
+          { name: '周报', path: '/blog/weekly/' },
+        ],
+      })}
+    />
+  </Seo>
   <SkipNavContent>
     <h1 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Weekly</h1>
     <Spacer axis="vertical" size={12} />
@@ -26,7 +41,7 @@ const series = (Object.keys(WEEKLY_SERIES) as WeeklySeries[]).map((slug) => ({
           <section>
             <div class="border-b border-border pb-4">
               <h2 class="font-medium text-lg md:text-xl text-highlight">
-                <Link variant="highlight" href={`/weekly/${slug}/`}>
+                <Link variant="highlight" href={`/blog/weekly/${slug}/`}>
                   {title}
                 </Link>
               </h2>

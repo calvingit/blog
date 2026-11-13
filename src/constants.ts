@@ -13,7 +13,8 @@ export const SITE: Record<string, string> = {
    */
   titleDefault: 'Wen\'s Blog',
   /**
-   * Used in meta tags, RSS feed, and other places
+   * Fallback meta description for pages that do not set their own.
+   * The homepage and RSS channel use HOME_DESCRIPTION and BLOG_DESCRIPTION.
    */
   description: 'Wen\'s Blog - Focus on Technology Sharing and Life Thoughts',
   /**
@@ -70,15 +71,15 @@ export const HEADER: Header = {
       links: [
         {
           title: 'AI Software Engineering',
-          url: '/weekly/ai/',
+          url: '/blog/weekly/ai/',
         },
         {
           title: 'Frontend & Mobile Engineering',
-          url: '/weekly/frontend/',
+          url: '/blog/weekly/frontend/',
         },
         {
           title: '摸鱼精选',
-          url: '/weekly/reading/',
+          url: '/blog/weekly/reading/',
         },
       ],
     },
@@ -107,6 +108,18 @@ export const HEADER: Header = {
     },
   ],
 }
+
+/**
+ * Homepage meta description. The visible homepage stays in M1 (PR #8);
+ * this sentence matches that page so previews without it still meet AC12-12.
+ */
+export const HOME_DESCRIPTION = '张文的个人介绍。十余年全栈工程师，从 C/C++ 到 iOS，再到 Flutter 与 AI Coding。'
+
+/**
+ * RSS channel description. Separate from the homepage introduction.
+ * Wording is fixed by PRD v4.
+ */
+export const BLOG_DESCRIPTION = '张文的技术博客，关注 AI Coding、Agent 软件工程，以及移动端与 Web 开发。'
 
 export const SKIP_NAV_ID = 'skip-to-content'
 

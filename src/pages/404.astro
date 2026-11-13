@@ -1,0 +1,18 @@
+---
+import SkipNavContent from '@components/a11y/skip-nav-content.astro'
+import Link from '@components/link.astro'
+import Seo from '@components/seo.astro'
+import Spacer from '@components/spacer.astro'
+import Layout from '@layouts/layout.astro'
+---
+
+<Layout>
+  <Seo slot="seo" title="页面未找到" description="这个地址没有对应的页面。" noIndex noCanonical />
+  <SkipNavContent>
+    <h1 class="font-medium text-xl text-highlight md:text-2xl lg:text-3xl">页面未找到</h1>
+    <Spacer axis="vertical" size={6} />
+    <p class="text-subtle">这个地址没有对应的页面。</p>
+    <Spacer axis="vertical" size={8} />
+    <Link href="/blog/">返回博客</Link>
+  </SkipNavContent>
+</Layout>

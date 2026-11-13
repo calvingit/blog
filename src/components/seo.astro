@@ -1,5 +1,5 @@
 ---
-import { SITE } from '@constants'
+import { HOME_DESCRIPTION, SITE } from '@constants'
 
 interface Props {
   title?: string
@@ -7,9 +7,11 @@ interface Props {
   description?: string
   image?: string
   noIndex?: boolean
+  noCanonical?: boolean
+  ogType?: 'website' | 'article'
 }
 
-const { title, forceTitle, description, image, noIndex = false } = Astro.props
+const { title, forceTitle, description, image, noIndex = false, noCanonical = false, ogType = 'website' } = Astro.props
 const {
   title: siteTitle,
   titleDefault: siteTitleDefault,
@@ -18,10 +20,12 @@ const {
   defaultOgImage: siteImage,
 } = SITE
 
+const pathname = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`
+const isHome = pathname === '/'
 const seo = {
   title: title ? `${title} | ${siteTitle}` : siteTitleDefault,
-  description: description || siteDescription,
-  url: new URL(Astro.url.pathname, siteUrl),
+  description: description || (isHome ? HOME_DESCRIPTION : siteDescription),
+  url: new URL(pathname, siteUrl),
   image: new URL(image || siteImage, siteUrl),
 }
 
@@ -34,12 +38,12 @@ if (forceTitle) {
 <meta name="description" content={seo.description} />
 <meta name="image" content={seo.image} />
 <link rel="alternate" type="application/rss+xml" title={SITE.titleDefault} href={new URL('rss.xml', Astro.site)} />
-<link rel="canonical" href={seo.url} />
+{!noCanonical && <link rel="canonical" href={seo.url} />}
 <meta property="og:title" content={seo.title} />
 <meta property="og:url" content={seo.url} />
 <meta property="og:description" content={seo.description} />
 <meta property="og:image" content={seo.image} />
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@calvin_cheung0" />
 <meta name="twitter:creator" content="@calvin_cheung0" />
@@ -47,5 +51,5 @@ if (forceTitle) {
 <meta name="twitter:url" content={seo.url} />
 <meta name="twitter:description" content={seo.description} />
 <meta name="twitter:image" content={seo.image} />
-{noIndex && <meta name="robots" content="noindex, nofollow" />}
+{noIndex && <meta name="robots" content="noindex" />}
 <slot />

@@ -4,11 +4,13 @@ import Seo from '@components/seo.astro'
 import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import Spacer from '@components/spacer.astro'
 import TagLinks from '@components/tag-links.astro'
-import { getWeeklyEntries, getWeeklySeries } from '@content'
+import { getContentUrl, getWeeklyEntries, getWeeklySeries, WEEKLY_SERIES } from '@content'
 import Layout from '@layouts/layout.astro'
 import Prose from '@components/prose.astro'
+import JsonLd from '@components/json-ld.astro'
 import Mermaid from '@components/mermaid.astro'
 import { SITE } from '@constants'
+import { blogPostingGraph } from '../../../../schema'
 import { defaultDateFormat, isoDateFormat } from '@utils'
 import { render } from 'astro:content'
 
@@ -28,10 +30,29 @@ const { entry } = Astro.props
 const { data: post } = entry
 const { Content } = await render(entry)
 const components = { Aside, Mermaid }
+const series = getWeeklySeries(entry)
+const path = getContentUrl(entry)
 ---
 
 <Layout>
-  <Seo slot="seo" forceTitle={post.title} description={post.description} image={post.image}>
+  <Seo slot="seo" forceTitle={post.title} description={post.description} image={post.image} ogType="article">
+    <JsonLd
+      data={blogPostingGraph({
+        title: post.title,
+        description: post.description,
+        date: post.date,
+        lastUpdated: post.lastUpdated,
+        image: post.image,
+        path,
+        crumbs: [
+          { name: '首页', path: '/' },
+          { name: '博客', path: '/blog/' },
+          { name: '周报', path: '/blog/weekly/' },
+          { name: WEEKLY_SERIES[series].title, path: `/blog/weekly/${series}/` },
+          { name: post.title, path },
+        ],
+      })}
+    />
     <meta name="twitter:label1" value="Author" />
     <meta name="twitter:data1" data-pagefind-meta="author" value={SITE.defaultAuthor} />
     <meta name="twitter:label2" value="Tags" />
