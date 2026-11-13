@@ -1,6 +1,6 @@
-# Wen's Blog
+# Calvin's Blog
 
-[Wen's Blog](https://zhangwen.site) 是一个持续更新的中文个人博客，记录软件开发、AI Coding 与日常阅读中的观察和实践。
+[Calvin's Blog](https://zhangwen.site) 是一个持续更新的中文个人博客，记录软件开发、AI Coding 与日常阅读中的观察和实践。
 
 ## 写什么
 

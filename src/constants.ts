@@ -7,15 +7,15 @@ export const SITE: Record<string, string> = {
   /**
    * Site-wide title
    */
-  title: 'Wen\'s Blog',
+  title: 'Calvin\'s Blog',
   /**
    * Used on index page and as a fallback if no title is set
    */
-  titleDefault: 'Wen\'s Blog',
+  titleDefault: 'Calvin\'s Blog',
   /**
    * Used in meta tags, RSS feed, and other places
    */
-  description: 'Wen\'s Blog - Focus on Technology Sharing and Life Thoughts',
+  description: 'Calvin\'s Blog - Focus on Technology Sharing and Life Thoughts',
   /**
    * Language used in the <html> tag
    */
@@ -27,7 +27,7 @@ export const SITE: Record<string, string> = {
   /**
    * Default author name that gets added to meta tags
    */
-  defaultAuthor: 'Wen',
+  defaultAuthor: 'Calvin',
 }
 
 interface HeaderLink {
