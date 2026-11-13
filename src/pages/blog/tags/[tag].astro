@@ -30,11 +30,11 @@ const { tagName, postsWithTag } = Astro.props
 ---
 
 <Layout>
-  <Seo slot="seo" title={`Tag: ${tagName}`} />
+  <Seo slot="seo" title={`标签：${tagName}`} description={`标签「${tagName}」下的文章。`} />
   <SkipNavContent>
     <div class="border-b border-border pb-4 flex justify-between items-center">
       <h1 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Tag: {tagName}</h1>
-      <div><Link href="/tags/">See all tags</Link></div>
+      <div><Link href="/blog/tags/">See all tags</Link></div>
     </div>
     <Spacer axis="vertical" size={8} />
     <div class="flex gap-10 flex-col">

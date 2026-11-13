@@ -13,9 +13,10 @@ export const SITE: Record<string, string> = {
    */
   titleDefault: 'Calvin',
   /**
-   * Used in meta tags, RSS feed, and other places
+   * Fallback only. The homepage passes its own sentence and must not inherit this.
+   * RSS reads `RSS_DESCRIPTION` and does not read this field.
    */
-  description: 'Calvin - Focus on Technology Sharing and Life Thoughts',
+  description: 'Calvin 的技术博客，关注 AI Coding、Agent 软件工程，以及移动端与 Web 开发。',
   /**
    * Language used in the <html> tag
    */
@@ -29,6 +30,11 @@ export const SITE: Record<string, string> = {
    */
   defaultAuthor: 'Calvin',
 }
+
+/**
+ * RSS channel description. The previous sentence named 张文; only that identity word changes.
+ */
+export const RSS_DESCRIPTION = 'Calvin 的技术博客，关注 AI Coding、Agent 软件工程，以及移动端与 Web 开发。'
 
 interface HeaderLink {
   title: string
@@ -70,15 +76,15 @@ export const HEADER: Header = {
       links: [
         {
           title: 'AI Software Engineering',
-          url: '/weekly/ai/',
+          url: '/blog/weekly/ai/',
         },
         {
           title: 'Frontend & Mobile Engineering',
-          url: '/weekly/frontend/',
+          url: '/blog/weekly/frontend/',
         },
         {
           title: '摸鱼精选',
-          url: '/weekly/reading/',
+          url: '/blog/weekly/reading/',
         },
       ],
     },

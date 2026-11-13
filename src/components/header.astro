@@ -5,7 +5,7 @@ import Search from './search.astro'
 
 const { pathname } = Astro.url
 const isActive = (url: string) => pathname === url
-const isWeeklyRoute = pathname.startsWith('/weekly/')
+const isWeeklyRoute = pathname.startsWith('/blog/weekly/')
 ---
 
 <header class="container relative">

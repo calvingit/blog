@@ -13,14 +13,14 @@ const tags = getTags(entries)
 ---
 
 <Layout>
-  <Seo slot="seo" title="Tags" />
+  <Seo slot="seo" title="标签" description="按标签浏览文章。" />
   <SkipNavContent>
     <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">All tags</h2>
     <Spacer axis="vertical" size={12} />
     <div class="flex gap-6 flex-col">
       {
         tags.map(({ tag, slug, count }) => (
-          <Link variant="highlight" href={`/tags/${slug}/`}>
+          <Link variant="highlight" href={`/blog/tags/${slug}/`}>
             {tag} ({count})
           </Link>
         ))

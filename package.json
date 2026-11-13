@@ -12,7 +12,9 @@
     "astro": "astro",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "assistant": "tsx ./scripts/assistant.ts"
+    "assistant": "tsx ./scripts/assistant.ts",
+    "migration:generate": "node scripts/migration/generate.mjs",
+    "migration:verify": "node scripts/migration/verify.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "7.3.5",

@@ -21,7 +21,7 @@
 
 - [博客首页](https://zhangwen.site/)：查看最新发布的文章。
 - [文章归档](https://zhangwen.site/blog/)：按时间浏览全部内容。
-- [标签页](https://zhangwen.site/tags/)：按主题筛选文章。
+- [标签页](https://zhangwen.site/blog/tags/)：按主题筛选文章。
 - [RSS](https://zhangwen.site/rss.xml)：通过阅读器订阅更新。
 - [关于我](https://zhangwen.site/about/)：了解作者与这个站点。
 

@@ -11,14 +11,14 @@ const posts = sortAsc(await getCollection('blog'))
 ---
 
 <Layout>
-  <Seo slot="seo" title="Blog" />
+  <Seo slot="seo" title="博客" description="文章归档。" />
   <SkipNavContent>
     <h1 class="sr-only">Blog</h1>
     <div class="flex gap-10 flex-col">
       {
         posts.map(({ data: post }) => (
           <div>
-            <Link variant="highlight" class="font-medium" href={`/${post.slug}/`}>
+            <Link variant="highlight" class="font-medium" href={`/blog/${post.slug}/`}>
               {post.title}
             </Link>
             <Spacer axis="vertical" size={2} />

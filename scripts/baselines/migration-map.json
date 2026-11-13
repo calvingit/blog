@@ -1,0 +1,3117 @@
+{
+  "counts": {
+    "sitemapLocs": 346,
+    "csvRows": 346,
+    "rssGuids": 231,
+    "posts": 171,
+    "weeklyPosts": 60,
+    "tagPages": 107,
+    "migrated": 343,
+    "keep": 3,
+    "redirectRules": 991
+  },
+  "keep": [
+    "/",
+    "/about/",
+    "/blog/"
+  ],
+  "rss": "/rss.xml",
+  "blogRssRedirect": "/blog/rss.xml",
+  "newGuidPolicy": "Existing items keep the baseline guid string with isPermaLink=false. Items that are not in the baseline use tag:zhangwen.site,YYYY-MM-DD:collection:[series:]slug, also with isPermaLink=false, so a later path move does not change the guid.",
+  "www": "Production only. Preview and local checks must not claim www was verified.",
+  "mappings": [
+    {
+      "kind": "post",
+      "oldPath": "/app-version/",
+      "newPath": "/blog/app-version/",
+      "guid": "https://zhangwen.site/app-version/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-network-debug/",
+      "newPath": "/blog/ios-network-debug/",
+      "guid": "https://zhangwen.site/ios-network-debug/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/mach-o/",
+      "newPath": "/blog/mach-o/",
+      "guid": "https://zhangwen.site/mach-o/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/clang/",
+      "newPath": "/blog/clang/",
+      "guid": "https://zhangwen.site/clang/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-uiscrollview/",
+      "newPath": "/blog/ios-uiscrollview/",
+      "guid": "https://zhangwen.site/ios-uiscrollview/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/swift-factory-di/",
+      "newPath": "/blog/swift-factory-di/",
+      "guid": "https://zhangwen.site/swift-factory-di/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-nspredicate/",
+      "newPath": "/blog/ios-nspredicate/",
+      "guid": "https://zhangwen.site/ios-nspredicate/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-toggle-torch/",
+      "newPath": "/blog/ios-toggle-torch/",
+      "guid": "https://zhangwen.site/ios-toggle-torch/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-hours/",
+      "newPath": "/blog/ios-hours/",
+      "guid": "https://zhangwen.site/ios-hours/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/xcode-tips/",
+      "newPath": "/blog/xcode-tips/",
+      "guid": "https://zhangwen.site/xcode-tips/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ubuntu-shadowsocks/",
+      "newPath": "/blog/ubuntu-shadowsocks/",
+      "guid": "https://zhangwen.site/ubuntu-shadowsocks/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-uialertcontroller/",
+      "newPath": "/blog/ios-uialertcontroller/",
+      "guid": "https://zhangwen.site/ios-uialertcontroller/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/mirrors/",
+      "newPath": "/blog/mirrors/",
+      "guid": "https://zhangwen.site/mirrors/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-appdelegate/",
+      "newPath": "/blog/ios-appdelegate/",
+      "guid": "https://zhangwen.site/ios-appdelegate/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-themedata/",
+      "newPath": "/blog/flutter-themedata/",
+      "guid": "https://zhangwen.site/flutter-themedata/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/swift-where/",
+      "newPath": "/blog/swift-where/",
+      "guid": "https://zhangwen.site/swift-where/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-texttheme/",
+      "newPath": "/blog/flutter-texttheme/",
+      "guid": "https://zhangwen.site/flutter-texttheme/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-gesturedetector/",
+      "newPath": "/blog/flutter-gesturedetector/",
+      "guid": "https://zhangwen.site/flutter-gesturedetector/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-architectures/",
+      "newPath": "/blog/ios-architectures/",
+      "guid": "https://zhangwen.site/ios-architectures/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-orientasion/",
+      "newPath": "/blog/flutter-orientasion/",
+      "guid": "https://zhangwen.site/flutter-orientasion/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-webrtc/",
+      "newPath": "/blog/ios-webrtc/",
+      "guid": "https://zhangwen.site/ios-webrtc/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/rvm/",
+      "newPath": "/blog/rvm/",
+      "guid": "https://zhangwen.site/rvm/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/mac-hidden-functions/",
+      "newPath": "/blog/mac-hidden-functions/",
+      "guid": "https://zhangwen.site/mac-hidden-functions/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/chao-chao-chao/",
+      "newPath": "/blog/chao-chao-chao/",
+      "guid": "https://zhangwen.site/chao-chao-chao/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/invest-funds-book/",
+      "newPath": "/blog/invest-funds-book/",
+      "guid": "https://zhangwen.site/invest-funds-book/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/dart-implements-extends-with/",
+      "newPath": "/blog/dart-implements-extends-with/",
+      "guid": "https://zhangwen.site/dart-implements-extends-with/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-widget-key/",
+      "newPath": "/blog/flutter-widget-key/",
+      "guid": "https://zhangwen.site/flutter-widget-key/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/raspberry-pi-tutorial/",
+      "newPath": "/blog/raspberry-pi-tutorial/",
+      "guid": "https://zhangwen.site/raspberry-pi-tutorial/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/investment-and-the-way-we-see-the-world/",
+      "newPath": "/blog/investment-and-the-way-we-see-the-world/",
+      "guid": "https://zhangwen.site/investment-and-the-way-we-see-the-world/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/choice-is-more-important-than-effort/",
+      "newPath": "/blog/choice-is-more-important-than-effort/",
+      "guid": "https://zhangwen.site/choice-is-more-important-than-effort/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/the-coldest-winter-in-ten-years/",
+      "newPath": "/blog/the-coldest-winter-in-ten-years/",
+      "guid": "https://zhangwen.site/the-coldest-winter-in-ten-years/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/install-jdk-in-mac/",
+      "newPath": "/blog/install-jdk-in-mac/",
+      "guid": "https://zhangwen.site/install-jdk-in-mac/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ubuntu-ftp/",
+      "newPath": "/blog/ubuntu-ftp/",
+      "guid": "https://zhangwen.site/ubuntu-ftp/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/fund-is-a-trust-relationship/",
+      "newPath": "/blog/fund-is-a-trust-relationship/",
+      "guid": "https://zhangwen.site/fund-is-a-trust-relationship/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-ios-camera/",
+      "newPath": "/blog/flutter-ios-camera/",
+      "guid": "https://zhangwen.site/flutter-ios-camera/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-common-arch/",
+      "newPath": "/blog/ios-common-arch/",
+      "guid": "https://zhangwen.site/ios-common-arch/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/restrain-human-nature-and-cross-the-cycle/",
+      "newPath": "/blog/restrain-human-nature-and-cross-the-cycle/",
+      "guid": "https://zhangwen.site/restrain-human-nature-and-cross-the-cycle/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-navigation-back-button/",
+      "newPath": "/blog/ios-navigation-back-button/",
+      "guid": "https://zhangwen.site/ios-navigation-back-button/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/chrome-hiden-functions/",
+      "newPath": "/blog/chrome-hiden-functions/",
+      "guid": "https://zhangwen.site/chrome-hiden-functions/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/swift-async-await-token/",
+      "newPath": "/blog/swift-async-await-token/",
+      "guid": "https://zhangwen.site/swift-async-await-token/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/git-notes/",
+      "newPath": "/blog/git-notes/",
+      "guid": "https://zhangwen.site/git-notes/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/tech-conf/",
+      "newPath": "/blog/tech-conf/",
+      "guid": "https://zhangwen.site/tech-conf/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/resolver/",
+      "newPath": "/blog/resolver/",
+      "guid": "https://zhangwen.site/resolver/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-getx/",
+      "newPath": "/blog/flutter-getx/",
+      "guid": "https://zhangwen.site/flutter-getx/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/chen-jin-wei-2021-04/",
+      "newPath": "/blog/chen-jin-wei-2021-04/",
+      "guid": "https://zhangwen.site/chen-jin-wei-2021-04/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/lin-ying-rui-2021-04/",
+      "newPath": "/blog/lin-ying-rui-2021-04/",
+      "guid": "https://zhangwen.site/lin-ying-rui-2021-04/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/qiu-dong-rong-2021-04/",
+      "newPath": "/blog/qiu-dong-rong-2021-04/",
+      "guid": "https://zhangwen.site/qiu-dong-rong-2021-04/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/yang-rui-wen-2021-04/",
+      "newPath": "/blog/yang-rui-wen-2021-04/",
+      "guid": "https://zhangwen.site/yang-rui-wen-2021-04/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/zhou-ying-bo-2021-04/",
+      "newPath": "/blog/zhou-ying-bo-2021-04/",
+      "guid": "https://zhangwen.site/zhou-ying-bo-2021-04/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-flavors-environment/",
+      "newPath": "/blog/flutter-flavors-environment/",
+      "guid": "https://zhangwen.site/flutter-flavors-environment/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/app-declarative-ui/",
+      "newPath": "/blog/app-declarative-ui/",
+      "guid": "https://zhangwen.site/app-declarative-ui/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/divide-into-swiftui-container-view/",
+      "newPath": "/blog/divide-into-swiftui-container-view/",
+      "guid": "https://zhangwen.site/divide-into-swiftui-container-view/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/swiftui-viewbuilder/",
+      "newPath": "/blog/swiftui-viewbuilder/",
+      "guid": "https://zhangwen.site/swiftui-viewbuilder/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/programmer-english/",
+      "newPath": "/blog/programmer-english/",
+      "guid": "https://zhangwen.site/programmer-english/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/invest-faith/",
+      "newPath": "/blog/invest-faith/",
+      "guid": "https://zhangwen.site/invest-faith/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/Swift-Concurrency专题/",
+      "newPath": "/blog/Swift-Concurrency专题/",
+      "guid": "https://zhangwen.site/Swift-Concurrency%E4%B8%93%E9%A2%98/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/reading-swift-concurrency/",
+      "newPath": "/blog/reading-swift-concurrency/",
+      "guid": "https://zhangwen.site/reading-swift-concurrency/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/sh-2886/",
+      "newPath": "/blog/sh-2886/",
+      "guid": "https://zhangwen.site/sh-2886/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/are-you-ok/",
+      "newPath": "/blog/are-you-ok/",
+      "guid": "https://zhangwen.site/are-you-ok/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-app-architecture-riverpod-introduction/",
+      "newPath": "/blog/flutter-app-architecture-riverpod-introduction/",
+      "guid": "https://zhangwen.site/flutter-app-architecture-riverpod-introduction/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-app-domain-model/",
+      "newPath": "/blog/flutter-app-domain-model/",
+      "guid": "https://zhangwen.site/flutter-app-domain-model/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-app-presentation-layer/",
+      "newPath": "/blog/flutter-app-presentation-layer/",
+      "guid": "https://zhangwen.site/flutter-app-presentation-layer/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-app-repository-pattern/",
+      "newPath": "/blog/flutter-app-repository-pattern/",
+      "guid": "https://zhangwen.site/flutter-app-repository-pattern/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-mac-tools/",
+      "newPath": "/blog/ios-mac-tools/",
+      "guid": "https://zhangwen.site/ios-mac-tools/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/optimistic-attitude/",
+      "newPath": "/blog/optimistic-attitude/",
+      "guid": "https://zhangwen.site/optimistic-attitude/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/design-language/",
+      "newPath": "/blog/design-language/",
+      "guid": "https://zhangwen.site/design-language/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/courage/",
+      "newPath": "/blog/courage/",
+      "guid": "https://zhangwen.site/courage/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/operating-systems-three-easy-pieces/",
+      "newPath": "/blog/operating-systems-three-easy-pieces/",
+      "guid": "https://zhangwen.site/operating-systems-three-easy-pieces/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/sip/",
+      "newPath": "/blog/sip/",
+      "guid": "https://zhangwen.site/sip/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/single-source-of-truth/",
+      "newPath": "/blog/single-source-of-truth/",
+      "guid": "https://zhangwen.site/single-source-of-truth/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/wwdc2022/",
+      "newPath": "/blog/wwdc2022/",
+      "guid": "https://zhangwen.site/wwdc2022/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/why-learn-useless-programming-language/",
+      "newPath": "/blog/why-learn-useless-programming-language/",
+      "guid": "https://zhangwen.site/why-learn-useless-programming-language/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/weak-ref/",
+      "newPath": "/blog/weak-ref/",
+      "guid": "https://zhangwen.site/weak-ref/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ghost-docker/",
+      "newPath": "/blog/ghost-docker/",
+      "guid": "https://zhangwen.site/ghost-docker/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/iphone14-size/",
+      "newPath": "/blog/iphone14-size/",
+      "guid": "https://zhangwen.site/iphone14-size/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/higher-order-functions-in-c/",
+      "newPath": "/blog/higher-order-functions-in-c/",
+      "guid": "https://zhangwen.site/higher-order-functions-in-c/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-apns-problems/",
+      "newPath": "/blog/ios-apns-problems/",
+      "guid": "https://zhangwen.site/ios-apns-problems/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ghost-migrate-from-mariadb-to-mysql/",
+      "newPath": "/blog/ghost-migrate-from-mariadb-to-mysql/",
+      "guid": "https://zhangwen.site/ghost-migrate-from-mariadb-to-mysql/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/2023-forward-1/",
+      "newPath": "/blog/2023-forward-1/",
+      "guid": "https://zhangwen.site/2023-forward-1/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/2023-forward-invest/",
+      "newPath": "/blog/2023-forward-invest/",
+      "guid": "https://zhangwen.site/2023-forward-invest/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/etf/",
+      "newPath": "/blog/etf/",
+      "guid": "https://zhangwen.site/etf/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-open-source-libraries/",
+      "newPath": "/blog/flutter-open-source-libraries/",
+      "guid": "https://zhangwen.site/flutter-open-source-libraries/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/xctest-instruction/",
+      "newPath": "/blog/xctest-instruction/",
+      "guid": "https://zhangwen.site/xctest-instruction/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/xctest-asserts/",
+      "newPath": "/blog/xctest-asserts/",
+      "guid": "https://zhangwen.site/xctest-asserts/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/xctest-async/",
+      "newPath": "/blog/xctest-async/",
+      "guid": "https://zhangwen.site/xctest-async/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-unit-test-performance/",
+      "newPath": "/blog/ios-unit-test-performance/",
+      "guid": "https://zhangwen.site/ios-unit-test-performance/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-vibrate/",
+      "newPath": "/blog/ios-vibrate/",
+      "guid": "https://zhangwen.site/ios-vibrate/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/swift-some-any/",
+      "newPath": "/blog/swift-some-any/",
+      "guid": "https://zhangwen.site/swift-some-any/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/swiftui-environment-value/",
+      "newPath": "/blog/swiftui-environment-value/",
+      "guid": "https://zhangwen.site/swiftui-environment-value/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/2023-google-io/",
+      "newPath": "/blog/2023-google-io/",
+      "guid": "https://zhangwen.site/2023-google-io/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/whats-new-in-xcode-15/",
+      "newPath": "/blog/whats-new-in-xcode-15/",
+      "guid": "https://zhangwen.site/whats-new-in-xcode-15/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/enable-ios-13-to-preview/",
+      "newPath": "/blog/enable-ios-13-to-preview/",
+      "guid": "https://zhangwen.site/enable-ios-13-to-preview/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-combine-framework/",
+      "newPath": "/blog/ios-combine-framework/",
+      "guid": "https://zhangwen.site/ios-combine-framework/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-class-widget-testable/",
+      "newPath": "/blog/flutter-class-widget-testable/",
+      "guid": "https://zhangwen.site/flutter-class-widget-testable/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/Why-Flutter-Official-Recommends-Classes-Instead-of-Functions/",
+      "newPath": "/blog/Why-Flutter-Official-Recommends-Classes-Instead-of-Functions/",
+      "guid": "https://zhangwen.site/Why-Flutter-Official-Recommends-Classes-Instead-of-Functions/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/windows-mac-newline/",
+      "newPath": "/blog/windows-mac-newline/",
+      "guid": "https://zhangwen.site/windows-mac-newline/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/wsl2/",
+      "newPath": "/blog/wsl2/",
+      "guid": "https://zhangwen.site/wsl2/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-build-runner/",
+      "newPath": "/blog/flutter-build-runner/",
+      "guid": "https://zhangwen.site/flutter-build-runner/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/360-jiagu/",
+      "newPath": "/blog/360-jiagu/",
+      "guid": "https://zhangwen.site/360-jiagu/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/powershell/",
+      "newPath": "/blog/powershell/",
+      "guid": "https://zhangwen.site/powershell/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/dart-sdk-freshly-known-classes-and-functions/",
+      "newPath": "/blog/dart-sdk-freshly-known-classes-and-functions/",
+      "guid": "https://zhangwen.site/dart-sdk-freshly-known-classes-and-functions/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-app-project-structure/",
+      "newPath": "/blog/flutter-app-project-structure/",
+      "guid": "https://zhangwen.site/flutter-app-project-structure/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-result-pattern/",
+      "newPath": "/blog/flutter-result-pattern/",
+      "guid": "https://zhangwen.site/flutter-result-pattern/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-valuenotifier/",
+      "newPath": "/blog/flutter-valuenotifier/",
+      "guid": "https://zhangwen.site/flutter-valuenotifier/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-sealed-classes-patterns-match/",
+      "newPath": "/blog/flutter-sealed-classes-patterns-match/",
+      "guid": "https://zhangwen.site/flutter-sealed-classes-patterns-match/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-combined-valuenotifier/",
+      "newPath": "/blog/flutter-combined-valuenotifier/",
+      "guid": "https://zhangwen.site/flutter-combined-valuenotifier/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-riverpod-asyncvalue/",
+      "newPath": "/blog/flutter-riverpod-asyncvalue/",
+      "guid": "https://zhangwen.site/flutter-riverpod-asyncvalue/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-result-with-asyncvalue/",
+      "newPath": "/blog/flutter-result-with-asyncvalue/",
+      "guid": "https://zhangwen.site/flutter-result-with-asyncvalue/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/how-to-build-flutter-uikit/",
+      "newPath": "/blog/how-to-build-flutter-uikit/",
+      "guid": "https://zhangwen.site/how-to-build-flutter-uikit/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-watch-it/",
+      "newPath": "/blog/flutter-watch-it/",
+      "guid": "https://zhangwen.site/flutter-watch-it/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/lynxjs/",
+      "newPath": "/blog/lynxjs/",
+      "guid": "https://zhangwen.site/lynxjs/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ios-short-video-editing-with-ffmpeg/",
+      "newPath": "/blog/ios-short-video-editing-with-ffmpeg/",
+      "guid": "https://zhangwen.site/ios-short-video-editing-with-ffmpeg/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-data-persistence/",
+      "newPath": "/blog/flutter-data-persistence/",
+      "guid": "https://zhangwen.site/flutter-data-persistence/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/2025-flutter-routing/",
+      "newPath": "/blog/2025-flutter-routing/",
+      "guid": "https://zhangwen.site/2025-flutter-routing/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/sqlite-optimization/",
+      "newPath": "/blog/sqlite-optimization/",
+      "guid": "https://zhangwen.site/sqlite-optimization/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/flutter-customscrollview-sliver/",
+      "newPath": "/blog/flutter-customscrollview-sliver/",
+      "guid": "https://zhangwen.site/flutter-customscrollview-sliver/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/cli-vs-mcp-lazy-loading-cost/",
+      "newPath": "/blog/cli-vs-mcp-lazy-loading-cost/",
+      "guid": "https://zhangwen.site/cli-vs-mcp-lazy-loading-cost/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/domestic-model-selection-guide/",
+      "newPath": "/blog/domestic-model-selection-guide/",
+      "guid": "https://zhangwen.site/domestic-model-selection-guide/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/skills-driven-business-defect-detection/",
+      "newPath": "/blog/skills-driven-business-defect-detection/",
+      "guid": "https://zhangwen.site/skills-driven-business-defect-detection/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/vercel-ai-sdk-nodejs/",
+      "newPath": "/blog/vercel-ai-sdk-nodejs/",
+      "guid": "https://zhangwen.site/vercel-ai-sdk-nodejs/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/claude-code-complete-tutorial/",
+      "newPath": "/blog/claude-code-complete-tutorial/",
+      "guid": "https://zhangwen.site/claude-code-complete-tutorial/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/harness-engineering-agent-first/",
+      "newPath": "/blog/harness-engineering-agent-first/",
+      "guid": "https://zhangwen.site/harness-engineering-agent-first/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/pocketflow-learning-notes/",
+      "newPath": "/blog/pocketflow-learning-notes/",
+      "guid": "https://zhangwen.site/pocketflow-learning-notes/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/prompt-engineering-guide/",
+      "newPath": "/blog/prompt-engineering-guide/",
+      "guid": "https://zhangwen.site/prompt-engineering-guide/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/system-prompt-architecture/",
+      "newPath": "/blog/system-prompt-architecture/",
+      "guid": "https://zhangwen.site/system-prompt-architecture/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/youzan-ai-customer-service-from-zero-to-one/",
+      "newPath": "/blog/youzan-ai-customer-service-from-zero-to-one/",
+      "guid": "https://zhangwen.site/youzan-ai-customer-service-from-zero-to-one/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ai-coding-knowledge-driven-shift/",
+      "newPath": "/blog/ai-coding-knowledge-driven-shift/",
+      "guid": "https://zhangwen.site/ai-coding-knowledge-driven-shift/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/claude-code-10-commands-practical-guide/",
+      "newPath": "/blog/claude-code-10-commands-practical-guide/",
+      "guid": "https://zhangwen.site/claude-code-10-commands-practical-guide/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/claude-code-agent-teams-guide/",
+      "newPath": "/blog/claude-code-agent-teams-guide/",
+      "guid": "https://zhangwen.site/claude-code-agent-teams-guide/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/claude-code-best-practices/",
+      "newPath": "/blog/claude-code-best-practices/",
+      "guid": "https://zhangwen.site/claude-code-best-practices/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/claude-code-memory-guide/",
+      "newPath": "/blog/claude-code-memory-guide/",
+      "guid": "https://zhangwen.site/claude-code-memory-guide/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/claude-code-team-10-tips/",
+      "newPath": "/blog/claude-code-team-10-tips/",
+      "guid": "https://zhangwen.site/claude-code-team-10-tips/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/context-engineering-ai-agents/",
+      "newPath": "/blog/context-engineering-ai-agents/",
+      "guid": "https://zhangwen.site/context-engineering-ai-agents/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/cursor-rules-optimization-practice/",
+      "newPath": "/blog/cursor-rules-optimization-practice/",
+      "guid": "https://zhangwen.site/cursor-rules-optimization-practice/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/nodejs-2025-modern-practices/",
+      "newPath": "/blog/nodejs-2025-modern-practices/",
+      "guid": "https://zhangwen.site/nodejs-2025-modern-practices/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/streamlit-autogen-deepseek-testcase-generator/",
+      "newPath": "/blog/streamlit-autogen-deepseek-testcase-generator/",
+      "guid": "https://zhangwen.site/streamlit-autogen-deepseek-testcase-generator/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/advanced-tool-use-anthropic/",
+      "newPath": "/blog/advanced-tool-use-anthropic/",
+      "guid": "https://zhangwen.site/advanced-tool-use-anthropic/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/claude-skills-complete-guide/",
+      "newPath": "/blog/claude-skills-complete-guide/",
+      "guid": "https://zhangwen.site/claude-skills-complete-guide/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ticket-analysis-sop-to-skill/",
+      "newPath": "/blog/ticket-analysis-sop-to-skill/",
+      "guid": "https://zhangwen.site/ticket-analysis-sop-to-skill/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/skill-creator-evals-benchmarking/",
+      "newPath": "/blog/skill-creator-evals-benchmarking/",
+      "guid": "https://zhangwen.site/skill-creator-evals-benchmarking/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/agents-md-might-hurt-you/",
+      "newPath": "/blog/agents-md-might-hurt-you/",
+      "guid": "https://zhangwen.site/agents-md-might-hurt-you/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/write-great-agents-md/",
+      "newPath": "/blog/write-great-agents-md/",
+      "guid": "https://zhangwen.site/write-great-agents-md/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/agent-skill-evaluation-playbook/",
+      "newPath": "/blog/agent-skill-evaluation-playbook/",
+      "guid": "https://zhangwen.site/agent-skill-evaluation-playbook/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ai-translation-accuracy/",
+      "newPath": "/blog/ai-translation-accuracy/",
+      "guid": "https://zhangwen.site/ai-translation-accuracy/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/how-coding-agents-reshape-epd/",
+      "newPath": "/blog/how-coding-agents-reshape-epd/",
+      "guid": "https://zhangwen.site/how-coding-agents-reshape-epd/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/agent-cli-vs-function-calling/",
+      "newPath": "/blog/agent-cli-vs-function-calling/",
+      "guid": "https://zhangwen.site/agent-cli-vs-function-calling/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/openai-ai-adoption-playbook/",
+      "newPath": "/blog/openai-ai-adoption-playbook/",
+      "guid": "https://zhangwen.site/openai-ai-adoption-playbook/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/agent-skill-design-patterns/",
+      "newPath": "/blog/agent-skill-design-patterns/",
+      "guid": "https://zhangwen.site/agent-skill-design-patterns/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/claude-code-skills-lessons/",
+      "newPath": "/blog/claude-code-skills-lessons/",
+      "guid": "https://zhangwen.site/claude-code-skills-lessons/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/codex-best-practices/",
+      "newPath": "/blog/codex-best-practices/",
+      "guid": "https://zhangwen.site/codex-best-practices/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/how-to-write-user-scope-agentsmd/",
+      "newPath": "/blog/how-to-write-user-scope-agentsmd/",
+      "guid": "https://zhangwen.site/how-to-write-user-scope-agentsmd/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/pua-skills/",
+      "newPath": "/blog/pua-skills/",
+      "guid": "https://zhangwen.site/pua-skills/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/context-to-harness-engineering/",
+      "newPath": "/blog/context-to-harness-engineering/",
+      "guid": "https://zhangwen.site/context-to-harness-engineering/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/skill-workflow/",
+      "newPath": "/blog/skill-workflow/",
+      "guid": "https://zhangwen.site/skill-workflow/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/compound-engineering/",
+      "newPath": "/blog/compound-engineering/",
+      "guid": "https://zhangwen.site/compound-engineering/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/claude-code-base-quick-preview/",
+      "newPath": "/blog/claude-code-base-quick-preview/",
+      "guid": "https://zhangwen.site/claude-code-base-quick-preview/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/saas-cli/",
+      "newPath": "/blog/saas-cli/",
+      "guid": "https://zhangwen.site/saas-cli/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/agentic-engineering-discipline/",
+      "newPath": "/blog/agentic-engineering-discipline/",
+      "guid": "https://zhangwen.site/agentic-engineering-discipline/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/agent-teams-vs-sub-agents/",
+      "newPath": "/blog/agent-teams-vs-sub-agents/",
+      "guid": "https://zhangwen.site/agent-teams-vs-sub-agents/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/codex-cli-goal/",
+      "newPath": "/blog/codex-cli-goal/",
+      "guid": "https://zhangwen.site/codex-cli-goal/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/gpt-5-6-sol-prompt-migration/",
+      "newPath": "/blog/gpt-5-6-sol-prompt-migration/",
+      "guid": "https://zhangwen.site/gpt-5-6-sol-prompt-migration/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/grill-me/",
+      "newPath": "/blog/grill-me/",
+      "guid": "https://zhangwen.site/grill-me/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ai-coding-workflow/",
+      "newPath": "/blog/ai-coding-workflow/",
+      "guid": "https://zhangwen.site/ai-coding-workflow/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ai-coding-workflow-1/",
+      "newPath": "/blog/ai-coding-workflow-1/",
+      "guid": "https://zhangwen.site/ai-coding-workflow-1/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ai-coding-workflow-2/",
+      "newPath": "/blog/ai-coding-workflow-2/",
+      "guid": "https://zhangwen.site/ai-coding-workflow-2/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ai-coding-workflow-3/",
+      "newPath": "/blog/ai-coding-workflow-3/",
+      "guid": "https://zhangwen.site/ai-coding-workflow-3/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ai-coding-workflow-4/",
+      "newPath": "/blog/ai-coding-workflow-4/",
+      "guid": "https://zhangwen.site/ai-coding-workflow-4/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ai-coding-created-a-code-mountain/",
+      "newPath": "/blog/ai-coding-created-a-code-mountain/",
+      "guid": "https://zhangwen.site/ai-coding-created-a-code-mountain/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/ai-era-software-engineering/",
+      "newPath": "/blog/ai-era-software-engineering/",
+      "guid": "https://zhangwen.site/ai-era-software-engineering/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/jev/",
+      "newPath": "/blog/jev/",
+      "guid": "https://zhangwen.site/jev/"
+    },
+    {
+      "kind": "post",
+      "oldPath": "/graph-workflow-ticket-runtime-state/",
+      "newPath": "/blog/graph-workflow-ticket-runtime-state/",
+      "guid": "https://zhangwen.site/graph-workflow-ticket-runtime-state/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-08-24/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-08-24/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-08-24/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-08-28/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-08-28/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-08-28/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-09-04/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-09-04/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-09-04/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-09-11/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-09-11/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-09-11/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-09-18/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-09-18/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-09-18/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-09-25/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-09-25/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-09-25/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-10-09/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-10-09/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-10-09/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-10-12/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-10-12/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-10-12/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-10-19/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-10-19/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-10-19/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-10-26/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-10-26/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-10-26/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-11-02/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-11-02/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-11-02/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-11-09/",
+      "newPath": "/blog/weekly/ai/ai-software-engineering-weekly-2026-11-09/",
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-11-09/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-08-31/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-08-31/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-08-31/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-07/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-07/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-07/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-14/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-14/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-14/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-21/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-21/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-21/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-28/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-28/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-28/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-05/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-05/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-05/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-12/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-12/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-12/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-19/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-19/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-19/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-26/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-26/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-26/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-02/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-02/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-02/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-09/",
+      "newPath": "/blog/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-09/",
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-09/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第1期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第1期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC1%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第2期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第2期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC2%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第3期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第3期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC3%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第4期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第4期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC4%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第5期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第5期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC5%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第6期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第6期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC6%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第7期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第7期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC7%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第8期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第8期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC8%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第9期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第9期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC9%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第10期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第10期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC10%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第11期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第11期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC11%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第12期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第12期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC12%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第13期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第13期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC13%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第14期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第14期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC14%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第15期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第15期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC15%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第16期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第16期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC16%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第17期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第17期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC17%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第18期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第18期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC18%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第19期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第19期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC19%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第20期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第20期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC20%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第21期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第21期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC21%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第22期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第22期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC22%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第23期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第23期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC23%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第24期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第24期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC24%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第25期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第25期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC25%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第26期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第26期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC26%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第27期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第27期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC27%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第28期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第28期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC28%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第29期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第29期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC29%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第30期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第30期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC30%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第31期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第31期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC31%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第32期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第32期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC32%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第33期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第33期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC33%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第34期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第34期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC34%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第35期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第35期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC35%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第36期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第36期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC36%E6%9C%9F/"
+    },
+    {
+      "kind": "weekly-post",
+      "oldPath": "/weekly/reading/摸鱼精选第37期/",
+      "newPath": "/blog/weekly/reading/摸鱼精选第37期/",
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC37%E6%9C%9F/"
+    },
+    {
+      "kind": "tags-index",
+      "oldPath": "/tags/",
+      "newPath": "/blog/tags/",
+      "guid": null
+    },
+    {
+      "kind": "weekly-index",
+      "oldPath": "/weekly/",
+      "newPath": "/blog/weekly/",
+      "guid": null
+    },
+    {
+      "kind": "weekly-series",
+      "oldPath": "/weekly/ai/",
+      "newPath": "/blog/weekly/ai/",
+      "guid": null
+    },
+    {
+      "kind": "weekly-series",
+      "oldPath": "/weekly/frontend/",
+      "newPath": "/blog/weekly/frontend/",
+      "guid": null
+    },
+    {
+      "kind": "weekly-series",
+      "oldPath": "/weekly/reading/",
+      "newPath": "/blog/weekly/reading/",
+      "guid": null
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/agentic-autofix/",
+      "newPath": "/blog/tags/agentic-autofix/",
+      "guid": null,
+      "name": "Agentic autofix"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/agents/",
+      "newPath": "/blog/tags/agents/",
+      "guid": null,
+      "name": "Agents"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/agp/",
+      "newPath": "/blog/tags/agp/",
+      "guid": null,
+      "name": "AGP"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/ai/",
+      "newPath": "/blog/tags/ai/",
+      "guid": null,
+      "name": "AI"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/ai-coding/",
+      "newPath": "/blog/tags/ai-coding/",
+      "guid": null,
+      "name": "AI Coding"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/android/",
+      "newPath": "/blog/tags/android/",
+      "guid": null,
+      "name": "Android"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/android-studio/",
+      "newPath": "/blog/tags/android-studio/",
+      "guid": null,
+      "name": "Android Studio"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/app-store/",
+      "newPath": "/blog/tags/app-store/",
+      "guid": null,
+      "name": "App Store"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/app-store-connect/",
+      "newPath": "/blog/tags/app-store-connect/",
+      "guid": null,
+      "name": "App Store Connect"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/automation/",
+      "newPath": "/blog/tags/automation/",
+      "guid": null,
+      "name": "Automation"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/benchmark/",
+      "newPath": "/blog/tags/benchmark/",
+      "guid": null,
+      "name": "Benchmark"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/brotli/",
+      "newPath": "/blog/tags/brotli/",
+      "guid": null,
+      "name": "Brotli"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/bun/",
+      "newPath": "/blog/tags/bun/",
+      "guid": null,
+      "name": "Bun"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/cache-components/",
+      "newPath": "/blog/tags/cache-components/",
+      "guid": null,
+      "name": "Cache Components"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/chrome/",
+      "newPath": "/blog/tags/chrome/",
+      "guid": null,
+      "name": "Chrome"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/claude/",
+      "newPath": "/blog/tags/claude/",
+      "guid": null,
+      "name": "Claude"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/claude-api/",
+      "newPath": "/blog/tags/claude-api/",
+      "guid": null,
+      "name": "Claude API"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/claude-code/",
+      "newPath": "/blog/tags/claude-code/",
+      "guid": null,
+      "name": "Claude Code"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/code-review/",
+      "newPath": "/blog/tags/code-review/",
+      "guid": null,
+      "name": "Code Review"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/codeql/",
+      "newPath": "/blog/tags/codeql/",
+      "guid": null,
+      "name": "CodeQL"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/codex/",
+      "newPath": "/blog/tags/codex/",
+      "guid": null,
+      "name": "Codex"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/coding-agent/",
+      "newPath": "/blog/tags/coding-agent/",
+      "guid": null,
+      "name": "Coding Agent"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/compose/",
+      "newPath": "/blog/tags/compose/",
+      "guid": null,
+      "name": "Compose"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/compose-multiplatform/",
+      "newPath": "/blog/tags/compose-multiplatform/",
+      "guid": null,
+      "name": "Compose Multiplatform"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/context-engineering/",
+      "newPath": "/blog/tags/context-engineering/",
+      "guid": null,
+      "name": "Context Engineering"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/copilot-automations/",
+      "newPath": "/blog/tags/copilot-automations/",
+      "guid": null,
+      "name": "Copilot Automations"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/copilot-fusion/",
+      "newPath": "/blog/tags/copilot-fusion/",
+      "guid": null,
+      "name": "Copilot Fusion"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/cursor/",
+      "newPath": "/blog/tags/cursor/",
+      "guid": null,
+      "name": "Cursor"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/device-posture-api/",
+      "newPath": "/blog/tags/device-posture-api/",
+      "guid": null,
+      "name": "Device Posture API"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/engineering/",
+      "newPath": "/blog/tags/engineering/",
+      "guid": null,
+      "name": "Engineering"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/eslint/",
+      "newPath": "/blog/tags/eslint/",
+      "guid": null,
+      "name": "ESLint"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/expo/",
+      "newPath": "/blog/tags/expo/",
+      "guid": null,
+      "name": "Expo"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/featurearc/",
+      "newPath": "/blog/tags/featurearc/",
+      "guid": null,
+      "name": "FeatureArc"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/firebase/",
+      "newPath": "/blog/tags/firebase/",
+      "guid": null,
+      "name": "Firebase"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/flutter/",
+      "newPath": "/blog/tags/flutter/",
+      "guid": null,
+      "name": "Flutter"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/frontend/",
+      "newPath": "/blog/tags/frontend/",
+      "guid": null,
+      "name": "Frontend"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/gemini-4-argon/",
+      "newPath": "/blog/tags/gemini-4-argon/",
+      "guid": null,
+      "name": "Gemini 4 Argon"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/gemini-api-cli/",
+      "newPath": "/blog/tags/gemini-api-cli/",
+      "guid": null,
+      "name": "Gemini API CLI"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/gemini-cli/",
+      "newPath": "/blog/tags/gemini-cli/",
+      "guid": null,
+      "name": "Gemini CLI"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/github-agentic-workflows/",
+      "newPath": "/blog/tags/github-agentic-workflows/",
+      "guid": null,
+      "name": "GitHub Agentic Workflows"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/github-copilot/",
+      "newPath": "/blog/tags/github-copilot/",
+      "guid": null,
+      "name": "GitHub Copilot"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/github-mcp-server/",
+      "newPath": "/blog/tags/github-mcp-server/",
+      "guid": null,
+      "name": "GitHub MCP Server"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/gpt-6-1-terra/",
+      "newPath": "/blog/tags/gpt-6-1-terra/",
+      "guid": null,
+      "name": "GPT-6.1 Terra"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/gradle/",
+      "newPath": "/blog/tags/gradle/",
+      "guid": null,
+      "name": "Gradle"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/hydrafusion/",
+      "newPath": "/blog/tags/hydrafusion/",
+      "guid": null,
+      "name": "HydraFusion"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/invest/",
+      "newPath": "/blog/tags/invest/",
+      "guid": null,
+      "name": "Invest"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/ios/",
+      "newPath": "/blog/tags/ios/",
+      "guid": null,
+      "name": "iOS"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/iphone-duo/",
+      "newPath": "/blog/tags/iphone-duo/",
+      "guid": null,
+      "name": "iPhone Duo"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/javascript/",
+      "newPath": "/blog/tags/javascript/",
+      "guid": null,
+      "name": "JavaScript"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/jetbrains-air/",
+      "newPath": "/blog/tags/jetbrains-air/",
+      "guid": null,
+      "name": "JetBrains Air"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/jetpack-compose/",
+      "newPath": "/blog/tags/jetpack-compose/",
+      "guid": null,
+      "name": "Jetpack Compose"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/jev/",
+      "newPath": "/blog/tags/jev/",
+      "guid": null,
+      "name": "Jev"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/kotlin/",
+      "newPath": "/blog/tags/kotlin/",
+      "guid": null,
+      "name": "Kotlin"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/learning/",
+      "newPath": "/blog/tags/learning/",
+      "guid": null,
+      "name": "Learning"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/llm/",
+      "newPath": "/blog/tags/llm/",
+      "guid": null,
+      "name": "LLM"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/macos/",
+      "newPath": "/blog/tags/macos/",
+      "guid": null,
+      "name": "macOS"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/mcp/",
+      "newPath": "/blog/tags/mcp/",
+      "guid": null,
+      "name": "MCP"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/mobile/",
+      "newPath": "/blog/tags/mobile/",
+      "guid": null,
+      "name": "Mobile"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/msw/",
+      "newPath": "/blog/tags/msw/",
+      "guid": null,
+      "name": "MSW"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/multi-agent/",
+      "newPath": "/blog/tags/multi-agent/",
+      "guid": null,
+      "name": "Multi-Agent"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/multi-step-swe/",
+      "newPath": "/blog/tags/multi-step-swe/",
+      "guid": null,
+      "name": "Multi-step SWE"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/mxc/",
+      "newPath": "/blog/tags/mxc/",
+      "guid": null,
+      "name": "MXC"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/next-js/",
+      "newPath": "/blog/tags/next-js/",
+      "guid": null,
+      "name": "Next.js"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/node-js/",
+      "newPath": "/blog/tags/node-js/",
+      "guid": null,
+      "name": "Node.js"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/nuxt/",
+      "newPath": "/blog/tags/nuxt/",
+      "guid": null,
+      "name": "Nuxt"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/opencode/",
+      "newPath": "/blog/tags/opencode/",
+      "guid": null,
+      "name": "OpenCode"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/origin/",
+      "newPath": "/blog/tags/origin/",
+      "guid": null,
+      "name": "Origin"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/others/",
+      "newPath": "/blog/tags/others/",
+      "guid": null,
+      "name": "Others"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/playwright/",
+      "newPath": "/blog/tags/playwright/",
+      "guid": null,
+      "name": "Playwright"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/pnpm/",
+      "newPath": "/blog/tags/pnpm/",
+      "guid": null,
+      "name": "pnpm"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/pull-request-target/",
+      "newPath": "/blog/tags/pull-request-target/",
+      "guid": null,
+      "name": "pull_request_target"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/react/",
+      "newPath": "/blog/tags/react/",
+      "guid": null,
+      "name": "React"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/react-native/",
+      "newPath": "/blog/tags/react-native/",
+      "guid": null,
+      "name": "React Native"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/react-native-windows/",
+      "newPath": "/blog/tags/react-native-windows/",
+      "guid": null,
+      "name": "React Native Windows"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/reading/",
+      "newPath": "/blog/tags/reading/",
+      "guid": null,
+      "name": "Reading"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/redux/",
+      "newPath": "/blog/tags/redux/",
+      "guid": null,
+      "name": "Redux"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/refactoring/",
+      "newPath": "/blog/tags/refactoring/",
+      "guid": null,
+      "name": "Refactoring"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/rlcd/",
+      "newPath": "/blog/tags/rlcd/",
+      "guid": null,
+      "name": "RLCD"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/rolldown/",
+      "newPath": "/blog/tags/rolldown/",
+      "guid": null,
+      "name": "Rolldown"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/rspack/",
+      "newPath": "/blog/tags/rspack/",
+      "guid": null,
+      "name": "Rspack"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/safari/",
+      "newPath": "/blog/tags/safari/",
+      "guid": null,
+      "name": "Safari"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/sandbox/",
+      "newPath": "/blog/tags/sandbox/",
+      "guid": null,
+      "name": "Sandbox"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/server-actions/",
+      "newPath": "/blog/tags/server-actions/",
+      "guid": null,
+      "name": "Server Actions"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/sharp/",
+      "newPath": "/blog/tags/sharp/",
+      "guid": null,
+      "name": "sharp"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/siri-ai/",
+      "newPath": "/blog/tags/siri-ai/",
+      "guid": null,
+      "name": "Siri AI"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/skills/",
+      "newPath": "/blog/tags/skills/",
+      "guid": null,
+      "name": "Skills"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/software-engineering/",
+      "newPath": "/blog/tags/software-engineering/",
+      "guid": null,
+      "name": "Software Engineering"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/softwares/",
+      "newPath": "/blog/tags/softwares/",
+      "guid": null,
+      "name": "Softwares"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/subagent/",
+      "newPath": "/blog/tags/subagent/",
+      "guid": null,
+      "name": "Subagent"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/swe-dive/",
+      "newPath": "/blog/tags/swe-dive/",
+      "guid": null,
+      "name": "SWE-DIVE"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/swe-residual/",
+      "newPath": "/blog/tags/swe-residual/",
+      "guid": null,
+      "name": "SWE-Residual"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/swe-stream/",
+      "newPath": "/blog/tags/swe-stream/",
+      "guid": null,
+      "name": "SWE-Stream"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/swift/",
+      "newPath": "/blog/tags/swift/",
+      "guid": null,
+      "name": "Swift"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/tanstack-charts/",
+      "newPath": "/blog/tags/tanstack-charts/",
+      "guid": null,
+      "name": "TanStack Charts"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/tdd/",
+      "newPath": "/blog/tags/tdd/",
+      "guid": null,
+      "name": "TDD"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/terminal-bench/",
+      "newPath": "/blog/tags/terminal-bench/",
+      "guid": null,
+      "name": "Terminal-Bench"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/thoughts/",
+      "newPath": "/blog/tags/thoughts/",
+      "guid": null,
+      "name": "Thoughts"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/tool/",
+      "newPath": "/blog/tags/tool/",
+      "guid": null,
+      "name": "Tool"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/turbopack/",
+      "newPath": "/blog/tags/turbopack/",
+      "guid": null,
+      "name": "Turbopack"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/tutorial/",
+      "newPath": "/blog/tags/tutorial/",
+      "guid": null,
+      "name": "Tutorial"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/viewport-segments-api/",
+      "newPath": "/blog/tags/viewport-segments-api/",
+      "guid": null,
+      "name": "Viewport Segments API"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/vite/",
+      "newPath": "/blog/tags/vite/",
+      "guid": null,
+      "name": "Vite"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/vitest/",
+      "newPath": "/blog/tags/vitest/",
+      "guid": null,
+      "name": "Vitest"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/webassembly/",
+      "newPath": "/blog/tags/webassembly/",
+      "guid": null,
+      "name": "WebAssembly"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/webkit/",
+      "newPath": "/blog/tags/webkit/",
+      "guid": null,
+      "name": "WebKit"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/webmcp/",
+      "newPath": "/blog/tags/webmcp/",
+      "guid": null,
+      "name": "WebMCP"
+    },
+    {
+      "kind": "tag",
+      "oldPath": "/tags/xcode/",
+      "newPath": "/blog/tags/xcode/",
+      "guid": null,
+      "name": "Xcode"
+    }
+  ],
+  "guids": [
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-11-09/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-11-09/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-09/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-09/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-11-02/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-11-02/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-02/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-11-02/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-10-26/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-10-26/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-26/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-26/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-10-19/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-10-19/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-19/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-19/"
+    },
+    {
+      "guid": "https://zhangwen.site/graph-workflow-ticket-runtime-state/",
+      "oldPath": "/graph-workflow-ticket-runtime-state/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-10-12/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-10-12/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-12/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-12/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-10-09/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-10-09/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-05/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-10-05/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-28/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-28/"
+    },
+    {
+      "guid": "https://zhangwen.site/jev/",
+      "oldPath": "/jev/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-09-25/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-09-25/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-21/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-21/"
+    },
+    {
+      "guid": "https://zhangwen.site/ai-era-software-engineering/",
+      "oldPath": "/ai-era-software-engineering/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-09-18/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-09-18/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-14/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-14/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-09-11/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-09-11/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-07/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-09-07/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-09-04/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-09-04/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/frontend/frontend-mobile-engineering-weekly-2026-08-31/",
+      "oldPath": "/weekly/frontend/frontend-mobile-engineering-weekly-2026-08-31/"
+    },
+    {
+      "guid": "https://zhangwen.site/ai-coding-created-a-code-mountain/",
+      "oldPath": "/ai-coding-created-a-code-mountain/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-08-28/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-08-28/"
+    },
+    {
+      "guid": "https://zhangwen.site/ai-coding-workflow/",
+      "oldPath": "/ai-coding-workflow/"
+    },
+    {
+      "guid": "https://zhangwen.site/ai-coding-workflow-1/",
+      "oldPath": "/ai-coding-workflow-1/"
+    },
+    {
+      "guid": "https://zhangwen.site/ai-coding-workflow-2/",
+      "oldPath": "/ai-coding-workflow-2/"
+    },
+    {
+      "guid": "https://zhangwen.site/ai-coding-workflow-3/",
+      "oldPath": "/ai-coding-workflow-3/"
+    },
+    {
+      "guid": "https://zhangwen.site/ai-coding-workflow-4/",
+      "oldPath": "/ai-coding-workflow-4/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/ai/ai-software-engineering-weekly-2026-08-24/",
+      "oldPath": "/weekly/ai/ai-software-engineering-weekly-2026-08-24/"
+    },
+    {
+      "guid": "https://zhangwen.site/grill-me/",
+      "oldPath": "/grill-me/"
+    },
+    {
+      "guid": "https://zhangwen.site/gpt-5-6-sol-prompt-migration/",
+      "oldPath": "/gpt-5-6-sol-prompt-migration/"
+    },
+    {
+      "guid": "https://zhangwen.site/codex-cli-goal/",
+      "oldPath": "/codex-cli-goal/"
+    },
+    {
+      "guid": "https://zhangwen.site/agent-teams-vs-sub-agents/",
+      "oldPath": "/agent-teams-vs-sub-agents/"
+    },
+    {
+      "guid": "https://zhangwen.site/agentic-engineering-discipline/",
+      "oldPath": "/agentic-engineering-discipline/"
+    },
+    {
+      "guid": "https://zhangwen.site/claude-code-base-quick-preview/",
+      "oldPath": "/claude-code-base-quick-preview/"
+    },
+    {
+      "guid": "https://zhangwen.site/saas-cli/",
+      "oldPath": "/saas-cli/"
+    },
+    {
+      "guid": "https://zhangwen.site/compound-engineering/",
+      "oldPath": "/compound-engineering/"
+    },
+    {
+      "guid": "https://zhangwen.site/skill-workflow/",
+      "oldPath": "/skill-workflow/"
+    },
+    {
+      "guid": "https://zhangwen.site/context-to-harness-engineering/",
+      "oldPath": "/context-to-harness-engineering/"
+    },
+    {
+      "guid": "https://zhangwen.site/how-to-write-user-scope-agentsmd/",
+      "oldPath": "/how-to-write-user-scope-agentsmd/"
+    },
+    {
+      "guid": "https://zhangwen.site/pua-skills/",
+      "oldPath": "/pua-skills/"
+    },
+    {
+      "guid": "https://zhangwen.site/codex-best-practices/",
+      "oldPath": "/codex-best-practices/"
+    },
+    {
+      "guid": "https://zhangwen.site/agent-skill-design-patterns/",
+      "oldPath": "/agent-skill-design-patterns/"
+    },
+    {
+      "guid": "https://zhangwen.site/claude-code-skills-lessons/",
+      "oldPath": "/claude-code-skills-lessons/"
+    },
+    {
+      "guid": "https://zhangwen.site/openai-ai-adoption-playbook/",
+      "oldPath": "/openai-ai-adoption-playbook/"
+    },
+    {
+      "guid": "https://zhangwen.site/agent-cli-vs-function-calling/",
+      "oldPath": "/agent-cli-vs-function-calling/"
+    },
+    {
+      "guid": "https://zhangwen.site/ai-translation-accuracy/",
+      "oldPath": "/ai-translation-accuracy/"
+    },
+    {
+      "guid": "https://zhangwen.site/how-coding-agents-reshape-epd/",
+      "oldPath": "/how-coding-agents-reshape-epd/"
+    },
+    {
+      "guid": "https://zhangwen.site/agent-skill-evaluation-playbook/",
+      "oldPath": "/agent-skill-evaluation-playbook/"
+    },
+    {
+      "guid": "https://zhangwen.site/agents-md-might-hurt-you/",
+      "oldPath": "/agents-md-might-hurt-you/"
+    },
+    {
+      "guid": "https://zhangwen.site/write-great-agents-md/",
+      "oldPath": "/write-great-agents-md/"
+    },
+    {
+      "guid": "https://zhangwen.site/skill-creator-evals-benchmarking/",
+      "oldPath": "/skill-creator-evals-benchmarking/"
+    },
+    {
+      "guid": "https://zhangwen.site/advanced-tool-use-anthropic/",
+      "oldPath": "/advanced-tool-use-anthropic/"
+    },
+    {
+      "guid": "https://zhangwen.site/claude-skills-complete-guide/",
+      "oldPath": "/claude-skills-complete-guide/"
+    },
+    {
+      "guid": "https://zhangwen.site/ticket-analysis-sop-to-skill/",
+      "oldPath": "/ticket-analysis-sop-to-skill/"
+    },
+    {
+      "guid": "https://zhangwen.site/ai-coding-knowledge-driven-shift/",
+      "oldPath": "/ai-coding-knowledge-driven-shift/"
+    },
+    {
+      "guid": "https://zhangwen.site/claude-code-10-commands-practical-guide/",
+      "oldPath": "/claude-code-10-commands-practical-guide/"
+    },
+    {
+      "guid": "https://zhangwen.site/claude-code-agent-teams-guide/",
+      "oldPath": "/claude-code-agent-teams-guide/"
+    },
+    {
+      "guid": "https://zhangwen.site/claude-code-best-practices/",
+      "oldPath": "/claude-code-best-practices/"
+    },
+    {
+      "guid": "https://zhangwen.site/claude-code-memory-guide/",
+      "oldPath": "/claude-code-memory-guide/"
+    },
+    {
+      "guid": "https://zhangwen.site/claude-code-team-10-tips/",
+      "oldPath": "/claude-code-team-10-tips/"
+    },
+    {
+      "guid": "https://zhangwen.site/context-engineering-ai-agents/",
+      "oldPath": "/context-engineering-ai-agents/"
+    },
+    {
+      "guid": "https://zhangwen.site/cursor-rules-optimization-practice/",
+      "oldPath": "/cursor-rules-optimization-practice/"
+    },
+    {
+      "guid": "https://zhangwen.site/nodejs-2025-modern-practices/",
+      "oldPath": "/nodejs-2025-modern-practices/"
+    },
+    {
+      "guid": "https://zhangwen.site/streamlit-autogen-deepseek-testcase-generator/",
+      "oldPath": "/streamlit-autogen-deepseek-testcase-generator/"
+    },
+    {
+      "guid": "https://zhangwen.site/claude-code-complete-tutorial/",
+      "oldPath": "/claude-code-complete-tutorial/"
+    },
+    {
+      "guid": "https://zhangwen.site/harness-engineering-agent-first/",
+      "oldPath": "/harness-engineering-agent-first/"
+    },
+    {
+      "guid": "https://zhangwen.site/pocketflow-learning-notes/",
+      "oldPath": "/pocketflow-learning-notes/"
+    },
+    {
+      "guid": "https://zhangwen.site/prompt-engineering-guide/",
+      "oldPath": "/prompt-engineering-guide/"
+    },
+    {
+      "guid": "https://zhangwen.site/system-prompt-architecture/",
+      "oldPath": "/system-prompt-architecture/"
+    },
+    {
+      "guid": "https://zhangwen.site/youzan-ai-customer-service-from-zero-to-one/",
+      "oldPath": "/youzan-ai-customer-service-from-zero-to-one/"
+    },
+    {
+      "guid": "https://zhangwen.site/cli-vs-mcp-lazy-loading-cost/",
+      "oldPath": "/cli-vs-mcp-lazy-loading-cost/"
+    },
+    {
+      "guid": "https://zhangwen.site/domestic-model-selection-guide/",
+      "oldPath": "/domestic-model-selection-guide/"
+    },
+    {
+      "guid": "https://zhangwen.site/skills-driven-business-defect-detection/",
+      "oldPath": "/skills-driven-business-defect-detection/"
+    },
+    {
+      "guid": "https://zhangwen.site/vercel-ai-sdk-nodejs/",
+      "oldPath": "/vercel-ai-sdk-nodejs/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-customscrollview-sliver/",
+      "oldPath": "/flutter-customscrollview-sliver/"
+    },
+    {
+      "guid": "https://zhangwen.site/sqlite-optimization/",
+      "oldPath": "/sqlite-optimization/"
+    },
+    {
+      "guid": "https://zhangwen.site/2025-flutter-routing/",
+      "oldPath": "/2025-flutter-routing/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-data-persistence/",
+      "oldPath": "/flutter-data-persistence/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-short-video-editing-with-ffmpeg/",
+      "oldPath": "/ios-short-video-editing-with-ffmpeg/"
+    },
+    {
+      "guid": "https://zhangwen.site/lynxjs/",
+      "oldPath": "/lynxjs/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-watch-it/",
+      "oldPath": "/flutter-watch-it/"
+    },
+    {
+      "guid": "https://zhangwen.site/how-to-build-flutter-uikit/",
+      "oldPath": "/how-to-build-flutter-uikit/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-result-with-asyncvalue/",
+      "oldPath": "/flutter-result-with-asyncvalue/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-riverpod-asyncvalue/",
+      "oldPath": "/flutter-riverpod-asyncvalue/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-combined-valuenotifier/",
+      "oldPath": "/flutter-combined-valuenotifier/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-sealed-classes-patterns-match/",
+      "oldPath": "/flutter-sealed-classes-patterns-match/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-valuenotifier/",
+      "oldPath": "/flutter-valuenotifier/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-result-pattern/",
+      "oldPath": "/flutter-result-pattern/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-app-project-structure/",
+      "oldPath": "/flutter-app-project-structure/"
+    },
+    {
+      "guid": "https://zhangwen.site/dart-sdk-freshly-known-classes-and-functions/",
+      "oldPath": "/dart-sdk-freshly-known-classes-and-functions/"
+    },
+    {
+      "guid": "https://zhangwen.site/powershell/",
+      "oldPath": "/powershell/"
+    },
+    {
+      "guid": "https://zhangwen.site/360-jiagu/",
+      "oldPath": "/360-jiagu/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC37%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第37期/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-build-runner/",
+      "oldPath": "/flutter-build-runner/"
+    },
+    {
+      "guid": "https://zhangwen.site/wsl2/",
+      "oldPath": "/wsl2/"
+    },
+    {
+      "guid": "https://zhangwen.site/windows-mac-newline/",
+      "oldPath": "/windows-mac-newline/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC36%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第36期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC35%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第35期/"
+    },
+    {
+      "guid": "https://zhangwen.site/Why-Flutter-Official-Recommends-Classes-Instead-of-Functions/",
+      "oldPath": "/Why-Flutter-Official-Recommends-Classes-Instead-of-Functions/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-class-widget-testable/",
+      "oldPath": "/flutter-class-widget-testable/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC34%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第34期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC33%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第33期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC32%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第32期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC31%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第31期/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-combine-framework/",
+      "oldPath": "/ios-combine-framework/"
+    },
+    {
+      "guid": "https://zhangwen.site/enable-ios-13-to-preview/",
+      "oldPath": "/enable-ios-13-to-preview/"
+    },
+    {
+      "guid": "https://zhangwen.site/whats-new-in-xcode-15/",
+      "oldPath": "/whats-new-in-xcode-15/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC30%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第30期/"
+    },
+    {
+      "guid": "https://zhangwen.site/2023-google-io/",
+      "oldPath": "/2023-google-io/"
+    },
+    {
+      "guid": "https://zhangwen.site/swiftui-environment-value/",
+      "oldPath": "/swiftui-environment-value/"
+    },
+    {
+      "guid": "https://zhangwen.site/swift-some-any/",
+      "oldPath": "/swift-some-any/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-vibrate/",
+      "oldPath": "/ios-vibrate/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC29%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第29期/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-unit-test-performance/",
+      "oldPath": "/ios-unit-test-performance/"
+    },
+    {
+      "guid": "https://zhangwen.site/xctest-async/",
+      "oldPath": "/xctest-async/"
+    },
+    {
+      "guid": "https://zhangwen.site/xctest-asserts/",
+      "oldPath": "/xctest-asserts/"
+    },
+    {
+      "guid": "https://zhangwen.site/xctest-instruction/",
+      "oldPath": "/xctest-instruction/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC28%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第28期/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-open-source-libraries/",
+      "oldPath": "/flutter-open-source-libraries/"
+    },
+    {
+      "guid": "https://zhangwen.site/etf/",
+      "oldPath": "/etf/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC27%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第27期/"
+    },
+    {
+      "guid": "https://zhangwen.site/2023-forward-invest/",
+      "oldPath": "/2023-forward-invest/"
+    },
+    {
+      "guid": "https://zhangwen.site/2023-forward-1/",
+      "oldPath": "/2023-forward-1/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC26%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第26期/"
+    },
+    {
+      "guid": "https://zhangwen.site/ghost-migrate-from-mariadb-to-mysql/",
+      "oldPath": "/ghost-migrate-from-mariadb-to-mysql/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC25%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第25期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC24%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第24期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC23%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第23期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC22%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第22期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC21%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第21期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC20%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第20期/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-apns-problems/",
+      "oldPath": "/ios-apns-problems/"
+    },
+    {
+      "guid": "https://zhangwen.site/higher-order-functions-in-c/",
+      "oldPath": "/higher-order-functions-in-c/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC19%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第19期/"
+    },
+    {
+      "guid": "https://zhangwen.site/iphone14-size/",
+      "oldPath": "/iphone14-size/"
+    },
+    {
+      "guid": "https://zhangwen.site/ghost-docker/",
+      "oldPath": "/ghost-docker/"
+    },
+    {
+      "guid": "https://zhangwen.site/weak-ref/",
+      "oldPath": "/weak-ref/"
+    },
+    {
+      "guid": "https://zhangwen.site/why-learn-useless-programming-language/",
+      "oldPath": "/why-learn-useless-programming-language/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC18%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第18期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC17%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第17期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC16%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第16期/"
+    },
+    {
+      "guid": "https://zhangwen.site/wwdc2022/",
+      "oldPath": "/wwdc2022/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC15%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第15期/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC14%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第14期/"
+    },
+    {
+      "guid": "https://zhangwen.site/single-source-of-truth/",
+      "oldPath": "/single-source-of-truth/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC13%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第13期/"
+    },
+    {
+      "guid": "https://zhangwen.site/sip/",
+      "oldPath": "/sip/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC12%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第12期/"
+    },
+    {
+      "guid": "https://zhangwen.site/operating-systems-three-easy-pieces/",
+      "oldPath": "/operating-systems-three-easy-pieces/"
+    },
+    {
+      "guid": "https://zhangwen.site/courage/",
+      "oldPath": "/courage/"
+    },
+    {
+      "guid": "https://zhangwen.site/design-language/",
+      "oldPath": "/design-language/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC11%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第11期/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-app-architecture-riverpod-introduction/",
+      "oldPath": "/flutter-app-architecture-riverpod-introduction/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-app-domain-model/",
+      "oldPath": "/flutter-app-domain-model/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-app-presentation-layer/",
+      "oldPath": "/flutter-app-presentation-layer/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-app-repository-pattern/",
+      "oldPath": "/flutter-app-repository-pattern/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-mac-tools/",
+      "oldPath": "/ios-mac-tools/"
+    },
+    {
+      "guid": "https://zhangwen.site/optimistic-attitude/",
+      "oldPath": "/optimistic-attitude/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC10%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第10期/"
+    },
+    {
+      "guid": "https://zhangwen.site/are-you-ok/",
+      "oldPath": "/are-you-ok/"
+    },
+    {
+      "guid": "https://zhangwen.site/sh-2886/",
+      "oldPath": "/sh-2886/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC9%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第9期/"
+    },
+    {
+      "guid": "https://zhangwen.site/reading-swift-concurrency/",
+      "oldPath": "/reading-swift-concurrency/"
+    },
+    {
+      "guid": "https://zhangwen.site/Swift-Concurrency%E4%B8%93%E9%A2%98/",
+      "oldPath": "/Swift-Concurrency专题/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC8%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第8期/"
+    },
+    {
+      "guid": "https://zhangwen.site/invest-faith/",
+      "oldPath": "/invest-faith/"
+    },
+    {
+      "guid": "https://zhangwen.site/programmer-english/",
+      "oldPath": "/programmer-english/"
+    },
+    {
+      "guid": "https://zhangwen.site/divide-into-swiftui-container-view/",
+      "oldPath": "/divide-into-swiftui-container-view/"
+    },
+    {
+      "guid": "https://zhangwen.site/swiftui-viewbuilder/",
+      "oldPath": "/swiftui-viewbuilder/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC7%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第7期/"
+    },
+    {
+      "guid": "https://zhangwen.site/app-declarative-ui/",
+      "oldPath": "/app-declarative-ui/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC6%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第6期/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-flavors-environment/",
+      "oldPath": "/flutter-flavors-environment/"
+    },
+    {
+      "guid": "https://zhangwen.site/chen-jin-wei-2021-04/",
+      "oldPath": "/chen-jin-wei-2021-04/"
+    },
+    {
+      "guid": "https://zhangwen.site/lin-ying-rui-2021-04/",
+      "oldPath": "/lin-ying-rui-2021-04/"
+    },
+    {
+      "guid": "https://zhangwen.site/qiu-dong-rong-2021-04/",
+      "oldPath": "/qiu-dong-rong-2021-04/"
+    },
+    {
+      "guid": "https://zhangwen.site/yang-rui-wen-2021-04/",
+      "oldPath": "/yang-rui-wen-2021-04/"
+    },
+    {
+      "guid": "https://zhangwen.site/zhou-ying-bo-2021-04/",
+      "oldPath": "/zhou-ying-bo-2021-04/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC5%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第5期/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-getx/",
+      "oldPath": "/flutter-getx/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC4%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第4期/"
+    },
+    {
+      "guid": "https://zhangwen.site/resolver/",
+      "oldPath": "/resolver/"
+    },
+    {
+      "guid": "https://zhangwen.site/tech-conf/",
+      "oldPath": "/tech-conf/"
+    },
+    {
+      "guid": "https://zhangwen.site/git-notes/",
+      "oldPath": "/git-notes/"
+    },
+    {
+      "guid": "https://zhangwen.site/chrome-hiden-functions/",
+      "oldPath": "/chrome-hiden-functions/"
+    },
+    {
+      "guid": "https://zhangwen.site/swift-async-await-token/",
+      "oldPath": "/swift-async-await-token/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC3%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第3期/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-navigation-back-button/",
+      "oldPath": "/ios-navigation-back-button/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC2%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第2期/"
+    },
+    {
+      "guid": "https://zhangwen.site/restrain-human-nature-and-cross-the-cycle/",
+      "oldPath": "/restrain-human-nature-and-cross-the-cycle/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-common-arch/",
+      "oldPath": "/ios-common-arch/"
+    },
+    {
+      "guid": "https://zhangwen.site/weekly/reading/%E6%91%B8%E9%B1%BC%E7%B2%BE%E9%80%89%E7%AC%AC1%E6%9C%9F/",
+      "oldPath": "/weekly/reading/摸鱼精选第1期/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-ios-camera/",
+      "oldPath": "/flutter-ios-camera/"
+    },
+    {
+      "guid": "https://zhangwen.site/fund-is-a-trust-relationship/",
+      "oldPath": "/fund-is-a-trust-relationship/"
+    },
+    {
+      "guid": "https://zhangwen.site/ubuntu-ftp/",
+      "oldPath": "/ubuntu-ftp/"
+    },
+    {
+      "guid": "https://zhangwen.site/install-jdk-in-mac/",
+      "oldPath": "/install-jdk-in-mac/"
+    },
+    {
+      "guid": "https://zhangwen.site/the-coldest-winter-in-ten-years/",
+      "oldPath": "/the-coldest-winter-in-ten-years/"
+    },
+    {
+      "guid": "https://zhangwen.site/choice-is-more-important-than-effort/",
+      "oldPath": "/choice-is-more-important-than-effort/"
+    },
+    {
+      "guid": "https://zhangwen.site/investment-and-the-way-we-see-the-world/",
+      "oldPath": "/investment-and-the-way-we-see-the-world/"
+    },
+    {
+      "guid": "https://zhangwen.site/raspberry-pi-tutorial/",
+      "oldPath": "/raspberry-pi-tutorial/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-widget-key/",
+      "oldPath": "/flutter-widget-key/"
+    },
+    {
+      "guid": "https://zhangwen.site/dart-implements-extends-with/",
+      "oldPath": "/dart-implements-extends-with/"
+    },
+    {
+      "guid": "https://zhangwen.site/invest-funds-book/",
+      "oldPath": "/invest-funds-book/"
+    },
+    {
+      "guid": "https://zhangwen.site/chao-chao-chao/",
+      "oldPath": "/chao-chao-chao/"
+    },
+    {
+      "guid": "https://zhangwen.site/mac-hidden-functions/",
+      "oldPath": "/mac-hidden-functions/"
+    },
+    {
+      "guid": "https://zhangwen.site/rvm/",
+      "oldPath": "/rvm/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-webrtc/",
+      "oldPath": "/ios-webrtc/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-orientasion/",
+      "oldPath": "/flutter-orientasion/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-architectures/",
+      "oldPath": "/ios-architectures/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-gesturedetector/",
+      "oldPath": "/flutter-gesturedetector/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-texttheme/",
+      "oldPath": "/flutter-texttheme/"
+    },
+    {
+      "guid": "https://zhangwen.site/swift-where/",
+      "oldPath": "/swift-where/"
+    },
+    {
+      "guid": "https://zhangwen.site/flutter-themedata/",
+      "oldPath": "/flutter-themedata/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-appdelegate/",
+      "oldPath": "/ios-appdelegate/"
+    },
+    {
+      "guid": "https://zhangwen.site/mirrors/",
+      "oldPath": "/mirrors/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-uialertcontroller/",
+      "oldPath": "/ios-uialertcontroller/"
+    },
+    {
+      "guid": "https://zhangwen.site/ubuntu-shadowsocks/",
+      "oldPath": "/ubuntu-shadowsocks/"
+    },
+    {
+      "guid": "https://zhangwen.site/xcode-tips/",
+      "oldPath": "/xcode-tips/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-hours/",
+      "oldPath": "/ios-hours/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-toggle-torch/",
+      "oldPath": "/ios-toggle-torch/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-nspredicate/",
+      "oldPath": "/ios-nspredicate/"
+    },
+    {
+      "guid": "https://zhangwen.site/swift-factory-di/",
+      "oldPath": "/swift-factory-di/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-uiscrollview/",
+      "oldPath": "/ios-uiscrollview/"
+    },
+    {
+      "guid": "https://zhangwen.site/clang/",
+      "oldPath": "/clang/"
+    },
+    {
+      "guid": "https://zhangwen.site/mach-o/",
+      "oldPath": "/mach-o/"
+    },
+    {
+      "guid": "https://zhangwen.site/ios-network-debug/",
+      "oldPath": "/ios-network-debug/"
+    },
+    {
+      "guid": "https://zhangwen.site/app-version/",
+      "oldPath": "/app-version/"
+    }
+  ],
+  "contentLinksRewritten": [],
+  "unresolvedContentLinks": []
+}

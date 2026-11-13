@@ -16,7 +16,7 @@ tags:
 
 这让我重新考虑，Engineering Skills 接下来应该往哪里发展。纵向切片（Vertical Slice）已经在我的使用中带来了明显收益，纯逻辑任务的执行边界也比单纯使用 Plan 模式更清楚，但涉及 Web、移动 App 和桌面客户端的图形界面（GUI），尤其是交互、样式与使用体验时，结果仍然很难稳定验收。继续增加 Skill、细化流程，是否就能解决这些问题？我现在没有这样的把握。
 
-之前整理[《Harness Engineering：Agent-First 时代的软件工程实践》](/harness-engineering-agent-first/)时，我关注的是为 Agent 建立可用的环境、文档与反馈机制，现在则更在意这套机制的实际收益与维护成本。结合 Matt Pocock 的 Skills 设计和吴恩达的 AI Engineering Skills Map 系列，我打算从软件工程本身重新梳理这些实践，区分已经有效的方法和仍需验证的方向。
+之前整理[《Harness Engineering：Agent-First 时代的软件工程实践》](/blog/harness-engineering-agent-first/)时，我关注的是为 Agent 建立可用的环境、文档与反馈机制，现在则更在意这套机制的实际收益与维护成本。结合 Matt Pocock 的 Skills 设计和吴恩达的 AI Engineering Skills Map 系列，我打算从软件工程本身重新梳理这些实践，区分已经有效的方法和仍需验证的方向。
 
 ## 写代码更快以后，工程判断影响了更多结果
 
@@ -131,7 +131,7 @@ type SendResult =
 
 ## 完成标准要与证据对应，GUI 尤其如此
 
-在[《我的 AI Coding 工作流（四）：感悟篇》](/ai-coding-workflow-4/)里，我已经写过，Agent 的自我汇报不能替代真实测试输出、构建、日志和实际运行结果。继续改进验证流程后，我最关心的问题又从“有没有拿到证据”推进到了“这些证据究竟证明了什么”，尤其是 GUI，行为测试通过以后，视觉与交互质量仍然可能没有得到检查。实现者与验证者分开，可以减少相互影响，但如果两者共同接受了错误的验收前提，独立执行也无法让结论自动变得可靠。
+在[《我的 AI Coding 工作流（四）：感悟篇》](/blog/ai-coding-workflow-4/)里，我已经写过，Agent 的自我汇报不能替代真实测试输出、构建、日志和实际运行结果。继续改进验证流程后，我最关心的问题又从“有没有拿到证据”推进到了“这些证据究竟证明了什么”，尤其是 GUI，行为测试通过以后，视觉与交互质量仍然可能没有得到检查。实现者与验证者分开，可以减少相互影响，但如果两者共同接受了错误的验收前提，独立执行也无法让结论自动变得可靠。
 
 我希望验证明确说明每项结论的依据：验收条件对应了什么检查，是否执行成功，证据是否足以支撑当前结论。测试被跳过、断言被削弱，或预期结果只是照着实现生成，都需要重新判断证据效力。失败与未验证也必须区分，环境无法启动，并不能证明产品行为错误，更不能写成验证通过。
 
@@ -157,7 +157,7 @@ GUI 是我目前最难稳定处理的部分，按钮能点击、接口返回成�
 
 ## 工作流需要边界，也需要允许返回
 
-在[《我的 AI Coding 工作流（二）：Skills 篇》](/ai-coding-workflow-2/)里，我曾经把开发工作做成固定的流水线，但这带来了几个问题：局部修改也要走完整流程，需求已经清楚还要重新探索，甚至在 Skill 中重复管理 Runtime 已有的`/goal`能力。那时的调整是先判断任务缺什么，再选择需要的方法，现在我还需要处理另一个更加实际的问题：执行过程中发现前提需求变了，应该回到哪一层，又能保留哪些已经有效的工作。
+在[《我的 AI Coding 工作流（二）：Skills 篇》](/blog/ai-coding-workflow-2/)里，我曾经把开发工作做成固定的流水线，但这带来了几个问题：局部修改也要走完整流程，需求已经清楚还要重新探索，甚至在 Skill 中重复管理 Runtime 已有的`/goal`能力。那时的调整是先判断任务缺什么，再选择需要的方法，现在我还需要处理另一个更加实际的问题：执行过程中发现前提需求变了，应该回到哪一层，又能保留哪些已经有效的工作。
 
 在 Engineering Skills 的持续改进中，一部分工作是拆分并理清文档职责：需求写入需求规范（SPEC.md），跨多处实现共享的设计约定按需写入概要设计（High-Level Design）的文档（HLD.md），任务单（Ticket）描述可执行的交付任务，执行过程留下进度和简短的验证证据。代码仓库里需要明确区分这些职责，让问题出现时能够找到需要修正的那一层。[^engineering-skills]
 
@@ -219,4 +219,4 @@ GUI 是我目前最难稳定处理的部分，按钮能点击、接口返回成�
 
 系列总览：[Andrew Ng — The AI Engineering Skills Map](https://www.linkedin.com/pulse/ai-engineering-skills-map-andrew-ng-m479c)，2026-08-14。
 
-相关旧文：[《我的 AI Coding 工作流（二）：Skills 篇》](https://zhangwen.site/ai-coding-workflow-2/)、[《我的 AI Coding 工作流（四）：感悟篇》](https://zhangwen.site/ai-coding-workflow-4/)、[《Harness Engineering：Agent-First 时代的软件工程实践》](https://zhangwen.site/harness-engineering-agent-first/)。
+相关旧文：[《我的 AI Coding 工作流（二）：Skills 篇》](https://zhangwen.site/blog/ai-coding-workflow-2/)、[《我的 AI Coding 工作流（四）：感悟篇》](https://zhangwen.site/blog/ai-coding-workflow-4/)、[《Harness Engineering：Agent-First 时代的软件工程实践》](https://zhangwen.site/blog/harness-engineering-agent-first/)。

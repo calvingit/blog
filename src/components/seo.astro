@@ -7,9 +7,19 @@ interface Props {
   description?: string
   image?: string
   noIndex?: boolean
+  ogType?: string
+  omitCanonical?: boolean
 }
 
-const { title, forceTitle, description, image, noIndex = false } = Astro.props
+const {
+  title,
+  forceTitle,
+  description,
+  image,
+  noIndex = false,
+  ogType = 'website',
+  omitCanonical = false,
+} = Astro.props
 const {
   title: siteTitle,
   titleDefault: siteTitleDefault,
@@ -34,17 +44,17 @@ if (forceTitle) {
 <meta name="description" content={seo.description} />
 <meta name="image" content={seo.image} />
 <link rel="alternate" type="application/rss+xml" title={SITE.titleDefault} href={new URL('rss.xml', Astro.site)} />
-<link rel="canonical" href={seo.url} />
+{!omitCanonical && <link rel="canonical" href={seo.url} />}
 <meta property="og:title" content={seo.title} />
-<meta property="og:url" content={seo.url} />
+{!omitCanonical && <meta property="og:url" content={seo.url} />}
 <meta property="og:description" content={seo.description} />
 <meta property="og:image" content={seo.image} />
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@calvin_cheung0" />
 <meta name="twitter:creator" content="@calvin_cheung0" />
 <meta name="twitter:title" content={seo.title} />
-<meta name="twitter:url" content={seo.url} />
+{!omitCanonical && <meta name="twitter:url" content={seo.url} />}
 <meta name="twitter:description" content={seo.description} />
 <meta name="twitter:image" content={seo.image} />
 {noIndex && <meta name="robots" content="noindex, nofollow" />}

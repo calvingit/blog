@@ -28,10 +28,10 @@ export function getWeeklySeries(entry: CollectionEntry<'weekly'>): WeeklySeries 
 
 export function getContentUrl(entry: SiteContentEntry): string {
   if (entry.collection === 'weekly') {
-    return `/weekly/${getWeeklySeries(entry)}/${entry.data.slug}/`
+    return `/blog/weekly/${getWeeklySeries(entry)}/${entry.data.slug}/`
   }
 
-  return `/${entry.data.slug}/`
+  return `/blog/${entry.data.slug}/`
 }
 
 export async function getWeeklyEntries(): Promise<Array<CollectionEntry<'weekly'>>> {

@@ -17,13 +17,23 @@ import remarkDirective from 'remark-directive'
 import remarkSmartypants from 'remark-smartypants'
 import { SITE } from './src/constants'
 import { remarkAsides, remarkMermaid } from './src/remark'
+import { lastmodForUrl } from './src/sitemap-lastmod'
 import { pagefindIntegration } from './src/utils'
 
 export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   site: SITE.url,
-  integrations: [expressiveCode(), mdx({ gfm: true }), sitemap(), pagefindIntegration(), react()],
+  integrations: [expressiveCode(), mdx({ gfm: true }), sitemap({
+    filter: (page) => {
+      const pathname = new URL(page).pathname
+      return pathname !== '/404/' && pathname !== '/404'
+    },
+    serialize(item) {
+      const lastmod = lastmodForUrl(item.url)
+      return lastmod ? { ...item, lastmod } : item
+    },
+  }), pagefindIntegration(), react()],
   vite: {
     plugins: [tailwindcss()],
   },

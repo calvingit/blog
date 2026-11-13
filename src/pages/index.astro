@@ -1,6 +1,8 @@
 ---
 import Layout from '@layouts/layout.astro'
+import JsonLd from '@components/json-ld.astro'
 import Seo from '@components/seo.astro'
+import { homeGraph } from '../jsonld'
 import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import { getAllContentEntries, getContentUrl } from '@content'
 import { sortAsc } from '@utils'
@@ -60,7 +62,9 @@ const AREAS = [
 ---
 
 <Layout>
-  <Seo slot="seo" forceTitle={HOME_TITLE} description={HOME_DESCRIPTION} />
+  <Seo slot="seo" forceTitle={HOME_TITLE} description={HOME_DESCRIPTION}>
+    <JsonLd data={homeGraph(HOME_DESCRIPTION)} />
+  </Seo>
   <SkipNavContent>
     <!-- Phone: the header spacer is 40px; -mt-2 leaves 32px under its rule. Desktop hero padding stays pt-12 / pb-24. -->
     <section

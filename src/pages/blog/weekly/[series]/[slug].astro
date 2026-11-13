@@ -1,26 +1,28 @@
 ---
-import { getCollection, render } from 'astro:content'
+import Aside from '@components/aside.astro'
 import Seo from '@components/seo.astro'
-import Layout from '@layouts/layout.astro'
-import Prose from '@components/prose.astro'
-import { SITE } from '@constants'
-import { defaultDateFormat, isoDateFormat } from '@utils'
 import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import Spacer from '@components/spacer.astro'
-import Aside from '@components/aside.astro'
 import TagLinks from '@components/tag-links.astro'
+import { getContentUrl, getWeeklyEntries, getWeeklySeries } from '@content'
+import Layout from '@layouts/layout.astro'
+import Prose from '@components/prose.astro'
 import Mermaid from '@components/mermaid.astro'
+import JsonLd from '@components/json-ld.astro'
+import { SITE } from '@constants'
+import { blogPosting } from '../../../../jsonld'
+import { defaultDateFormat, isoDateFormat } from '@utils'
+import { render } from 'astro:content'
 
 export async function getStaticPaths() {
-  const entries = await getCollection('blog')
+  const entries = await getWeeklyEntries()
 
-  return entries.map((e) => ({
+  return entries.map((entry) => ({
     params: {
-      blog: e.data.slug,
+      series: getWeeklySeries(entry),
+      slug: entry.data.slug,
     },
-    props: {
-      entry: e,
-    },
+    props: { entry },
   }))
 }
 
@@ -28,10 +30,21 @@ const { entry } = Astro.props
 const { data: post } = entry
 const { Content } = await render(entry)
 const components = { Aside, Mermaid }
+const pageUrl = new URL(getContentUrl(entry), SITE.url).href
 ---
 
 <Layout>
-  <Seo slot="seo" forceTitle={post.title} description={post.description} image={post.image}>
+  <Seo slot="seo" forceTitle={post.title} description={post.description} image={post.image} ogType="article">
+    <JsonLd
+      data={blogPosting({
+        headline: post.title,
+        description: post.description,
+        datePublished: isoDateFormat(post.date),
+        dateModified: isoDateFormat(post.lastUpdated),
+        pageUrl,
+        image: post.image,
+      })}
+    />
     <meta name="twitter:label1" value="Author" />
     <meta name="twitter:data1" data-pagefind-meta="author" value={SITE.defaultAuthor} />
     <meta name="twitter:label2" value="Tags" />
