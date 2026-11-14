@@ -1,115 +1,291 @@
 ---
 import Layout from '@layouts/layout.astro'
+import JsonLd from '@components/json-ld.astro'
 import Seo from '@components/seo.astro'
-import { Content as Hero } from '@assets/hero.mdx'
+import { homeGraph } from '../jsonld'
 import SkipNavContent from '@components/a11y/skip-nav-content.astro'
 import { getAllContentEntries, getContentUrl } from '@content'
-import { defaultDateFormat, sortAsc } from '@utils'
-import Link from '@components/link.astro'
-import Prose from '@components/prose.astro'
-import Spacer from '@components/spacer.astro'
-import { SITE } from '@constants'
+import { sortAsc } from '@utils'
 
-const OSS_PROJECTS: Array<{ name: string; url: string; description: string }> = [
+const HOME_TITLE = 'Calvin｜软件开发与 AI 工程实践'
+const HOME_DESCRIPTION = '这里持续关注 AI Coding、Agent 软件工程的发展。'
+
+const featuredPosts = sortAsc((await getAllContentEntries()).filter((entry) => entry.data.featured))
+
+const PROJECTS = [
   {
-    name: 'secco',
-    url: 'https://github.com/LekoArts/secco',
-    description: 'Local package testing made easy',
+    name: 'cstack',
+    description: '小而有据、按风险调整的 AI 编码工程技能原型。',
+    url: 'https://github.com/calvingit/cstack',
+    type: 'GitHub',
   },
   {
-    name: 'astro-loaders',
-    url: 'https://github.com/LekoArts/astro-loaders',
-    description: "Loaders for Astro's Content Layer",
+    name: 'SimDeck',
+    description: '管理 Android 和 iOS 模拟器的 macOS 菜单栏应用。',
+    url: 'https://github.com/calvingit/SimDeck',
+    type: 'GitHub',
   },
   {
-    name: 'annum',
-    url: 'https://github.com/LekoArts/annum',
-    description: 'Visualize your Trakt.tv history',
+    name: 'Jev 多目标框选 Demo',
+    description: '用 Jev 识别并框出图中同类物体的演示。',
+    url: 'https://bbox-demo.zhangwen.site/',
+    type: 'Demo',
   },
-]
+  {
+    name: '每日早间资讯',
+    description: '每天汇总 AI、X、HN、Reddit、GitHub Trending 的中文早报。',
+    url: 'https://daily-news.zhangwen.site/',
+    type: 'Demo',
+  },
+  {
+    name: 'pstack 中文课程',
+    description: '系统学习 poteto/pstack 的中文课程。',
+    url: 'https://pstack-learn.zhangwen.site/',
+    type: 'Demo',
+  },
+] as const
 
-const POSTS_TO_SHOW = 10
-
-const entries = sortAsc(await getAllContentEntries())
-const featuredPosts = entries.filter((entry) => entry.data.featured)
-const posts = entries.filter((entry) => !entry.data.featured).slice(0, POSTS_TO_SHOW)
+const AREAS = [
+  {
+    title: 'Client & Full Stack',
+    description: 'iOS、Swift、Flutter、Web、Node.js',
+  },
+  {
+    title: 'AI Software Engineering',
+    description: 'Prompt、Context、Loop、Agent',
+  },
+  {
+    title: 'Engineering Practices',
+    description: '软件工程、验证与审查、工程效率与工具链',
+  },
+] as const
 ---
 
 <Layout>
-  <Seo slot="seo" />
+  <Seo slot="seo" forceTitle={HOME_TITLE} description={HOME_DESCRIPTION}>
+    <JsonLd data={homeGraph(HOME_DESCRIPTION)} />
+  </Seo>
   <SkipNavContent>
-    <h1 class="sr-only">{SITE.title}</h1>
-    <Prose>
-      <Hero />
-    </Prose>
+    <!-- Phone: the header spacer is 40px; -mt-2 leaves 32px under its rule. Desktop hero padding stays pt-12 / pb-24. -->
+    <section
+      class="relative isolate overflow-hidden -mt-2 pb-10 pt-0 md:mt-0 md:pb-24 md:pt-12"
+      aria-labelledby="intro-title"
+    >
+      <div class="relative z-10 max-w-xl">
+        <h1 id="intro-title" class="text-4xl font-semibold tracking-tight text-highlight md:text-5xl">你好 👋</h1>
+        <p class="mt-7 max-w-lg text-base leading-8 text-text md:text-lg">
+          {HOME_DESCRIPTION}
+        </p>
+      </div>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 520 220"
+        fill="none"
+        color="#6b7280"
+        preserveAspectRatio="xMaxYMax meet"
+        aria-hidden="true"
+        focusable="false"
+        class="pointer-events-none absolute bottom-3 right-0 hidden h-56 w-[58%] lg:block dark:text-slate-300"
+      >
+        <defs>
+          <mask id="hero-cartoon-vis-back" maskUnits="userSpaceOnUse" x="0" y="0" width="520" height="220">
+            <rect width="520" height="220" fill="#000"></rect>
+            <path
+              d="M 42 178 C 72 170 92 148 114 126 C 136 104 156 90 180 90 C 206 90 226 104 246 126 C 252 133 254 135 257 137 L 257 220 L 42 220 Z"
+              fill="#fff"></path>
+            <path
+              d="M 210 160 C 246 150 276 124 306 96 C 330 74 350 64 376 64 C 408 64 434 80 458 102 C 482 122 504 130 520 132 L 520 220 L 210 220 Z"
+              fill="#000"></path>
+            <path
+              d="M 16 206 C 58 196 90 178 124 168 C 150 160 176 162 206 174 C 250 188 312 186 382 190 C 440 194 488 200 520 204 L 520 220 L 16 220 Z"
+              fill="#000"></path>
+          </mask>
+          <mask id="hero-cartoon-vis-main" maskUnits="userSpaceOnUse" x="0" y="0" width="520" height="220">
+            <rect width="520" height="220" fill="#000"></rect>
+            <path
+              d="M 210 160 C 246 150 276 124 306 96 C 330 74 350 64 376 64 C 408 64 434 80 458 102 C 482 122 504 130 520 132 L 520 220 L 210 220 Z"
+              fill="#fff"></path>
+            <path
+              d="M 16 206 C 58 196 90 178 124 168 C 150 160 176 162 206 174 C 250 188 312 186 382 190 C 440 194 488 200 520 204 L 520 220 L 16 220 Z"
+              fill="#000"></path>
+          </mask>
+          <mask id="hero-cartoon-vis-front" maskUnits="userSpaceOnUse" x="0" y="0" width="520" height="220">
+            <rect width="520" height="220" fill="#000"></rect>
+            <path
+              d="M 16 206 C 58 196 90 178 124 168 C 150 160 176 162 206 174 C 250 188 312 186 382 190 C 440 194 488 200 520 204 L 520 220 L 16 220 Z"
+              fill="#fff"></path>
+          </mask>
+        </defs>
+        <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" opacity="0.52">
+          <circle cx="408" cy="36" r="15.5" stroke-width="1.70"></circle>
+          <g stroke-width="1.45">
+            <path d="M 408.00 16.00 L 408.00 4.00"></path>
+            <path d="M 422.14 21.86 L 429.57 14.43"></path>
+            <path d="M 428.00 36.00 L 440.00 36.00"></path>
+            <path d="M 422.14 50.14 L 429.57 57.57"></path>
+            <path d="M 393.86 50.14 L 386.43 57.57"></path>
+            <path d="M 388.00 36.00 L 376.00 36.00"></path>
+            <path d="M 393.86 21.86 L 386.43 14.43"></path>
+          </g>
+        </g>
+        <g stroke="currentColor" stroke-width="1.20" stroke-linecap="round" stroke-linejoin="round" opacity="0.40">
+          <path d="M 78 64 C 74 56 80 48 90 50 C 94 42 108 40 116 48 C 126 46 134 54 130 62 C 124 68 86 70 78 64 Z"
+          ></path>
+          <path
+            d="M 248 46 C 242 38 250 28 264 30 C 270 20 288 20 296 30 C 308 26 320 36 314 46 C 306 54 256 56 248 46 Z"
+          ></path>
+        </g>
+        <g mask="url(#hero-cartoon-vis-back)" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 100 150 C 126 130 150 118 178 118 C 200 118 216 128 228 140" stroke-width="1.20" opacity="0.34"
+          ></path>
+          <path
+            d="M 42 178 C 72 170 92 148 114 126 C 136 104 156 90 180 90 C 206 90 226 104 246 126 C 252 133 254 135 257 137"
+            stroke-width="1.70"
+            opacity="0.52"></path>
+        </g>
+        <g mask="url(#hero-cartoon-vis-main)" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 304 116 C 332 96 352 84 376 84 C 408 84 436 98 456 114" stroke-width="1.20" opacity="0.34"></path>
+          <path
+            d="M 210 160 C 246 150 276 124 306 96 C 330 74 350 64 376 64 C 408 64 434 80 458 102 C 482 122 504 130 520 132"
+            stroke-width="1.70"
+            opacity="0.52"></path>
+        </g>
+        <g mask="url(#hero-cartoon-vis-front)" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 70 192 C 100 180 128 172 154 172 C 180 172 204 180 224 186" stroke-width="1.20" opacity="0.34"
+          ></path>
+          <path
+            d="M 16 206 C 58 196 90 178 124 168 C 150 160 176 162 206 174 C 250 188 312 186 382 190 C 440 194 488 200 520 204"
+            stroke-width="1.70"
+            opacity="0.52"></path>
+        </g>
+      </svg>
+    </section>
+
     {
       featuredPosts.length > 0 && (
-        <>
-          <Spacer axis="vertical" size={32} />
-          <section>
-            <div class="border-b border-border pb-4">
-              <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Featured</h2>
+        <section class="md:mt-12" aria-labelledby="featured-heading">
+          <div class="mb-5 flex flex-wrap items-center justify-between gap-4 md:mb-6">
+            <div class="flex items-center gap-3">
+              <span aria-hidden="true" class="h-5 w-1 rounded-sm bg-stone-400 dark:bg-stone-500" />
+              <h2 id="featured-heading" class="text-xl font-semibold text-highlight md:text-2xl">
+                精选文章
+              </h2>
             </div>
-            <Spacer axis="vertical" size={8} />
-            <div class="flex gap-10 flex-col">
-              {featuredPosts.map((entry) => (
-                <div>
-                  <Link variant="highlight" href={getContentUrl(entry)}>
-                    {entry.data.title}
-                  </Link>
-                  <Spacer axis="vertical" size={2} />
-                  <p class="text-sm text-faded leading-relaxed italic">{entry.data.description}</p>
-                  <Spacer axis="vertical" size={3} />
-                  <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
+            <a href="/blog/" class="text-sm text-subtle hover:text-highlight hover:underline">
+              查看更多文章 ↗
+            </a>
+          </div>
+          <div>
+            {featuredPosts.map((entry, index) => (
+              <a
+                href={getContentUrl(entry)}
+                class:list={[
+                  'home-row grid gap-x-6 gap-y-2 md:grid-cols-[6.5rem_minmax(0,1.1fr)_minmax(0,1fr)] md:items-start',
+                  index < featuredPosts.length - 1 && 'border-b border-border',
+                  index === 0 ? 'pb-5 pt-0' : 'py-5',
+                ]}
+              >
+                <time datetime={entry.data.date.toISOString().slice(0, 10)} class="text-sm tabular-nums text-faded">
+                  {entry.data.date.toISOString().slice(0, 10).replace(/-/g, '.')}
+                </time>
+                <div class="space-y-2">
+                  <h3 class="home-row-name font-medium leading-6 text-highlight">{entry.data.title}</h3>
+                  <span class="text-xs text-faded">{entry.data.tags.slice(0, 2).join(' / ')}</span>
                 </div>
-              ))}
-            </div>
-          </section>
-        </>
+                <p class="text-sm leading-6 text-subtle">{entry.data.description}</p>
+              </a>
+            ))}
+          </div>
+        </section>
       )
     }
-    <Spacer axis="vertical" size={32} />
-    <section>
-      <div class="border-b border-border pb-4 flex justify-between items-center">
-        <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Latest Posts</h2>
-        <div><Link href="/blog/">Browse blog</Link></div>
+
+    <section class="mt-12 md:mt-16" aria-labelledby="projects-heading">
+      <div class="mb-5 flex items-center gap-3 md:mb-6">
+        <span aria-hidden="true" class="h-5 w-1 rounded-sm bg-stone-400 dark:bg-stone-500"></span>
+        <h2 id="projects-heading" class="text-xl font-semibold text-highlight md:text-2xl">精选项目</h2>
       </div>
-      <Spacer axis="vertical" size={8} />
-      <div class="flex gap-10 flex-col">
+      <ul>
         {
-          posts.map((entry) => (
-            <div>
-              <Link variant="highlight" href={getContentUrl(entry)}>
-                {entry.data.title}
-              </Link>
-              <Spacer axis="vertical" size={2} />
-              <p class="text-sm text-faded leading-relaxed italic">{entry.data.description}</p>
-              <Spacer axis="vertical" size={3} />
-              <div class="text-faded">{defaultDateFormat(entry.data.date)}</div>
+          PROJECTS.map((project, index) => (
+            <li class:list={[index < PROJECTS.length - 1 && 'border-b border-border']}>
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class:list={[
+                  'home-row grid min-h-11 gap-x-6 gap-y-1 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_5rem] md:items-baseline',
+                  index === 0 ? 'pb-4 pt-0' : 'py-4',
+                ]}
+              >
+                <h3 class="home-row-name font-medium text-highlight">{project.name}</h3>
+                <p class="text-sm leading-6 text-subtle">{project.description}</p>
+                <span class="text-sm text-subtle md:text-right">
+                  {project.type}
+                  <span aria-hidden="true"> ↗</span>
+                  <span class="sr-only">（新窗口打开）</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="mt-12 md:mt-16" aria-labelledby="areas-heading">
+      <div class="mb-5 flex items-center gap-3 md:mb-6">
+        <span aria-hidden="true" class="h-5 w-1 rounded-sm bg-stone-400 dark:bg-stone-500"></span>
+        <h2 id="areas-heading" class="text-xl font-semibold text-highlight md:text-2xl">关注领域</h2>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3 md:gap-0 md:divide-x md:divide-border">
+        {
+          AREAS.map((area) => (
+            <div class="space-y-3 md:px-6 md:first:pl-0 md:last:pr-0">
+              <h3 class="text-base font-medium text-highlight">{area.title}</h3>
+              <p class="text-sm leading-6 text-subtle">{area.description}</p>
             </div>
           ))
         }
       </div>
     </section>
-    <!-- <Spacer axis="vertical" size={32} />
-    <section>
-      <div class="border-b border-border pb-4">
-        <h2 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Open Source Projects</h2>
+
+    <section
+      class="mt-12 grid gap-5 pb-12 md:mt-16 md:grid-cols-[7rem_minmax(0,1fr)_auto] md:items-start md:gap-6 md:pb-16"
+      aria-labelledby="about-heading"
+    >
+      <div class="flex items-center gap-3">
+        <span aria-hidden="true" class="h-5 w-1 rounded-sm bg-stone-400 dark:bg-stone-500"></span>
+        <h2 id="about-heading" class="text-xl font-semibold text-highlight md:text-2xl">关于我</h2>
       </div>
-      <Spacer axis="vertical" size={8} />
-      <div class="flex gap-10 flex-col">
-        {
-          OSS_PROJECTS.map((oss) => (
-            <div>
-              <Link variant="highlight" href={oss.url}>
-                {oss.name}
-              </Link>
-              <Spacer axis="vertical" size={2} />
-              <div class="text-faded">{oss.description}</div>
-            </div>
-          ))
-        }
-      </div>
-    </section> -->
+      <p class="text-sm leading-7 text-subtle">
+        一名有十余年经验的全栈工程师，技术路径从 C/C++ 到 iOS，再到 Flutter 和 AI Coding。
+      </p>
+      <a href="/about/" class="text-sm text-subtle hover:text-highlight hover:underline">了解更多 ↗</a>
+    </section>
   </SkipNavContent>
 </Layout>
+
+<style>
+  .home-row:hover {
+    background-color: rgb(0 0 0 / 4%);
+  }
+
+  .home-row:hover .home-row-name {
+    text-decoration: underline;
+  }
+
+  .home-row:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  :global([data-theme='dark']) .home-row:hover {
+    background-color: rgb(255 255 255 / 6%);
+  }
+
+  :global([data-theme='dark']) .home-row:focus-visible {
+    outline-color: #fff;
+  }
+</style>

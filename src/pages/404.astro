@@ -1,0 +1,14 @@
+---
+import Layout from '@layouts/layout.astro'
+import Seo from '@components/seo.astro'
+import SkipNavContent from '@components/a11y/skip-nav-content.astro'
+---
+
+<Layout>
+  <Seo slot="seo" title="页面不存在" description="这个地址没有对应的页面。" noIndex omitCanonical />
+  <SkipNavContent>
+    <h1 class="text-xl font-medium text-highlight md:text-2xl">页面不存在</h1>
+    <p class="mt-6 text-text">这个地址没有对应的页面。</p>
+    <p class="mt-6"><a class="underline" href="/">返回首页</a></p>
+  </SkipNavContent>
+</Layout>

@@ -16,7 +16,7 @@ const series = (Object.keys(WEEKLY_SERIES) as WeeklySeries[]).map((slug) => ({
 ---
 
 <Layout>
-  <Seo slot="seo" title="Weekly" description="每周技术工程观察。" />
+  <Seo slot="seo" title="周报" description="每周技术工程观察。" />
   <SkipNavContent>
     <h1 class="font-medium text-xl md:text-2xl lg:text-3xl text-highlight">Weekly</h1>
     <Spacer axis="vertical" size={12} />
@@ -26,7 +26,7 @@ const series = (Object.keys(WEEKLY_SERIES) as WeeklySeries[]).map((slug) => ({
           <section>
             <div class="border-b border-border pb-4">
               <h2 class="font-medium text-lg md:text-xl text-highlight">
-                <Link variant="highlight" href={`/weekly/${slug}/`}>
+                <Link variant="highlight" href={`/blog/weekly/${slug}/`}>
                   {title}
                 </Link>
               </h2>

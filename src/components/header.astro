@@ -1,35 +1,25 @@
 ---
 import { HEADER, SITE } from '@constants'
-import Spacer from './spacer.astro'
 import Link from './link.astro'
 import Search from './search.astro'
 
 const { pathname } = Astro.url
 const isActive = (url: string) => pathname === url
-const isWeeklyRoute = pathname.startsWith('/weekly/')
+const isWeeklyRoute = pathname.startsWith('/blog/weekly/')
 ---
 
-<header class="container">
-  <Spacer axis="vertical" size={8} />
-  <div class="flex flex-row justify-between items-center">
-    <div>
-      <a
-        class="font-semibold text-xl md:text-2xl lg:text-3xl text-highlight"
-        href="/"
-        aria-label={`${SITE.title} - Back to home`}>{SITE.title}</a
-      >
-    </div>
-    <Search />
-  </div>
-  <Spacer axis="vertical" size={6} />
-  <div
-    class="flex flex-row flex-wrap justify-between items-center gap-y-2 border-b border-border pb-4 text-lg md:text-xl"
-  >
-    <nav aria-label="Primary navigation" class="flex gap-4">
+<header class="container relative">
+  <div class="flex flex-wrap items-center gap-x-8 gap-y-4 border-b border-border py-6">
+    <a
+      class="order-1 shrink-0 text-xl font-semibold tracking-tight text-highlight md:text-2xl"
+      href="/"
+      aria-label={SITE.title + ' - Back to home'}
+    >{SITE.title}</a>
+    <nav aria-label="Primary navigation" class="order-3 flex w-full flex-wrap items-center gap-x-6 gap-y-2 text-base lg:order-2 lg:w-auto lg:flex-1">
       {
-        HEADER.internal.map((link) =>
+        HEADER.internal.map(link =>
           'links' in link ? (
-            <div class="group relative">
+            <div class="group relative max-sm:static">
               <button
                 type="button"
                 class:list={[
@@ -39,27 +29,20 @@ const isWeeklyRoute = pathname.startsWith('/weekly/')
                 aria-haspopup="true"
               >
                 {link.title}
-                <svg
-                  aria-hidden="true"
-                  class="size-4"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                >
+                <svg aria-hidden="true" class="size-4" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
                   <path d="m4 6 4 4 4-4" />
                 </svg>
               </button>
-              <div class="invisible pointer-events-none absolute top-full left-0 z-10 pt-2 opacity-0 transition-opacity group-hover:visible group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto group-focus-within:opacity-100">
-                <div class="min-w-64 border border-border bg-bg py-2 shadow-lg">
-                  {link.links.map((item) => (
+              <div class="invisible pointer-events-none absolute left-0 top-full z-20 pt-2 opacity-0 transition-opacity group-hover:visible group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:visible group-focus-within:pointer-events-auto group-focus-within:opacity-100 max-sm:right-0">
+                <div class="min-w-64 border border-border bg-bg py-2 shadow-lg max-sm:min-w-0">
+                  {link.links.map(item => (
                     <Link
                       href={item.url}
                       class:list={[
-                        'block px-4 py-2 whitespace-nowrap hover:no-underline hover:bg-border',
+                        'block px-4 py-2 whitespace-nowrap hover:bg-border hover:no-underline max-sm:whitespace-normal',
                         isActive(item.url) && 'active',
                       ]}
-                      aria-current={isActive(item.url) ? 'page' : 'false'}
+                      aria-current={isActive(item.url) ? 'page' : undefined}
                     >
                       {item.title}
                     </Link>
@@ -71,7 +54,7 @@ const isWeeklyRoute = pathname.startsWith('/weekly/')
             <Link
               href={link.url}
               class={isActive(link.url) ? 'active' : ''}
-              aria-current={isActive(link.url) ? 'page' : 'false'}
+              aria-current={isActive(link.url) ? 'page' : undefined}
             >
               {link.title}
             </Link>
@@ -79,15 +62,16 @@ const isWeeklyRoute = pathname.startsWith('/weekly/')
         )
       }
     </nav>
-    <div class="ml-auto flex shrink-0 gap-4">
-      {
-        HEADER.external.map((link) => (
-          <Link href={link.url} {...link.props}>
+    <div class="order-2 ml-auto flex shrink-0 items-center gap-4 lg:order-3">
+      <Search />
+      <div class="hidden items-center gap-4 border-l border-border pl-4 text-sm sm:flex">
+        {HEADER.external.map(link => (
+          <Link href={link.url} {...link.props} rel="noopener noreferrer">
             {link.title}
           </Link>
-        ))
-      }
+        ))}
+      </div>
     </div>
   </div>
-  <Spacer axis="vertical" size={16} />
+  <div class="h-10 md:h-12" aria-hidden="true"></div>
 </header>
