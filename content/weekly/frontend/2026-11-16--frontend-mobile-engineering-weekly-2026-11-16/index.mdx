@@ -1,0 +1,60 @@
+---
+title: Frontend & Mobile Engineering Weekly：Flutter 3.50 将 FFIgen 与 JNIgen 标为稳定；Node.js 发布含多项 High 级别修复的安全更新
+slug: frontend-mobile-engineering-weekly-2026-11-16
+description: 11 月 9 日至 15 日，Flutter 3.50、Dart 3.14、Kotlin 2.5.0-RC、Node.js 安全更新、Vite 开发服务器修复、Prettier 3.10
+date: 2026-11-16
+lastUpdated: 2026-11-16
+series: frontend
+tags:
+  - Flutter
+  - Dart
+  - Kotlin
+  - Chrome
+  - Node.js
+  - Vite
+  - Prettier
+  - pnpm
+  - Rspack
+  - Vue Router
+searchIndex: true
+---
+
+本期覆盖 2026 年 11 月 9 日 00\:00 至 11 月 15 日 23\:59（UTC+8），整理前端与移动端的官方公告、版本发布和安全更新。
+
+## 移动端平台与框架
+
+- [Flutter 3.50 与 Dart 3.14 发布](https://flutter.dev/blog/whats-new-in-flutter-3-50)
+  > Flutter 团队 11 月 11 日发布 Flutter 3.50，并同期发布 Dart 3.14。本版将面向 Objective-C 的 FFIgen 与面向 Java/Kotlin 的 JNIgen 标为稳定，可直接同步或在后台 isolate 中调用平台 API，不再经过 platform channel；Pigeon 的 native interop 模式仍为预览。Web 方面，`flutter build web --wasm` 可在 Safari 26.2+ 与 Firefox 147+ 上运行 WebAssembly，Flutter 称在重度 widget 基准中帧率超过 JavaScript 的两倍，需在 `web/flutter_bootstrap.js` 中通过 `wasmAllowList` 选择加入，之后才会默认启用；`--web-content-hash` 为编译产物加入内容哈希，`--no-deprecated-js-interop` 会拒绝已废弃的 `dart:html` 等旧 JS interop。新项目默认改用独立的 `material_ui` 与 `cupertino_ui` 包，SDK 内耦合的 Material 与 Cupertino 库被正式弃用；Dart 3.14 新增按版本自动升级 SDK 约束的 `dart migrate` 工具，并提供把编译器、分析器与 pub 客户端编译为 WebAssembly、在浏览器本地运行的 DartPad beta。
+
+- [Kotlin 2.5.0-RC 发布](https://kotlinlang.org/docs/whatsnew-eap.html)
+  > JetBrains 11 月 11 日发布 Kotlin 2.5.0-RC。本版将 only-syntax 模式下的按名解构、未使用返回值检查器，以及改进后的编译期常量标为稳定，未使用返回值检查器与 only-syntax 按名解构均已默认启用；实验性功能包括 companion extensions 与 companion blocks（需 `-Xcompanion-blocks-and-extensions`），以及支持多个属性的 full value classes（需 `-Xfull-value-classes`）。Kotlin/Native 的 Swift export 进入 Beta 并换用新的 Gradle DSL；Kotlin Multiplatform 新增实验性独立编译方案，以及把非 JVM/Android 平台产物打成单个 `.kar`（ZIP 再经 XZ 压缩）的发布格式。本版还可生成 Java 28 字节码，Kotlin/JS 增加 `es2020` 目标，跨模块 klib inlining 改为默认启用；将编译器最低运行 JDK 从 8 提升到 17 的迁移进入报错阶段，可用 `-Xallow-pre-17-runtime-jdk` 暂时关闭，该选项计划在 2.5.20 或 2.6.0 移除。
+
+## Web 框架与浏览器
+
+- [Chrome 159 进入 Beta](https://developer.chrome.com/blog/chrome-159-beta)
+  > Google 11 月 12 日将 Chrome 159 推入 Beta，计划稳定版于 12 月 8 日发布。CSS 方面，`AccentColor` 与 `AccentColorText` 改为反映元素生效的 `accent-color`，单轴滚动容器可以按轴处理 scroll snap；WebTransport 增加 datagram 可读/可写流、拥塞控制选项、`getStats()` 与 `exportKeyingMaterial()` 等 API。JavaScript 在 Unicode 模式下为正则增加 `\A`、`\z` 与 `\Z` 缓冲区边界转义；Web Authentication Conditional UI Passive Mode 以 origin trial 提供，可在没有登录表单时以非模态方式提示通行密钥或密码登录。
+
+- [Vue Router 5.5.0 发布](https://github.com/vuejs/router/releases/tag/v5.5.0)
+  > Vue Router 11 月 10 日发布 5.5.0，并于 11 月 14 日发布 5.5.1。5.5.0 会在 query 与 params 冲突时发出警告，滚动位置改为写入 `sessionStorage` 而非 `history.state`，并在实验性 API 中支持类型安全的 route record props；配合 unplugin 与 Volar，可在 `definePage` 的 props 为 true 时于 `defineProps()` 中声明路由参数。5.5.1 为 `experimental_createRouter` 增加 `RouterLink` 与 `useLink`，并调整实验性 API：匹配失败时不再输出完整堆栈（该项为 breaking）。同日还发布面向 4.x 线的 4.6.5。
+
+## 构建、运行时与工程工具
+
+- [Node.js 发布 11 月安全更新，修复多项 High 级别漏洞](https://nodejs.org/en/blog/vulnerability/november-2026-security-releases)
+  > Node.js 项目 11 月 12 日发布 26.13.1（Lithium LTS）、24.22.3（Krypton LTS）与 22.23.5（Jod LTS）安全更新，最高严重级别为 High。修复涵盖 HTTP/2 会话拆除时的进程中止与内存泄漏、HTTPS 零长度 TLS 写入导致的解析器重入、可远程触发的 TLS 服务器崩溃，以及 TLS 1.2 重协商更改 servername 绕过客户端证书策略等问题；其中 CVE-2026-123863、CVE-2026-126051 与 CVE-2026-123874 等若干 High 项仅影响 24.x 与 26.x。本次还更新了 llhttp，并在相应发行线更新了 undici 与 sqlite。
+
+- [Vite 修复开发服务器远程代码执行漏洞](https://github.com/vitejs/vite/security/advisories/GHSA-p4f5-76q4-ffq7)
+  > Vite 团队 11 月 9 日发布 8.3.7、8.2.5、8.1.7、7.3.8 与 6.4.6，修复开发服务器中 `__vite-browser-external` 等虚拟模块未转义模块 ID 导致的远程代码执行问题；GitHub 于 11 月 10 日公开编号为 GHSA-p4f5-76q4-ffq7 的公告，严重级别为 Critical。该问题只影响将 Vite 开发服务器显式暴露到网络（`--host` 或 `server.host`）的应用，受影响范围包括 8.3.0 至 8.3.6、8.2.0 至 8.2.4、8.0.0 至 8.1.6、7.0.0 至 7.3.7，以及 4.0.0 至 6.4.5。Vite 8 的漏洞代码位于 Rolldown 二进制中，8.3.7 与 8.2.5 依赖 Rolldown 1.2.17 的修复，8.1.7 依赖 Rolldown 1.1.7；11 月 11 日随后发布的 8.3.8 为缺陷修复。
+
+- [Prettier 3.10.0 加入官方 Yuku 插件并支持新的 Flow 与 JavaScript 语法](https://prettier.io/blog/2026/11/11/3.10.0)
+  > Prettier 11 月 11 日发布 3.10.0，并在 11 月 12 日发布 3.10.1。3.10 新增需单独安装的官方插件 `@prettier/plugin-yuku`，基于 Yuku 工具链，提供 `yuku`（JavaScript）与 `yuku-ts`（TypeScript）解析器，因包体积限制未捆绑进 prettier 主包。本版支持 flow-parser 0.332.0 起的新 Flow 语法，并为尚未标准化的 Structs、Import Sync 与 Deferred re-exports 提案提供格式化支持；3.10.1 修复 GraphQL 空 selection set 与注释相关的问题。
+
+- [pnpm 12.19 至 12.21 加入 pnpm fund 与实验性 v13 锁文件](https://github.com/pnpm/pnpm/releases/tag/v12.21.0)
+  > pnpm 11 月 10 日至 14 日相继发布 12.19.0、12.20.0 与 12.21.0。12.19.0 新增与 `npm fund` 类似的 `pnpm fund`，让 `nodeLinker.type: loaded` 能处理需要构建的包，并加入 `projectScopedOptionalPeers` 设置与实验性的 `lockfile.format: v13`（以类 JSON 的 YAML 语法写入锁文件）；离线安装出错时不再打印 registry 凭证。12.20.0 起，捆绑的 `node-gyp` 不再附带被安全扫描器标记为 CVE-2026-84947 的 undici 6，且远程解析与共享构建缓存不再兼容 pnpr 0.1.0-alpha.19 及更早版本。12.21.0 让 `pnpm store add` 为锁文件中的 tarball 与带 `integrity` 的 git 依赖准备离线安装，并修复重复安装时 peer 依赖选择被改写，以及 v13 锁文件与 `nodeLinker: hoisted` 下的若干安装失败。
+
+- [Rspack 2.3.2 改进 HMR 并加入实验性 rule.as](https://github.com/web-infra-dev/rspack/releases/tag/v2.3.2)
+  > Rspack 11 月 10 日发布 2.3.2。本版改进 HMR 对 code-splitting 变化的处理，减少 chunk 新增或重排时不必要的整页刷新，新请求的 chunk 会在 HMR accept 回调运行前加载。实验性 `rule.as` 可让匹配到的资源以另一路径继续参与后续规则匹配，同时仍按原始文件读取内容；在启用 `optimization.sideEffects` 时（生产构建默认开启），Rspack 会跳过仅用 `export *` 转发且无副作用的中间模块。本版还增加 `output.environment.topLevelAwait`、`externals.byLayer`，并为注入的样式提供可选的运行时 public path。
+
+## 工程博客与项目进展
+
+- [Chrome 宣布 Modern Web Guidance 1.0 稳定发布](https://developer.chrome.com/blog/modern-web-guidance-v1)
+  > Chrome 团队 11 月 10 日宣布 Modern Web Guidance 1.0 稳定发布。这组面向编码代理的 skills 把 Web 平台实践与浏览器兼容性数据提供给代理，1.0 新增可扫描现有代码并提示可安全现代化改动的工作流，并提供公开的评估面板。Firefox 与 Edge 加入该项目，共同维护跨浏览器兼容性；安装方式为在项目目录执行 `npx modern-web-guidance@latest install`。
