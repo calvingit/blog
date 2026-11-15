@@ -1,0 +1,65 @@
+---
+title: AI Software Engineering Weekly：Claude Code 推出实验性 Code Mode；Cursor Projects 支持多人协作
+slug: ai-software-engineering-weekly-2026-11-16
+description: 11 月 9 日至 15 日，Claude Code 的 Code Mode、Cursor Projects 多人协作、Codex 0.169、JetBrains Air、AWS Emulator
+date: 2026-11-16
+lastUpdated: 2026-11-16
+series: ai
+tags:
+  - Claude Code
+  - Code Mode
+  - Cursor
+  - Codex
+  - GitHub Copilot
+  - JetBrains Air
+  - AWS Emulator
+  - AgentCore
+  - ExpertCrowd-SWE
+  - AGENTS.md
+searchIndex: true
+---
+
+本期覆盖 2026 年 11 月 9 日 00\:00 至 11 月 15 日 23\:59（UTC+8），上一期已收录的事件不再重复，本期整理 Claude Code、Codex、Cursor、JetBrains Air 与 Copilot 的功能与版本更新，三项 AWS 上的 agent 基础设施，以及三篇 coding agent 评测与上下文文件研究。
+
+## Coding Agent 与开发工具
+
+- [Claude Code 2.1.321–2.1.325：实验性 Code Mode、Fable 5.2 与若干安全修复](https://github.com/anthropics/claude-code/releases/tag/v2.1.325)
+  > Anthropic 在 11 月 10 日、13 日和 14 日发布 Claude Code 2.1.321、2.1.322、2.1.323 与 2.1.325。2.1.323 新增实验性、默认关闭的 Code Mode：Claude 编写 JavaScript 来调用 Bash、Read、Edit 等工具，可用环境变量 `CLAUDE_CODE_EXPERIMENTAL_CODE_MODE=1` 开启，组织也可在托管设置中把它设为 `0` 以禁止使用；Code Mode 需要 2.1.323 或更高版本的原生终端交互会话，以及 Claude 订阅或 Console 账号，并支持 Opus 5.5、Sonnet 5.5、Haiku 5.5 与 Fable 5.2，不适用于 `claude -p`、Agent SDK、VS Code 面板、Desktop、云端会话，以及 Bedrock、Vertex、Foundry、网关、零数据留存或 HIPAA 组织。脚本中的每次工具调用仍经过 `deny`、`ask` 规则和 `PreToolUse` hook，但 auto mode 的分类器审查的是整段代码而非每一次调用，也看不到运行时才算出的值。2.1.321 把 Claude Fable 5.2（`claude-fable-5-2`）设为默认 Fable 模型，上下文窗口为 1M，标价为每百万 token $8 / $40、缓存读取 $0.20，并修复了 MCP OAuth 在服务器重定向时把 refresh token 等密钥发往另一主机的问题；2.1.322 在 Vertex 的 global、us 与 eu 区域加入 fast mode，若 Vertex 拒绝则回退到标准速度；2.1.325 修复了 zstd 压缩响应解码中的一个安全问题，并把沙箱内 Bash 命令改为默认走常规权限流程，若要恢复不提示直接运行，需设置 `sandbox.autoAllowBashIfSandboxed: true`。
+
+- [Codex CLI 0.167.2–0.169.0：多标签侧边对话、终端内配置模型提供方](https://github.com/openai/codex/releases/tag/rust-v0.169.0)
+  > OpenAI 在 11 月 12 日和 13 日发布 Codex CLI 0.167.2、0.168.0 与 0.169.0。0.168.0 可在 Sessions → Model providers 中浏览模型提供方并为新对话选择默认项，启用 `features.tui_workspace` 后可在主聊天旁打开侧边对话。0.169.0 让这一可选终端工作区支持多个侧边对话标签，可在重启后重新打开已保存的本地侧边对话，还可在 agent command center 中按名称、提示预览或工作目录搜索更早的任务，并在终端里添加或编辑自定义模型提供方；在启用自定义网关接入时，可在登录过程中创建提供方，并在 SSH 或没有本地浏览器的环境中使用 device code。0.167.2 起，Codex 默认在 Google Cloud Vertex AI 上增量发送工具更新，可在 `config.toml` 的 `[features]` 下设置 `incremental_tools_legacy_gcp = false` 以退出；0.169.0 还规定，即便加上 `--sandbox workspace-write`，`codex exec` 在未信任目录中仍禁用项目配置和 MCP 服务器，需与 `codex exec` 或 `codex review` 一起使用 `--trust` 才会明确保存项目信任。
+
+- [Cursor Projects 支持多人协作](https://cursor.com/blog/projects-multiplayer)
+  > Cursor 11 月 10 日宣布，Projects 现已支持多人协作，并以 beta 在 Cursor 中推出。加入同一 Project 的成员各自保留与 coordinator 和 worker agent 的一对一对话，同时共享任务看板，以及需求文档、规格和设计稿等上下文；每个成员的对话按本人计费。成员的 coordinator 可以直接互相传信，接收方会把内容标为来自队友 agent 的不可信输入，并在分享这位成员的个人文件或连接器数据前先询问。共享 Project 需要团队账号，且 Cursor 版本不低于 3.26.13；Projects 本身只在包含 Cloud Agents 的方案中提供，不适用于 Free、Plus、legacy Hobby，也不适用于 Privacy Mode (Legacy)。
+
+- [JetBrains Air 随 2026.3 进入其 IDE](https://blog.jetbrains.com/ai/2026/11/air-in-jetbrains-ides-ga/)
+  > JetBrains 11 月 11 日宣布，Air 随 2026.3 进入 JetBrains IDE，用于在 IDE 内运行、跟踪和审查 coding agent，支持 Junie、Codex、Claude Agent 与 GitHub Copilot，并可通过 ACP 连接其他兼容 agent。Agent 可通过 IDE 的 MCP server 与内置 skills 运行检查、构建与运行配置、查询数据库并使用重构，在 IntelliJ IDEA 与 CLion 中还可驱动调试器；并行会话可使用各自的本地 Git worktree，不过 agent 自行创建的 worktree 目前尚未纳入 Air 的跟踪。本地 agent 工作流不需要付费的 JetBrains AI 订阅，可使用已有提供方订阅、API key，或用 JetBrains Account 免费使用 Junie Lite；AI Assistant 作为独立插件仍可用，并支持到 2027 年初。
+
+- [GitHub Copilot app 对 GitHub Enterprise Server 的支持一般可用](https://github.blog/changelog/2026-11-13-github-enterprise-server-support-in-the-github-copilot-app/)
+  > GitHub 11 月 13 日宣布，GitHub Copilot app 对 GitHub Enterprise Server（GHES）的支持一般可用，此前为 opt-in preview。用户需先用 GitHub.com 或 GHE.com 账号登录，再在 Settings > Accounts > Add account 中添加 GHES 账号，以处理远程仓库、issue 和 pull request。它需要 Copilot app 1.2.0 或更高版本，cloud sessions 不适用于 GHES。
+
+- [GitHub Copilot 上线 Fable 5.2、Gemini 4 Carbon 与 Hydrogen，并计划于 12 月 14 日停用部分模型](https://github.blog/changelog/2026-11-09-claude-fable-5-2-in-github-copilot/)
+  > GitHub 在 11 月 9 日、10 日和 13 日先后宣布，Claude Fable 5.2、Gemini 4 Carbon 与 Gemini 4 Hydrogen 在 GitHub Copilot 中一般可用，并逐步推送到 VS Code、Copilot CLI、coding agent 等客户端。Fable 5.2 与 Carbon 面向 Pro+、Max、Business 和 Enterprise，Hydrogen 还面向 Pro；Business 与 Enterprise 管理员需单独打开 Fable 5.2 策略（默认关闭），Fable 5.2 默认要求 Anthropic 留存提示和输出以运行安全分类器，符合条件的企业可申请使用零数据留存端点至当年年底。GitHub 11 月 13 日还宣布，将于 12 月 14 日在所有 Copilot 体验中停用 Claude Fable 5、Claude Haiku 4.5、Gemini 3.8 Flash、Gemini 4 Argon、Grok 4.6 与 Kimi K3，年付个人订阅者可继续使用 Haiku 4.5，Kimi K3 的替代模型尚未公布。
+
+## 工程实践与基础设施
+
+- [AWS Emulator 一般可用，可在本地用现有 SDK 与 CLI 调用 AWS API](https://aws.amazon.com/about-aws/whats-new/2026/11/aws-emulator-now-available/)
+  > AWS 11 月 11 日宣布 AWS Emulator 一般可用，可在本机或 CI 中把现有 AWS SDK 与 CLI 调用指向本地 HTTPS 端点，无需部署或 AWS 账号，开发者和 coding agent 都可以在本地迭代。它对已支持的操作返回与 AWS 相同的成功结果和错误，尚未实现的操作返回 501 Not Implemented；资源状态保存在内存中，每个实例有独立的端口、密钥和状态。源代码以 CC0 1.0 发布，无额外服务费用；默认只监听本机，不按 AWS 的方式评估 IAM 策略，每个模拟器对应单一账号，也不提供跨账号或跨区域行为。Linux 可安装 RPM 或 Debian 包，macOS 与 Windows 需在 Docker 中运行。
+
+- [AWS Nitro Sandboxes 为 EKS、ECS 与 EC2 提供硬件隔离](https://aws.amazon.com/about-aws/whats-new/2026/11/nitro-sandboxes-eks-ecs-ec2/)
+  > AWS 11 月 9 日宣布 AWS Nitro Sandboxes 可用，由 Nitro Hypervisor 管理轻量虚拟机，可让 EKS pod、ECS task 或轻量 VM（包括其中运行的 AI agent）各自运行在硬件隔离的 Nitro 虚拟机中，用于执行不受信任、多租户或受监管的工作负载，以及在隔离环境中运行 LLM 生成的代码。它支持密码学证明，仅向已证明完整性的沙箱释放密钥；在大多数基于 Nitro 的 EC2 实例和所有商业区域提供，无额外费用。在 EKS 或 ECS 上启用后，Pod Identity、VPC CNI、EBS/EFS/S3 与 CloudWatch 等原有能力仍可使用。
+
+- [Amazon Bedrock 发布新一代 AgentCore runtime](https://aws.amazon.com/blogs/machine-learning/run-agents-securely-and-efficiently-with-the-next-generation-agentcore-runtime/)
+  > AWS 11 月 12 日宣布新一代 Amazon Bedrock AgentCore runtime。每个会话仍在独立的硬件隔离 Firecracker MicroVM 中运行；AWS 称会话启动最快可提升到原来的 15 倍，计算规模最大为原来的 4 倍。会话可扩展至最多 8 个 vCPU 与 32 GB 内存，容器镜像最大 10 GB，启动时间在 2 秒以内，且与镜像大小和并发无关；空闲 agent 会缩至零，多轮会话的内存消耗最多可降低 68%，会话还可把工作动态挂载到文件系统（例如支持 FUSE 的 Amazon S3）。按会话把存储文件夹与会话凭证绑定的能力，公告写明将在 re:Invent 前提供，目前尚未交付。
+
+## 研究与 Benchmark
+
+- [ExpertCrowd-SWE：用专家撰写的 100 个任务评测不熟悉代码库上的 coding agent](https://arxiv.org/abs/2611.13246)
+  > Josip Vrdoljak 等人 11 月 10 日在 arXiv 发布 ExpertCrowd-SWE（arXiv:2611.13246），包含 100 个由从业工程师撰写的多文件软件工程任务，覆盖 87 个开源项目与 11 种语言，用于在大型、不熟悉的代码库上评测自主 coding agent。每个任务针对真实仓库的固定提交，配有密封参考解答，以及按加权、多为可执行标准给分的 grader；发布前会校准到参考解答得分为 1.0、未改动的仓库与无效改动得分为 0。作者在统一平台 harness 中评估 7 个前沿模型，各跑 5 次（共 3,495 次计分运行），Claude Opus 5.5（67.3%）与 GPT-6 Astra（63.7%）领先且无统计显著差距，随后是 Claude Fable 5.1（46.5%）和 Gemini 3.8 Flash（40.0%）。没有任务被所有模型完整解决，80 个任务上没有任何模型在全部 5 次运行中都拿到满分；作者公开 24 个任务及其环境、grader 与结果，其余 76 个留作防污染。
+
+- [论文考察 coding agent 对 AGENTS.md 等上下文文件指令的遵从情况](https://arxiv.org/abs/2611.13709)
+  > Gianmario Voria 等人 11 月 10 日在 arXiv 发布论文（arXiv:2611.13709），研究真实的 agent context file（例如 AGENTS.md）快照及其关联的 agent 生成提交，把其中明确、可执行的指令落地为测量脚本，并按指令检查遵从情况。作者报告，多数可观察指令可以这样操作化，agent 对这类指引的遵循多于不遵循，但遵从情况在始终遵守与从未遵守的指令之间明显分化，并随指令类别和 coding agent 而异。
+
+- [论文指出 agent 基准的饱和有相当部分来自通过/失败的记分方式](https://arxiv.org/abs/2611.13541)
+  > Zihan Dong 等人 11 月 10 日在 arXiv 发布论文（arXiv:2611.13541），对包括 SWE-bench Verified 与 Terminal-Bench 在内的八个基准已发布运行重新打分，认为许多饱和来自测量方式而非任务本身。作者指出，多数 agent 基准把一次运行压成通过或失败的一个比特：在 SWE-bench Verified 上，相邻的前十名 agent 差距小于测试本身的误差，校正测试后的名次变动不超过随机删除每名 agent 六分之一通过项所带来的变动；在 ALE-Bench 上，按竞赛分数分开的前十名在对照中位人类评分时打成平手，尽管近一半运行超过这一水平。作者提出带日期锚点的截断对数比分数，并把成本作为单独轴；在 Terminal-Bench 的一次重跑中，通过/失败打成平手的模型在被测试丢弃的数值指标上相差超过十倍。
+
