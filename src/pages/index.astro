@@ -180,9 +180,8 @@ const AREAS = [
               <a
                 href={getContentUrl(entry)}
                 class:list={[
-                  'home-row grid gap-x-6 gap-y-2 md:grid-cols-[6.5rem_minmax(0,1.1fr)_minmax(0,1fr)] md:items-start',
+                  'home-row grid gap-x-6 gap-y-2 px-3 py-5 md:grid-cols-[6.5rem_minmax(0,1.1fr)_minmax(0,1fr)] md:items-start',
                   index < featuredPosts.length - 1 && 'border-b border-border',
-                  index === 0 ? 'pb-5 pt-0' : 'py-5',
                 ]}
               >
                 <time datetime={entry.data.date.toISOString().slice(0, 10)} class="text-sm tabular-nums text-faded">
