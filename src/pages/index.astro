@@ -180,9 +180,8 @@ const AREAS = [
               <a
                 href={getContentUrl(entry)}
                 class:list={[
-                  'home-row grid gap-x-6 gap-y-2 md:grid-cols-[6.5rem_minmax(0,1.1fr)_minmax(0,1fr)] md:items-start',
+                  'home-row grid gap-x-6 gap-y-2 px-3 py-5 md:grid-cols-[6.5rem_minmax(0,1.1fr)_minmax(0,1fr)] md:items-start',
                   index < featuredPosts.length - 1 && 'border-b border-border',
-                  index === 0 ? 'pb-5 pt-0' : 'py-5',
                 ]}
               >
                 <time datetime={entry.data.date.toISOString().slice(0, 10)} class="text-sm tabular-nums text-faded">
@@ -214,7 +213,7 @@ const AREAS = [
                 target="_blank"
                 rel="noopener noreferrer"
                 class:list={[
-                  'home-row grid min-h-11 gap-x-6 gap-y-1 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_5rem] md:items-baseline',
+                  'home-row grid min-h-11 gap-x-6 gap-y-1 px-3 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_5rem] md:items-baseline',
                   index === 0 ? 'pb-4 pt-0' : 'py-4',
                 ]}
               >
